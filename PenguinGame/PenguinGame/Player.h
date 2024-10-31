@@ -13,5 +13,11 @@ private:
 	int m_scores;
 	int m_lives;
 	Position m_position;
+public:
+	Player(const std::string& name, Position initial_position);
+	std::string getName();
+	int getPoints();
+	int getLives();
+	~Player();
 };
 
