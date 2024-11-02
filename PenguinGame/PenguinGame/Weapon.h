@@ -6,6 +6,7 @@ class Weapon
 {
 public:
 	Weapon(int fireRate);
+	void update();
 	bool canShoot();
 private:
 	int m_fireRate;
