@@ -8,6 +8,7 @@ public:
 	Weapon(int fireRate);
 	void update();
 	bool canShoot();
+	void setFireRate(int newFireRate);
 private:
 	int m_fireRate;
 	int m_timeSinceLastShot;

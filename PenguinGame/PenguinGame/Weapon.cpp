@@ -22,3 +22,8 @@ bool Weapon::canShoot()
 	}
 	return false;
 }
+
+void Weapon::setFireRate(int newFireRate)
+{
+	m_fireRate = newFireRate;
+}
