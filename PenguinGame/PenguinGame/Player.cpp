@@ -6,6 +6,21 @@ Player::Player(const std::string& name)
 {
 }
 
+std::string Player::getName()
+{
+	return m_name;
+}
+
+int Player::getPoints()
+{
+	return m_points;
+}
+
+int Player::getScore()
+{
+	return m_score;
+}
+
 Player::~Player()
 {
 }
