@@ -129,10 +129,12 @@
   <ItemGroup>
     <ClInclude Include="Penguin.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Snowball.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Penguin.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Snowball.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
