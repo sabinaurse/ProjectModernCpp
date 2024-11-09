@@ -1,20 +1,25 @@
 #pragma once
+#include <iostream>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
 
 
 enum class Cell {
-	Empty,
-	Destructible_Wall,
-	Indestructible_Wall,
-	Bomb
+	Empty,               //0
+	Destructible_Wall,   //1
+	Indestructible_Wall, //2
+	Bomb                 //3 <- ulterior trebuie modificata astfel incat sa fie "in spatele unui zid destructibil"
 };
 
 class GameBoard
 {
 public:
 	GameBoard() = default;
+	GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance);
+
+	void  initializeBoard();
+	void printBoard();
 
 	int getRows() const;
 	int getCols() const;
@@ -28,8 +33,8 @@ public:
 	void setIndestructiblWallChance(int indestructiblWallChance);
 
 private:
-	int m_rows;
-	int m_cols;
+	int m_rows = 0;
+	int m_cols = 0;
 	std::vector<std::vector<Cell>> m_board;
 
 	int m_bombChance = 0;
