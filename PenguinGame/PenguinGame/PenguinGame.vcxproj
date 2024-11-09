@@ -127,12 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GameBoard.h" />
     <ClInclude Include="Penguin.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Snowball.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameBoard.cpp" />
     <ClCompile Include="Penguin.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Snowball.cpp" />
