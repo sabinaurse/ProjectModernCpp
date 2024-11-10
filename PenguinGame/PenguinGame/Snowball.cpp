@@ -18,7 +18,7 @@ void Snowball::updatePosition(GameBoard& gameBoard)
 		m_lastUpdate = currentTime;
 
 		if (checkCollision(gameBoard))
-			deactivate;
+			deactivate();
 	}
 }
 

@@ -22,7 +22,7 @@ public:
 	Position getPosition() const;
 private:
 	//Metoda pentru a calcula directia bulgarelui de zapada
-	std::pair<int, int> fireDirectionProjectile(int mouseX, int mouseY, bool isMouseControlled, char heyboardDirection);
+	std::pair<float, float> fireDirectionProjectile(int mouseX, int mouseY, bool isMouseControlled, char heyboardDirection);
 	int m_lives;
 	int m_points;
 	int m_score;

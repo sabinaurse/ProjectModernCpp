@@ -1,4 +1,4 @@
-#include "Penguin.h"
+﻿#include "Penguin.h"
 
 Penguin::Penguin(Position initialPosition,int fireRate):
 	m_lives(3),m_points(0),m_score(0),m_position(initialPosition),
@@ -12,18 +12,18 @@ void Penguin::fire(int mouseX, int mouseY, bool isMouseControlled, char keyboard
 		//Obtinem directia bulgarelui
 		auto direction = fireDirectionProjectile(mouseX, mouseY, isMouseControlled, keyboardDirection);
 
-		int dx = direction.first;
-		int dy = direction.second;
+		float dx = direction.first;
+		float dy = direction.second;
 
-		if (dx != 0 || dy != 0)
+		if (dx != 0.0f || dy != 0.0f)
 		{
-			// Definim direc?ia ca un string, �n func?ie de direc?ia calculat?
+			// Definim direcția ca un string, în funcție de direcția calculată
 			std::string directionString;
 
-			if (dx == 1) directionString = "right"; // Dreapta
-			else if (dx == -1) directionString = "left"; // St�nga
-			else if (dy == 1) directionString = "down"; // Jos
-			else if (dy == -1) directionString = "up"; // Sus
+			if (dx > 0) directionString = "right"; // Dreapta
+			else if (dx < 0) directionString = "left"; // Stânga
+			else if (dy > 0) directionString = "down"; // Jos
+			else if (dy < 0) directionString = "up"; // Sus
 
 			//Cream un nou bulgare de zapada
 			Snowball newSnowball(std::make_tuple(m_position.x, m_position.y), directionString);
@@ -83,23 +83,23 @@ Position Penguin::getPosition() const
 	return m_position;
 }
 
-std::pair<int, int> Penguin::fireDirectionProjectile(int mouseX, int mouseY, bool isMouseControlled, char heyboardDirection)
+std::pair<float, float> Penguin::fireDirectionProjectile(int mouseX, int mouseY, bool isMouseControlled, char heyboardDirection)
 {
-	int dx = 0;
-	int dy = 0;
+	float dx = 0;
+	float dy = 0;
 
 	if (isMouseControlled)
 	{
 		//Calculam directia pe baza pozitiei mouse-ului
-		dx = mouseX - m_position.x;
-		dy = mouseY - m_position.y;
+		dx = static_cast<float>(mouseX - m_position.x);
+		dy = static_cast<float>(mouseY - m_position.y);
 
 		//Normalizam vectorul directiei
-		float length = sqrt(dx * dx + dy * dy);
+		double length = sqrt(dx * dx + dy * dy);
 		if (length != 0)
 		{
-			dx /= length;
-			dy /= length;
+			dx /= static_cast<float>(length);
+			dy /= static_cast<float>(length);
 		}
 	}
 	else {
