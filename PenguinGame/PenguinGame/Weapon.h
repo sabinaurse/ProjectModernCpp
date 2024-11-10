@@ -9,6 +9,7 @@ public:
 	void update();
 	bool canShoot();
 	void setFireRate(int newFireRate);
+	void resetTimeSinceLastShot();
 private:
 	int m_fireRate;
 	int m_timeSinceLastShot;

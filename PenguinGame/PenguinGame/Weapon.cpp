@@ -1,15 +1,15 @@
 #include "Weapon.h"
 
 Weapon::Weapon(int fireRate):
-	m_fireRate(fireRate),
-	m_timeSinceLastShot(0)
+	m_fireRate(fireRate), m_timeSinceLastShot(0)
 {
 
 }
 
 void Weapon::update()
 {
-	m_timeSinceLastShot++;
+	if (m_timeSinceLastShot < m_fireRate)
+		m_timeSinceLastShot++;
 }
 
 
@@ -26,4 +26,9 @@ bool Weapon::canShoot()
 void Weapon::setFireRate(int newFireRate)
 {
 	m_fireRate = newFireRate;
+}
+
+void Weapon::resetTimeSinceLastShot()
+{
+	m_timeSinceLastShot = 0;
 }
