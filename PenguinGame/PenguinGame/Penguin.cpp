@@ -44,11 +44,7 @@ void Penguin::fire(int mouseX, int mouseY, bool isMouseControlled, char keyboard
 
 void Penguin::updateWeapon()
 {
-
-}
-
-void Penguin::checkWeaponUpgrades() {
-	if (m_points >= 500) 
+	if (m_points >= 500)
 	{
 		std::cout << "Penguin's weapon upgraded! Faster reload." << std::endl;
 		m_weapon.upgradeReloadSpeed();

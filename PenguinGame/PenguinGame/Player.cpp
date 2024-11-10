@@ -1,22 +1,21 @@
 #include "Player.h"
 
-Player::Player(const std::string& name)
-	:m_name(name),m_points(0),m_score(0)
-
+Player::Player(const std::string& name, const std::string& password)
+	:m_name(name),m_password(password), m_points(0), m_score(0), m_weaponBoostCount(0), m_speedBoostCount(0)
 {
 }
 
-std::string Player::GetName()const
+std::string Player::GetName() const
 {
 	return m_name;
 }
 
-int Player::GetPoints()const
+int Player::GetPoints() const
 {
 	return m_points;
 }
 
-int Player::GetScore()const
+int Player::GetScore() const
 {
 	return m_score;
 }
@@ -45,8 +44,4 @@ void Player::addPoints(int points) {
 void Player::addScore(int score) {
 	m_score += score;
 	checkSpeedBoost();
-}
-
-Player::~Player()
-{
 }

@@ -31,11 +31,14 @@ public:
 	void setBombChance(int bombChance);
 	void setDestructiblWallChance(int destructiblWallChance);
 	void setIndestructiblWallChance(int indestructiblWallChance);
-	
+
 	bool isWithinBounds(int x, int y) const;
 	Cell getCell(int x, int y) const;
 	void setCell(int x, int y, Cell cellType);
 	void destroyCell(int x, int y);
+
+	void detonateBomb(int x, int y);
+	void triggerExplosion(int x, int y);
 private:
 	int m_rows = 0;
 	int m_cols = 0;
@@ -44,6 +47,7 @@ private:
 	int m_bombChance = 0;
 	int m_destructiblWallChance = 0;
 	int m_indestructiblWallChance = 0;
+	int m_bombsPlaced = 0;
 
 	bool willDestructibleWallAppear();
 	bool willIndestructibleWallAppear();

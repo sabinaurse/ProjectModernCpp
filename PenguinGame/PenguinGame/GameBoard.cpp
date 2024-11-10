@@ -16,8 +16,11 @@ void GameBoard::initializeBoard()
 		{
 			if (willDestructibleWallAppear())
 				m_board[i][j] = Cell::Destructible_Wall;
-			else if (willBombAppear())
+			else if (willBombAppear() && m_bombsPlaced<3)
+			{
 				m_board[i][j] = Cell::Bomb;
+				m_bombsPlaced++;
+			}
 			else if (willIndestructibleWallAppear())
 				m_board[i][j] = Cell::Indestructible_Wall;
 
@@ -105,7 +108,13 @@ bool GameBoard::willIndestructibleWallAppear()
 
 bool GameBoard::willBombAppear()
 {
-	return std::rand() % 100 < m_bombChance;
+	int randX = std::rand() % m_rows;
+	int randY = std::rand() % m_cols;
+
+	if (m_board[randX][randY] == Cell::Destructible_Wall) {
+		return true;
+	}
+	return false;
 }
 
 bool GameBoard::isWithinBounds(int x, int y) const 
@@ -133,4 +142,35 @@ void GameBoard::destroyCell(int x, int y)
 {
 	if (isWithinBounds(x, y) && m_board[x][y] == Cell::Destructible_Wall)
 		m_board[x][y] = Cell::Empty;
+}
+
+void GameBoard::detonateBomb(int x, int y)
+{
+	if (getCell(x, y) == Cell::Bomb)
+	{
+		triggerExplosion(x, y);
+	}
+}
+
+void GameBoard::triggerExplosion(int x, int y)
+{
+	const int explosionRadius = 10;
+
+	for (int nx = 0; nx < m_rows; ++nx)
+	{
+		for (int ny = 0; ny < m_cols; ++ny)
+		{
+			int dx = nx - x;
+			int dy = ny - y;
+			double distance = std::sqrt(dx * dx + dy * dy);
+
+			if (distance <= explosionRadius)
+			{
+				//daca jucator lipseste
+				{
+					m_board[nx][ny] = Cell::Empty;
+				}
+			}
+		}
+	}
 }
