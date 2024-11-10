@@ -20,6 +20,11 @@ int Player::GetScore() const
 	return m_score;
 }
 
+void Player::SetName(std::string name)
+{
+	m_name = name;
+}
+
 void Player::checkWeaponBoost() 
 {
 	if (m_points >= 500 && m_weaponBoostCount < 4) {

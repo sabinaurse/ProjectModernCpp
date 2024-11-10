@@ -15,7 +15,7 @@ public:
 	std::string GetName() const;
 	int GetPoints() const;
 	int GetScore() const;
-
+	void SetName(std::string name);
 	void addPoints(int points);
 	void addScore(int points);
 
