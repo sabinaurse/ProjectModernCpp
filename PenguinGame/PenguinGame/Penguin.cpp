@@ -44,7 +44,21 @@ void Penguin::fire(int mouseX, int mouseY, bool isMouseControlled, char keyboard
 
 void Penguin::updateWeapon()
 {
-	m_weapon.update();
+
+}
+
+void Penguin::checkWeaponUpgrades() {
+	if (m_points >= 500) 
+	{
+		std::cout << "Penguin's weapon upgraded! Faster reload." << std::endl;
+		m_weapon.upgradeReloadSpeed();
+		m_points = 0;
+	}
+	if (m_score >= 10) {
+		std::cout << "Penguin's snowball speed doubled!" << std::endl;
+		doubleSnowballSpeed();
+		m_score = 0;
+	}
 }
 
 void Penguin::takeDamage(int damage)
@@ -81,6 +95,13 @@ int Penguin::getScore() const
 Position Penguin::getPosition() const
 {
 	return m_position;
+}
+
+void Penguin::doubleSnowballSpeed()
+{
+	for (auto& snowball : m_snowballs) {
+		snowball.doubleSpeed();
+	}
 }
 
 std::pair<float, float> Penguin::fireDirectionProjectile(int mouseX, int mouseY, bool isMouseControlled, char heyboardDirection)

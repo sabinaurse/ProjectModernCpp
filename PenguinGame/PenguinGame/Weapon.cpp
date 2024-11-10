@@ -1,4 +1,5 @@
 #include "Weapon.h"
+#include "Snowball.h"
 
 Weapon::Weapon(int fireRate):
 	m_fireRate(fireRate), m_timeSinceLastShot(0)
@@ -31,4 +32,12 @@ void Weapon::setFireRate(int newFireRate)
 void Weapon::resetTimeSinceLastShot()
 {
 	m_timeSinceLastShot = 0;
+}
+
+void Weapon::upgradeReloadSpeed()
+{
+	if (m_fireRate > 1)
+	{
+		m_fireRate = m_fireRate / 2;
+	}
 }

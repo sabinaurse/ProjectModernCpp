@@ -15,11 +15,13 @@ public:
 	Penguin(Position initialPosition, int fireRate);
 	void fire(int mouseX, int mouseY, bool isMouseControlled, char keyboardDirection);
 	void updateWeapon();
+	void checkWeaponUpgrades();
 	void takeDamage(int damage);
 	bool isAlive() const;
 	void move(int dx, int dy);
 	int getScore() const;
 	Position getPosition() const;
+	void doubleSnowballSpeed();
 private:
 	//Metoda pentru a calcula directia bulgarelui de zapada
 	std::pair<float, float> fireDirectionProjectile(int mouseX, int mouseY, bool isMouseControlled, char heyboardDirection);

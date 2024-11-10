@@ -7,11 +7,19 @@ private:
 	std::string m_name;
 	int m_points;
 	int m_score;
+	int m_weaponBoostCount;
+	int m_speedBoostCount;
 public:
 	Player(const std::string& name);
-	std::string getName();
-	int getPoints();
-	int getScore();
+	std::string GetName()const;
+	int GetPoints()const;
+	int GetScore()const;
+
+	void addPoints(int points);
+	void addScore(int points);
+
+	void checkWeaponBoost();
+	void checkSpeedBoost();
 	~Player();
 };
 

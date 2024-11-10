@@ -14,6 +14,7 @@ public:
     bool checkCollision(GameBoard& gameBoard);
     bool isActive() const;
     void deactivate();
+    void doubleSpeed();
 
 private:
     std::tuple<int, int> getNextPosition();

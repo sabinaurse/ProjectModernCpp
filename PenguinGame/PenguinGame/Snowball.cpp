@@ -54,6 +54,11 @@ void Snowball::deactivate()
 	m_active = false;
 }
 
+void Snowball::doubleSpeed()
+{
+	m_speed *= 2;
+}
+
 std::tuple<int, int> Snowball::getNextPosition()
 {
 	int x = std::get<0>(m_position);
