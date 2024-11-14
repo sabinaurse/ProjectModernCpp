@@ -1,8 +1,9 @@
 #include "GameBoard.h"
 
-GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance)
+GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs)
 	: m_rows{ rows }, m_cols{ cols },
-	m_bombChance{ bombChance }, m_destructiblWallChance{ destructiblWallChance }, m_indestructiblWallChance{ indestructiblWallChance }
+	m_bombChance{ bombChance }, m_destructiblWallChance{ destructiblWallChance },
+	m_indestructiblWallChance{ indestructiblWallChance }, m_maxBombs{ maxBombs }
 {
 	initializeBoard();
 }
@@ -16,7 +17,7 @@ void GameBoard::initializeBoard()
 		{
 			if (willDestructibleWallAppear())
 				m_board[i][j] = Cell::Destructible_Wall;
-			else if (willBombAppear() && m_bombsPlaced<3)
+			else if (willBombAppear() && m_bombsPlaced<m_maxBombs)
 			{
 				m_board[i][j] = Cell::Bomb;
 				m_bombsPlaced++;

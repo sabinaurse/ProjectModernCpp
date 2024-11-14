@@ -16,7 +16,7 @@ class GameBoard
 {
 public:
 	GameBoard() = default;
-	GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance);
+	GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs);
 
 	void  initializeBoard();
 	void printBoard();
@@ -48,6 +48,7 @@ private:
 	int m_destructiblWallChance = 0;
 	int m_indestructiblWallChance = 0;
 	int m_bombsPlaced = 0;
+	int m_maxBombs = 0;
 
 	bool willDestructibleWallAppear();
 	bool willIndestructibleWallAppear();

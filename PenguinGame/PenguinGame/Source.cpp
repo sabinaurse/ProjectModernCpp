@@ -15,11 +15,12 @@ void main()
     int randomRows = minRows + std::rand() % (maxRows - minRows + 1);
     int randomCols = minCols + std::rand() % (maxCols - minCols + 1);
 
-    int bombChance = 10;
-    int destructiblWallChance = 20;
+    int bombChance = 15;
+    int destructiblWallChance = 30;
     int indestructiblWallChance = 30;
+    int maxBombs = 3;
 
-    GameBoard board(randomRows, randomCols, bombChance, destructiblWallChance, indestructiblWallChance);
+    GameBoard board(randomRows, randomCols, bombChance, destructiblWallChance, indestructiblWallChance, maxBombs);
 
     board.printBoard();
 
