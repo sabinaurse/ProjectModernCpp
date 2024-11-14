@@ -25,3 +25,23 @@ void Player::SetName(std::string name)
 	m_name = name;
 }
 
+
+void Player::AddPoints(int points)
+{
+    m_points += points;
+}
+
+void Player::SetScore(int score)
+{
+    m_score = score;
+}
+
+void Player::UpdateScore()
+{
+    if (m_score == 0) {
+        std::cout << m_name << " has no score yet." << std::endl;
+    }
+    else {
+        std::cout << m_name << " scored: " << m_score << std::endl;
+    }
+}

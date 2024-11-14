@@ -59,6 +59,31 @@ void Penguin::UpgradeFireRate() {
 	}
 }
 
+#define RADIUS_OF_COLLISION 15.0f
+bool Penguin::CollidesWith(Penguin* penguin)
+{
+	// Verificăm dacă pinguinul este valid și în viață
+	if (!penguin || !penguin->IsAlive()) {
+		return false;  // Dacă pinguinul nu este valid sau este mort, nu există coliziune
+	}
+
+	// Calculăm distanța între bulgărele de zăpadă și pinguin
+	int distanceX = m_position.first - penguin->GetPosition().first;
+	int distanceY = m_position.second - penguin->GetPosition().second;
+	float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
+
+	// Verificăm dacă distanța este mai mică decât raza de coliziune
+	return distance < RADIUS_OF_COLLISION;
+	//nu stiu daca putem altfel
+}
+
+void Penguin::EliminateEnemy()
+{
+	m_enemiesEliminated++;  // Incrementăm numărul de inamici eliminați
+	m_score += 100;  // Adăugăm 100 de puncte pentru fiecare inamic eliminat
+	std::cout << "Penguin eliminated an enemy! Total enemies eliminated: " << m_enemiesEliminated << std::endl;
+}
+
 void Penguin::TakeDamage(int damage)
 {
 	if (!m_isAlive) return;

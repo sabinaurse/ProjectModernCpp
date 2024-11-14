@@ -21,8 +21,10 @@ public:
 	std::pair<int, int> GetPosition() const { return m_position; }
 	void ResetCharacter();
 	void UpgradeFireRate();
+	bool CollidesWith(Penguin* penguin);
 
 	Player* GetPlayer() const { return m_player; }  // Metodă pentru a obține jucătorul asociat
+	void EliminateEnemy();
 private:
 	//Metoda pentru a calcula directia bulgarelui de zapada
 	std::pair<float, float> FireDirectionProjectile(int mouseX, int mouseY, bool isMouseControlled, char heyboardDirection);
@@ -38,6 +40,7 @@ private:
 	bool m_isAlive;
 	Weapon m_weapon;
 
+	int m_enemiesEliminated;  // Numarul de inamici eliminati
 	int m_weaponBoostCount;
 	int m_speedBoostCount;
 	std::vector<Snowball> m_snowballs; //Vector de bulgari de zapada

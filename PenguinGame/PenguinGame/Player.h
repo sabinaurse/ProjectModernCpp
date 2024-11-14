@@ -13,6 +13,9 @@ public:
 	std::string GetName() const;
 	int GetPoints() const;
 	int GetScore() const;
+	void AddPoints(int points);
+	void SetScore(int score);
+	void UpdateScore();
 	void SetName(std::string name);
 	~Player() = default;
 };
