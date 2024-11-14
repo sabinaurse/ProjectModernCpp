@@ -16,7 +16,7 @@ class GameBoard
 {
 public:
 	GameBoard() = default;
-	GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs);
+	GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs, int minDistanceBombs);
 
 	void  initializeBoard();
 	void printBoard();
@@ -27,10 +27,6 @@ public:
 	int getBombChance() const;
 	int getDestructiblWallChance() const;
 	int getIndestructiblWallChance() const;
-
-	void setBombChance(int bombChance);
-	void setDestructiblWallChance(int destructiblWallChance);
-	void setIndestructiblWallChance(int indestructiblWallChance);
 
 	bool isWithinBounds(int x, int y) const;
 	Cell getCell(int x, int y) const;
@@ -43,13 +39,16 @@ private:
 	int m_rows = 0;
 	int m_cols = 0;
 	std::vector<std::vector<Cell>> m_board;
+	std::vector<std::pair<int, int>> m_bombPositions;
 
 	int m_bombChance = 0;
 	int m_destructiblWallChance = 0;
 	int m_indestructiblWallChance = 0;
 	int m_bombsPlaced = 0;
 	int m_maxBombs = 0;
+	int m_minDistanceBombs = 0;
 
+	bool isFarEnoughFromOtherBombs(int x, int y);
 	bool willDestructibleWallAppear();
 	bool willIndestructibleWallAppear();
 	bool willBombAppear();

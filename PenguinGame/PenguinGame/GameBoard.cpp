@@ -1,11 +1,28 @@
 #include "GameBoard.h"
 
-GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs)
+GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs, int minDistanceBombs)
 	: m_rows{ rows }, m_cols{ cols },
 	m_bombChance{ bombChance }, m_destructiblWallChance{ destructiblWallChance },
-	m_indestructiblWallChance{ indestructiblWallChance }, m_maxBombs{ maxBombs }
+	m_indestructiblWallChance{ indestructiblWallChance }, m_maxBombs{ maxBombs },
+	m_minDistanceBombs{ minDistanceBombs }
 {
 	initializeBoard();
+}
+
+bool GameBoard::isFarEnoughFromOtherBombs(int x, int y)
+{
+	for (const auto& bomb : m_bombPositions)
+	{
+		int dx = bomb.first - x;
+		int dy = bomb.second - y;
+		double distance = std::sqrt(dx * dx + dy * dy);
+
+		if (distance < m_minDistanceBombs) 
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 void GameBoard::initializeBoard()
@@ -17,15 +34,19 @@ void GameBoard::initializeBoard()
 		{
 			if (willDestructibleWallAppear())
 			{
-				if (m_bombsPlaced < m_maxBombs && willBombAppear()) //*
+				if (m_bombsPlaced < m_maxBombs && willBombAppear()&&isFarEnoughFromOtherBombs(i, j))
 				{
+					
 					m_board[i][j] = Cell::Hidden_Bomb;
+					m_bombPositions.push_back({ i, j }); 
 					m_bombsPlaced++;
+					
 				}
 				else
 				{
 					m_board[i][j] = Cell::Destructible_Wall;
 				}
+
 			}
 			else if (willIndestructibleWallAppear())
 			{
@@ -87,21 +108,6 @@ int GameBoard::getDestructiblWallChance() const
 int GameBoard::getIndestructiblWallChance() const
 {
 	return m_indestructiblWallChance;
-}
-
-void GameBoard::setBombChance(int bombChance)
-{
-	m_bombChance = bombChance;
-}
-
-void GameBoard::setDestructiblWallChance(int destructiblWallChance)
-{
-	m_destructiblWallChance = destructiblWallChance;
-}
-
-void GameBoard::setIndestructiblWallChance(int indestructiblWallChance)
-{
-	m_indestructiblWallChance = indestructiblWallChance;
 }
 
 bool GameBoard::willDestructibleWallAppear()

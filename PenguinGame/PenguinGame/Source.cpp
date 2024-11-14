@@ -19,8 +19,9 @@ void main()
     int destructiblWallChance = 30;
     int indestructiblWallChance = 30;
     int maxBombs = 3;
+    int distanceBombs = 3; // doar pt testare
 
-    GameBoard board(randomRows, randomCols, bombChance, destructiblWallChance, indestructiblWallChance, maxBombs);
+    GameBoard board(randomRows, randomCols, bombChance, destructiblWallChance, indestructiblWallChance, maxBombs, distanceBombs);
 
     board.printBoard();
 
