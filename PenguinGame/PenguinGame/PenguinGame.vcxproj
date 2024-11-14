@@ -132,7 +132,6 @@
     <ClInclude Include="Penguin.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Snowball.h" />
-    <ClInclude Include="UserManager.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
@@ -142,7 +141,6 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Snowball.cpp" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="UserManager.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,7 +1,7 @@
 ﻿#include "Weapon.h"
 #include "Snowball.h"
 
-Weapon::Weapon(int fireRate):
+Weapon::Weapon(int fireRate) :
 	m_fireRate(fireRate), m_timeSinceLastShot(std::chrono::steady_clock::now())
 {
 
@@ -25,4 +25,9 @@ void Weapon::UpgradeFireRate() // nesigur daca trb si asta sau doar snowball spe
 		m_fireRate /= 2;
 		std::cout << "Weapon fire rate upgraded! New fire rate: " << m_fireRate << " ms" << std::endl;
 	}
+}
+
+void Weapon::SetFireRate(int fireRate)
+{
+	m_fireRate = fireRate;
 }

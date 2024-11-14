@@ -1,4 +1,4 @@
-#include "GameBoard.h"
+ï»¿#include "GameBoard.h"
 
 GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs, int minDistanceBombs)
 	: m_rows{ rows }, m_cols{ cols },
@@ -17,7 +17,7 @@ bool GameBoard::isFarEnoughFromOtherBombs(int x, int y)
 		int dy = bomb.second - y;
 		double distance = std::sqrt(dx * dx + dy * dy);
 
-		if (distance < m_minDistanceBombs) 
+		if (distance < m_minDistanceBombs)
 		{
 			return false;
 		}
@@ -34,13 +34,13 @@ void GameBoard::initializeBoard()
 		{
 			if (willDestructibleWallAppear())
 			{
-				if (m_bombsPlaced < m_maxBombs && willBombAppear()&&isFarEnoughFromOtherBombs(i, j))
+				if (m_bombsPlaced < m_maxBombs && willBombAppear() && isFarEnoughFromOtherBombs(i, j))
 				{
-					
+
 					m_board[i][j] = Cell::Hidden_Bomb;
-					m_bombPositions.push_back({ i, j }); 
+					m_bombPositions.push_back({ i, j });
 					m_bombsPlaced++;
-					
+
 				}
 				else
 				{
@@ -125,7 +125,7 @@ bool GameBoard::willBombAppear()
 	return std::rand() % 100 < m_bombChance;
 }
 
-bool GameBoard::isWithinBounds(int x, int y) const 
+bool GameBoard::isWithinBounds(int x, int y) const
 {
 	return x >= 0 && x < m_rows && y >= 0 && y < m_cols;
 }
@@ -135,15 +135,15 @@ Cell GameBoard::getCell(int x, int y) const
 	if (isWithinBounds(x, y))
 		return m_board[x][y];
 
-	throw std::out_of_range("Coordonatele sunt în afara limitelor tabelei de joc");
+	throw std::out_of_range("Coordonatele sunt Ã®n afara limitelor tabelei de joc");
 }
 
 void GameBoard::setCell(int x, int y, Cell cellType)
 {
 	if (isWithinBounds(x, y))
 		m_board[x][y] = cellType;
-	else 
-		throw std::out_of_range("Coordonatele sunt în afara limitelor tabelei de joc");
+	else
+		throw std::out_of_range("Coordonatele sunt Ã®n afara limitelor tabelei de joc");
 }
 
 void GameBoard::destroyCell(int x, int y)
@@ -154,12 +154,12 @@ void GameBoard::destroyCell(int x, int y)
 
 		if (currentCell == Cell::Destructible_Wall)
 		{
-			m_board[x][y] = Cell::Empty; 
+			m_board[x][y] = Cell::Empty;
 		}
 		else if (currentCell == Cell::Hidden_Bomb)
 		{
-			triggerExplosion(x,y);
-			m_board[x][y] = Cell::Empty; 
+			triggerExplosion(x, y);
+			m_board[x][y] = Cell::Empty;
 		}
 	}
 }

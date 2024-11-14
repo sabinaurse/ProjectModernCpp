@@ -19,7 +19,7 @@ public:
 	int GetScore() const { return m_score; }
 	std::pair<int, int> GetPosition() const { return m_position; }
 	void ResetCharacter();
-	void DoubleSnowballSpeed();
+	void UpgradeFireRate();
 
 private:
 	//Metoda pentru a calcula directia bulgarelui de zapada
@@ -29,11 +29,13 @@ private:
 private:
 	int m_lives;
 	int m_points;
-	int m_score=0;
-	std::pair<int,int> m_position;
+	int m_score = 0;
+	std::pair<int, int> m_position;
 	bool m_isAlive;
 	Weapon m_weapon;
 
+	int m_weaponBoostCount;
+	int m_speedBoostCount;
 	std::vector<Snowball> m_snowballs; //Vector de bulgari de zapada
 };
 
