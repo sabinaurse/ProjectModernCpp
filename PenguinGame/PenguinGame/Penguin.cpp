@@ -7,7 +7,7 @@ void Penguin::Fire(int mouseX, int mouseY, bool isMouseControlled, char keyboard
 {
 	if (!m_isAlive) return; // verificam daca personajul e mort
 	// Verificam daca arma poate trage
-	if (m_weapon.canShoot()) {
+	if (m_weapon.CanShoot()) {
 		auto direction = FireDirectionProjectile(mouseX, mouseY, isMouseControlled, keyboardDirection);// calc directia de tragere
 		
 		if (direction.first != 0.0f || direction.second != 0.0f) {
@@ -20,7 +20,7 @@ void Penguin::Fire(int mouseX, int mouseY, bool isMouseControlled, char keyboard
 			m_snowballs.emplace_back(std::make_tuple(m_position.first, m_position.second), directionString);
 			std::cout << "Penguin fired a snowball from position (" << m_position.first << ", " << m_position.second << ")." << std::endl;
 		}
-		m_weapon.resetTimeSinceLastShot();
+		m_weapon.ResetTimeSinceLastShot();
 	}
 	else {
 		std::cout << "Penguin can't shoot yet. Waiting for reload." << std::endl;

@@ -6,13 +6,11 @@ class Weapon
 {
 public:
 	Weapon(int fireRate);
-	void update();
-	bool canShoot();
-	void setFireRate(int newFireRate);
-	void resetTimeSinceLastShot();
-	void upgradeReloadSpeed();
+	bool CanShoot() const;
+	void ResetTimeSinceLastShot();
+	void UpgradeFireRate(); // posibil unnecessary daca nu e nevoie de un upgrade special, putem pastra doar snowball speed upgraded
 private:
 	int m_fireRate;
-	int m_timeSinceLastShot;
+	std::chrono::steady_clock::time_point m_timeSinceLastShot;
 };
 
