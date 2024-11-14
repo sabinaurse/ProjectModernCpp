@@ -1,15 +1,16 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <iostream>
 #include <vector>
 #include "Weapon.h"
+#include "Player.h"
 #include "Snowball.h"
 
 
 class Penguin
 {
 public:
-	Penguin(std::pair<int, int> initialPosition, int fireRate);
+	Penguin(Player* player, std::pair<int, int> initialPosition, int fireRate);
 
 	void Fire(int mouseX, int mouseY, bool isMouseControlled, char keyboardDirection);
 	void UpdateWeapon();
@@ -21,12 +22,15 @@ public:
 	void ResetCharacter();
 	void UpgradeFireRate();
 
+	Player* GetPlayer() const { return m_player; }  // Metodă pentru a obține jucătorul asociat
 private:
 	//Metoda pentru a calcula directia bulgarelui de zapada
 	std::pair<float, float> FireDirectionProjectile(int mouseX, int mouseY, bool isMouseControlled, char heyboardDirection);
 	void CheckForWeaponUpgrade();
 
 private:
+	Player* m_player; // jucătorul care controlează acest pinguin
+
 	int m_lives;
 	int m_points;
 	int m_score = 0;

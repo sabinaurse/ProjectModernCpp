@@ -1,6 +1,7 @@
 ﻿#include "Penguin.h"
 
-Penguin::Penguin(std::pair<int, int> initialPosition, int fireRate) :
+Penguin::Penguin(Player* player, std::pair<int, int> initialPosition, int fireRate) :
+	m_player(player), // Setăm jucătorul
 	m_lives(3), m_position(initialPosition), m_isAlive(true), m_weapon(fireRate), m_speedBoostCount(0), m_weaponBoostCount(0) {}
 
 void Penguin::Fire(int mouseX, int mouseY, bool isMouseControlled, char keyboardDirection)
