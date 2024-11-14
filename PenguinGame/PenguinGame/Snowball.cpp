@@ -31,13 +31,13 @@ bool Snowball::checkCollision(GameBoard& gameBoard)
 	{
 		Cell cell = gameBoard.getCell(x, y);
 
-		if (cell == Cell::Destructible_Wall)
+		if (cell == Cell::Destructible_Wall || cell == Cell::Hidden_Bomb)
 		{
 			gameBoard.destroyCell(x, y);
 			return true;
 		}
 
-		if (cell == Cell::Indestructible_Wall || cell == Cell::Bomb)
+		if (cell == Cell::Indestructible_Wall)
 			return true;
 
 		return false; // nu am avut nicio coliziune

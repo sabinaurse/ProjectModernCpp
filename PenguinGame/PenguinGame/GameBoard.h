@@ -9,7 +9,7 @@ enum class Cell {
 	Empty,               //0
 	Destructible_Wall,   //1
 	Indestructible_Wall, //2
-	Bomb                 //3 <- ulterior trebuie modificata astfel incat sa fie "in spatele unui zid destructibil"
+	Hidden_Bomb          //3 
 };
 
 class GameBoard

@@ -16,14 +16,21 @@ void GameBoard::initializeBoard()
 		for (int j = 0; j < m_cols; ++j)
 		{
 			if (willDestructibleWallAppear())
-				m_board[i][j] = Cell::Destructible_Wall;
-			else if (willBombAppear() && m_bombsPlaced<m_maxBombs)
 			{
-				m_board[i][j] = Cell::Bomb;
-				m_bombsPlaced++;
+				if (m_bombsPlaced < m_maxBombs && willBombAppear()) //*
+				{
+					m_board[i][j] = Cell::Hidden_Bomb;
+					m_bombsPlaced++;
+				}
+				else
+				{
+					m_board[i][j] = Cell::Destructible_Wall;
+				}
 			}
 			else if (willIndestructibleWallAppear())
+			{
 				m_board[i][j] = Cell::Indestructible_Wall;
+			}
 
 		}
 }
@@ -44,8 +51,8 @@ void GameBoard::printBoard()
 			case Cell::Indestructible_Wall:
 				std::cout << "2";
 				break;
-			case Cell::Bomb:
-				std::cout << "3";
+			case Cell::Hidden_Bomb:
+				std::cout << "B";
 				break;
 			default:
 				std::cout << "?";
@@ -109,13 +116,7 @@ bool GameBoard::willIndestructibleWallAppear()
 
 bool GameBoard::willBombAppear()
 {
-	int randX = std::rand() % m_rows;
-	int randY = std::rand() % m_cols;
-
-	if (m_board[randX][randY] == Cell::Destructible_Wall) {
-		return true;
-	}
-	return false;
+	return std::rand() % 100 < m_bombChance;
 }
 
 bool GameBoard::isWithinBounds(int x, int y) const 
@@ -141,15 +142,19 @@ void GameBoard::setCell(int x, int y, Cell cellType)
 
 void GameBoard::destroyCell(int x, int y)
 {
-	if (isWithinBounds(x, y) && m_board[x][y] == Cell::Destructible_Wall)
-		m_board[x][y] = Cell::Empty;
-}
-
-void GameBoard::detonateBomb(int x, int y)
-{
-	if (getCell(x, y) == Cell::Bomb)
+	if (isWithinBounds(x, y))
 	{
-		triggerExplosion(x, y);
+		Cell currentCell = m_board[x][y];
+
+		if (currentCell == Cell::Destructible_Wall)
+		{
+			m_board[x][y] = Cell::Empty; 
+		}
+		else if (currentCell == Cell::Hidden_Bomb)
+		{
+			triggerExplosion(x,y);
+			m_board[x][y] = Cell::Empty; 
+		}
 	}
 }
 
