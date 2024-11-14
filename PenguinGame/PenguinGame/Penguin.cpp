@@ -96,7 +96,7 @@ Position Penguin::getPosition() const
 void Penguin::doubleSnowballSpeed()
 {
 	for (auto& snowball : m_snowballs) {
-		snowball.doubleSpeed();
+		snowball.DoubleSpeed();
 	}
 }
 

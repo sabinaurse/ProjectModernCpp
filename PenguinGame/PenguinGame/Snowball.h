@@ -7,17 +7,18 @@
 class Snowball
 {
 public:
-    Snowball(std::tuple<int, int> start_position, const std::string& launch_direction, float launch_speed = 0.25);
+    Snowball(const std::tuple<int, int>& startPosition, const std::string& launchDirection, float launchSpeed = 0.25f);
     ~Snowball() = default;
 
-    void updatePosition(GameBoard& gameBoard);
-    bool checkCollision(GameBoard& gameBoard);
-    bool isActive() const;
-    void deactivate();
-    void doubleSpeed();
+    void UpdatePosition(GameBoard& gameBoard, const std::vector<Snowball>& activeSnowballs);
+    bool CheckCollision(GameBoard& gameBoard, const std::vector<Snowball>& activeSnowballs);
+    bool IsActive() const { return m_active; }
+    void Deactivate() { m_active = false; }
+    void DoubleSpeed() { m_speed *= 2; }
+    std::tuple<int, int> GetPosition() const { return m_position; }
 
 private:
-    std::tuple<int, int> getNextPosition();
+    std::tuple<int, int> getNextPosition() const;
 
 private:
     std::tuple<int, int> m_position;
