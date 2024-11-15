@@ -28,32 +28,33 @@
 //
 //}
 
-int main() {
-    Game game;
 
-    // Creăm jucători
-    Player player1("Alice", "password123");
-    Player player2("Bob", "securepass");
-
-    // Adăugăm jucători în joc
-    game.AddPlayer(&player1);  // Adăugăm jucătorul în joc
-    game.AddPlayer(&player2);
-
-    // Începem jocul
-    game.StartGame();
-
-    // Accesăm pinguinul pentru fiecare jucător
-    for (auto* player : game.GetPlayers()) {  // folosim pointeri aici
-        std::cout << "Trying to get penguin for player: " << player->GetName() << std::endl;
-        Penguin* penguin = game.GetPenguinForPlayer(*player);
-        if (penguin) {
-            std::cout << player->GetName() << " controls a penguin at position ("
-                << penguin->GetPosition().first << ", " << penguin->GetPosition().second << ")" << std::endl;
-        }
-        else {
-            std::cout << "No penguin found for player: " << player->GetName() << std::endl;
-        }
-    }
-
-    return 0;
-}
+//int main() {
+//    Game game;
+//
+//    // Creăm jucători
+//    Player player1("Alice", "password123");
+//    Player player2("Bob", "securepass");
+//
+//    // Adăugăm jucători în joc
+//    game.AddPlayer(&player1);  // Adăugăm jucătorul în joc
+//    game.AddPlayer(&player2);
+//
+//    // Începem jocul
+//    game.StartGame();
+//
+//    // Accesăm pinguinul pentru fiecare jucător
+//    for (auto* player : game.GetPlayers()) {  // folosim pointeri aici
+//        std::cout << "Trying to get penguin for player: " << player->GetName() << std::endl;
+//        Penguin* penguin = game.GetPenguinForPlayer(*player);
+//        if (penguin) {
+//            std::cout << player->GetName() << " controls a penguin at position ("
+//                << penguin->GetPosition().first << ", " << penguin->GetPosition().second << ")" << std::endl;
+//        }
+//        else {
+//            std::cout << "No penguin found for player: " << player->GetName() << std::endl;
+//        }
+//    }
+//
+//    return 0;
+//}

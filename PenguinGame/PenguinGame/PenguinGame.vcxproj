@@ -139,6 +139,7 @@
     <ClCompile Include="GameBoard.cpp" />
     <ClCompile Include="Penguin.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Server.cpp" />
     <ClCompile Include="Snowball.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Weapon.cpp" />
