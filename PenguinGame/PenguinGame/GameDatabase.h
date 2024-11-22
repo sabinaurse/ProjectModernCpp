@@ -38,7 +38,7 @@ namespace game_database
 	class Database {
 	public:
 		Database();
-
+		
 		void AddPlayer(const GamePlayer& player);
 		std::vector<GamePlayer> GetAllPlayers();
 		GamePlayer GetPlayerByName(const std::string& name);

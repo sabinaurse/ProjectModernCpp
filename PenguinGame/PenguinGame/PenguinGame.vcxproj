@@ -132,6 +132,7 @@
     <ClInclude Include="GameDatabase.h" />
     <ClInclude Include="Penguin.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Routing.h" />
     <ClInclude Include="Snowball.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
@@ -141,7 +142,7 @@
     <ClCompile Include="GameDatabase.cpp" />
     <ClCompile Include="Penguin.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="Routing.cpp" />
     <ClCompile Include="Snowball.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Weapon.cpp" />

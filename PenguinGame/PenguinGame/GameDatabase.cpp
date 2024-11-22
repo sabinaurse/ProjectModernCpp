@@ -1,4 +1,4 @@
-#include "GameDatabase.h"
+﻿#include "GameDatabase.h"
 
 namespace game_database
 {
@@ -9,8 +9,16 @@ namespace game_database
 
 	void Database::AddPlayer(const GamePlayer& player)
 	{
-		// Inseram un jucator in baza de date
-		storage.insert(player);
+		auto result = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == player.name));
+
+		if (result.empty())
+		{
+			storage.insert(player); 
+		}
+		else
+		{
+			throw std::runtime_error("Player already exists in data base"); // Gestionare eroare daca exista deja numele player-ului in baza de date
+		}
 	}
 
 	std::vector<GamePlayer> Database::GetAllPlayers()

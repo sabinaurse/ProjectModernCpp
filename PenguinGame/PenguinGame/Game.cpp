@@ -48,6 +48,11 @@ void Game::StartGame()
 
 void Game::AddPlayer(Player* player)
 {
+    for (const auto& existingPlayer : m_players) {
+        if (existingPlayer->GetName() == player->GetName()) {
+            throw std::runtime_error("Player with the same name already exists in the game!");
+        }
+    }
     m_players.push_back(player);
 }
 
