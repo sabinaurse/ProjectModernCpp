@@ -5,6 +5,13 @@ Player::Player(const std::string& name, const std::string& password)
 {
 }
 
+Player::Player(const game_database::GamePlayer& dbPlayer)
+    : m_name(dbPlayer.name),
+    m_password(dbPlayer.password),
+    m_points(dbPlayer.points),
+    m_score(dbPlayer.score) {}
+
+
 std::string Player::GetName() const
 {
 	return m_name;

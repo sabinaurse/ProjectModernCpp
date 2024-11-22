@@ -1,6 +1,5 @@
 #pragma once
 #include <sqlite_orm/sqlite_orm.h>
-#include "Player.h"
 #include <string>
 #include <vector>
 
@@ -44,6 +43,7 @@ namespace game_database
 		GamePlayer GetPlayerByName(const std::string& name);
 		void UpdatePlayerPoints(const std::string& name, int newPoints);
 		void UpdatePlayerScore(const std::string& name, int newScore);
+		void DeletePlayer(const std::string& name);
 
 	private:
 		Storage storage;

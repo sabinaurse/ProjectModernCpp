@@ -55,4 +55,33 @@ namespace game_database
 			throw std::runtime_error("Player not found");
 		}
 	}
+
+	void Database::UpdatePlayerPoints(const std::string& name, int newPoints)
+	{
+		auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
+
+		if (!players.empty())
+		{
+			GamePlayer player = players.front();
+			player.points = newPoints;
+			storage.update(player);
+		}
+		else
+		{
+			throw std::runtime_error("Player not found");
+		}
+	}
+
+	void Database::DeletePlayer(const std::string& name) {
+		try {
+			
+			auto player = storage.get<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name)); // Verifică dacă jucătorul există
+			storage.remove<GamePlayer>(player.id); // Șterge jucătorul
+
+		}
+		catch (const std::runtime_error& e) {
+			throw std::runtime_error("Failed to delete player: " + std::string(e.what()));
+		}
+	}
+
 }

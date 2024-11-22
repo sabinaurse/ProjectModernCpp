@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include "GameDatabase.h"
 
 class Player
 {
@@ -10,6 +11,7 @@ private:
 	int m_score;
 public:
 	Player(const std::string& name, const std::string& password);
+	Player(const game_database::GamePlayer& dbPlayer);
 	std::string GetName() const;
 	int GetPoints() const;
 	int GetScore() const;
