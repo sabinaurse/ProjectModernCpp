@@ -1,6 +1,6 @@
 ﻿#include "Routing.h"
 
-Routing::Routing(Game& game, game_database::Database& db) :m_game{ game }, m_db{ db }
+Routing::Routing(Game& game, game_database::PlayerDatabase& db) :m_game{ game }, m_db{ db }
 {}
 
 void Routing::Run(int port)

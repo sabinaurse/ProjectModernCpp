@@ -2,12 +2,12 @@
 
 namespace game_database
 {
-	Database::Database() : storage(createStorage("PenguinGame.sqlite"))
+	PlayerDatabase::PlayerDatabase() : storage(createStorage("PenguinGame.sqlite"))
 	{
 		storage.sync_schema(); // Sincronizeaza schema bazei de date
 	}
 
-	void Database::AddPlayer(const GamePlayer& player)
+	void PlayerDatabase::AddPlayer(const GamePlayer& player)
 	{
 		auto result = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == player.name));
 
@@ -21,12 +21,12 @@ namespace game_database
 		}
 	}
 
-	std::vector<GamePlayer> Database::GetAllPlayers()
+	std::vector<GamePlayer> PlayerDatabase::GetAllPlayers()
 	{
 		return storage.get_all<GamePlayer>();
 	}
 
-	GamePlayer Database::GetPlayerByName(const std::string& name)
+	GamePlayer PlayerDatabase::GetPlayerByName(const std::string& name)
 	{
 		auto result = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
 
@@ -40,7 +40,7 @@ namespace game_database
 		}
 	}
 
-	void Database::UpdatePlayerScore(const std::string& name, int newScore)
+	void PlayerDatabase::UpdatePlayerScore(const std::string& name, int newScore)
 	{
 		auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
 
@@ -56,7 +56,7 @@ namespace game_database
 		}
 	}
 
-	void Database::UpdatePlayerPoints(const std::string& name, int newPoints)
+	void PlayerDatabase::UpdatePlayerPoints(const std::string& name, int newPoints)
 	{
 		auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
 
@@ -72,7 +72,7 @@ namespace game_database
 		}
 	}
 
-	void Database::DeletePlayer(const std::string& name) {
+	void PlayerDatabase::DeletePlayer(const std::string& name) {
 		try {
 			
 			auto player = storage.get<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name)); // Verifică dacă jucătorul există
@@ -82,6 +82,20 @@ namespace game_database
 		catch (const std::runtime_error& e) {
 			throw std::runtime_error("Failed to delete player: " + std::string(e.what()));
 		}
+	}
+
+	void WeaponDatabase::UpdateFireRate(const std::string& upgradeId, int newBulletSpeed)
+	{
+		auto upgrade = storage.get<WeaponUpgrade>(sqlite_orm::where(sqlite_orm::c(&WeaponUpgrade::id) == std::stoi(upgradeId)));
+		upgrade.bullet_speed = newBulletSpeed;
+		storage.update(upgrade);
+	}
+
+	void WeaponDatabase::UpdateCooldown(const std::string& upgradeId, int newCooldown)
+	{
+		auto upgrade = storage.get<WeaponUpgrade>(sqlite_orm::where(sqlite_orm::c(&WeaponUpgrade::id) == std::stoi(upgradeId)));
+		upgrade.cooldown = newCooldown;
+		storage.update(upgrade);
 	}
 
 }

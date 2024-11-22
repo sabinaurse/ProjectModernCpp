@@ -13,7 +13,7 @@ int main() {
     //Testare server
 
     Game game;
-    game_database::Database db;
+    game_database::PlayerDatabase db;
 
     Routing r(game, db);
     r.Run();
