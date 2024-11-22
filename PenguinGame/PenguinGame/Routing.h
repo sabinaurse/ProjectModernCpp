@@ -1,0 +1,18 @@
+#pragma once
+#include <crow.h>
+#include "Game.h"
+#include "GameDatabase.h"
+
+class Routing
+{
+public:
+	Routing(Game& game, game_database::Database& db);
+	void Run(int port = 18080);
+private:
+	crow::SimpleApp m_app;
+	Game& m_game;
+	game_database::Database& m_db;
+};
+
+
+
