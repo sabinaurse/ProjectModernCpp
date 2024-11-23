@@ -4,7 +4,7 @@
 Weapon::Weapon(int fireRate) :
 	m_fireRate(fireRate), m_timeSinceLastShot(std::chrono::steady_clock::now())
 {
-
+	// constructor
 }
 
 bool Weapon::CanShoot() const
