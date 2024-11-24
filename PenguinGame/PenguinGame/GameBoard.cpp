@@ -226,7 +226,7 @@ void GameBoard::triggerExplosion(int x, int y, std::vector<Penguin*>& penguins)
 		double distance = std::sqrt(dx * dx + dy * dy);
 
 		if (distance <= explosionRadius) {
-			penguin->TakeDamage(3); // ii luam toate cele 3 vieti pt a-l reseta
+			penguin->ResetCharacter(); // ii luam toate cele 3 vieti pt a-l reseta
 			std::cout << "Penguin at position (" << px << ", " << py<< ") was hit by the explosion!" << std::endl;
 		}
 	}

@@ -6,48 +6,59 @@
 #include "Player.h"
 #include "Snowball.h"
 
+using Position = std::pair<int, int>;
 
 class Penguin
 {
 public:
-	Penguin(Player* player, std::pair<int, int> initialPosition, int fireRate);
+	Penguin(Player* player,Position initialPosition, int fireRate);
 
-	void Fire(int mouseX, int mouseY, bool isMouseControlled, char keyboardDirection);
+	void Move(char direction, const GameBoard& board);
+
+	void Fire();
+	void UpgradeBulletSpeed(); // Metodă pentru dublarea vitezei gloanțelor
 	void UpdateWeapon();
 	void UpgradeFireRate();
 
-	void TakeDamage(int damage);
-	bool IsAlive() const { return m_isAlive; }
-	void Move(int dx, int dy);
-	int GetScore() const { return m_score; }
-	std::pair<int, int> GetPosition() const { return m_position; }
+	bool CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const std::vector<Snowball>& snowballs);
+	void EliminateEnemy();
+
+	void TakeDamage();
 	void ResetCharacter();
 	void ResetState();
-	bool CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const std::vector<Snowball>& snowballs);
 
+	bool IsAlive() const { return m_isAlive; }
+	int GetScore() const { return m_score; }
+	Position GetPosition() const { return m_position; }
+	float GetBulletSpeed() const; // Returnează viteza curentă a gloanțelor
 	Player* GetPlayer() const { return m_player; }  // Metoda pentru a obt jucatorul asociat
-	void EliminateEnemy();
-private:
-	//Metoda pentru a calcula directia bulgarelui de zapada
-	std::pair<float, float> FireDirectionProjectile(int mouseX, int mouseY, bool isMouseControlled, char heyboardDirection);
-	void CheckForWeaponUpgrade();
 
 private:
-	Player* m_player; // jucatorul care controleaza acest pinguin
+	//void CheckForWeaponUpgrade();
+	void CheckBulletSpeedUpgrade();
 
-	int m_lives;
-	int m_points;
+private:
+	Player* m_player;
+	bool m_isAlive = true;
+	char m_currentDirection = 'W';
+	Position m_position;
+	Position m_initialPosition;
+
+	// Statistici și scor
+	int m_lives = 3;
+	int m_points = 0;
 	int m_score = 0;
-	std::pair<int, int> m_initialPosition;
-	std::pair<int, int> m_position;
-	bool m_isAlive;
+	int m_enemiesEliminated = 0;
+
+	// Arme
+	Weapon m_weapon;
+	float m_bulletSpeed = 0.25f;
+	bool m_speedBoostApplied = false;
+	int m_weaponBoostCount = 0;
+	std::vector<Snowball> m_snowballs;
+
+	// Resetare
 	int m_resetCount = 0;
 	const int m_maxResets = 3;
-	Weapon m_weapon;
-
-	int m_enemiesEliminated;  // Numarul de inamici eliminati
-	int m_weaponBoostCount;
-	int m_speedBoostCount;
-	std::vector<Snowball> m_snowballs; //Vector de bulgari de zapada
 };
 

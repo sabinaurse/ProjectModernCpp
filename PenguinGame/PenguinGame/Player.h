@@ -4,21 +4,23 @@
 
 class Player
 {
-private:
-	std::string m_name;
-	std::string m_password;
-	int m_points;
-	int m_score;
 public:
 	Player(const std::string& name, const std::string& password);
 	Player(const game_database::GamePlayer& dbPlayer);
+	
 	std::string GetName() const;
 	int GetPoints() const;
 	int GetScore() const;
+
 	void AddPoints(int points);
 	void SetScore(int score);
 	void UpdateScore();
-	void SetName(std::string name);
+	void SetName(const std::string &name);
 	~Player() = default;
+private:
+	std::string m_name;
+	std::string m_password;
+	int m_points=0;
+	int m_score=0;
 };
 
