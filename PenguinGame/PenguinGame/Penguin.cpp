@@ -5,7 +5,7 @@
 
 Penguin::Penguin(Player* player,Position initialPosition, int fireRate) :
 	m_player{ player }, m_initialPosition{ initialPosition }, m_position{ initialPosition },
-	 m_weapon(fireRate) {}
+	m_weapon{ fireRate } {}
 
 void Penguin::Move(char direction, const GameBoard& board) {
 	if (!m_isAlive) return; // Nu poate să se miște dacă e mort.

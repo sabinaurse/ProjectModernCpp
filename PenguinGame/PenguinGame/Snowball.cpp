@@ -1,10 +1,10 @@
 #include "Snowball.h"
 
 Snowball::Snowball(const std::pair<int, int>& startPosition, const std::string& launchDirection, float launchSpeed)
-    : m_position(startPosition), m_direction(launchDirection), m_speed(launchSpeed),
-    m_active(true), m_lastUpdate(std::chrono::steady_clock::now()) {}
+    : m_position{ startPosition }, m_direction{ launchDirection }, m_speed{ launchSpeed },
+    m_active{ true }, m_lastUpdate{ std::chrono::steady_clock::now() } {}
 
-void Snowball::UpdatePosition(GameBoard& gameBoard, const std::vector<Snowball>& activeSnowballs)
+void Snowball::UpdatePosition(GameBoard& gameBoard,const  std::vector<Snowball>& activeSnowballs)
 {
     // verificam daca a trecut suficient timp pentru a misca glontul
     auto currentTime = std::chrono::steady_clock::now();

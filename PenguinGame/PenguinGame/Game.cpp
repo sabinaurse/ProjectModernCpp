@@ -203,3 +203,15 @@ void Game::CheckForCollisions() {
         penguin->RemoveInactiveSnowballs();
     }
 }
+void Game::RestartGame() {
+    m_isGameOver = false;
+
+    for (auto* penguin : m_penguins) {
+        penguin->ResetState();
+    }
+
+    m_gameBoard.initializeBoard();
+
+    std::cout << "Game restarted!" << std::endl;
+}
+

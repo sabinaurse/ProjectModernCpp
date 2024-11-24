@@ -232,22 +232,6 @@ void GameBoard::triggerExplosion(int x, int y, std::vector<Penguin*>& penguins)
 	}
 }
 
-void GameBoard::triggerExplosion(int x, int y) {
-	const int explosionRadius = 10;
-
-	for (int nx = 0; nx < m_rows; ++nx) {
-		for (int ny = 0; ny < m_cols; ++ny) {
-			int dx = nx - x;
-			int dy = ny - y;
-			double distance = std::sqrt(dx * dx + dy * dy);
-
-			if (distance <= explosionRadius) {
-				m_board[nx][ny] = Cell::Empty;
-			}
-		}
-	}
-}
-
 
 
 void GameBoard::detonateBomb(int x, int y) {
@@ -263,6 +247,23 @@ void GameBoard::detonateBomb(int x, int y) {
 
 			if (distance <= explosionRadius) {
 				destroyCell(i, j, emptyPenguins); 
+			}
+		}
+	}
+}
+
+void GameBoard::triggerExplosion(int x, int y) {
+	const int explosionRadius = 10;
+
+	// Distrugem celulele din raza exploziei
+	for (int nx = 0; nx < m_rows; ++nx) {
+		for (int ny = 0; ny < m_cols; ++ny) {
+			int dx = nx - x;
+			int dy = ny - y;
+			double distance = std::sqrt(dx * dx + dy * dy);
+
+			if (distance <= explosionRadius) {
+				m_board[nx][ny] = Cell::Empty;
 			}
 		}
 	}

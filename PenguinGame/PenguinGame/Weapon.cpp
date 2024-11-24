@@ -2,10 +2,8 @@
 #include "Snowball.h"
 
 Weapon::Weapon(int fireRate) :
-	m_fireRate(fireRate), m_timeSinceLastShot(std::chrono::steady_clock::now())
-{
-	// constructor
-}
+	m_fireRate{ fireRate }, m_timeSinceLastShot{std::chrono::steady_clock::now()}
+{}
 
 bool Weapon::CanShoot() const
 {

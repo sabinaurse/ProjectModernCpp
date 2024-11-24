@@ -1,7 +1,7 @@
 #include "Player.h"
 
 Player::Player(const std::string& name, const std::string& password)
-	:m_name(name), m_password(password)
+    :m_name{ name }, m_password{ password }
 {
 }
 

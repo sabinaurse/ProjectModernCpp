@@ -11,7 +11,7 @@ class Game
 public:
 	void StartGame();
 	void EndGame();
-	void Update();
+	//void Update();
 	void AddPenguin(Player* player);
 	void AddPlayer(Player* player);
 	void InitializePlayers();
@@ -20,6 +20,7 @@ public:
 	std::vector<Player*>& GetPlayers() { return m_players; }
 	void ShowLeaderboard();
 	void CheckForCollisions();
+	void RestartGame();
 private:
 	GameBoard m_gameBoard;
 	std::vector<Player*> m_players;
