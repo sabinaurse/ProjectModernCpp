@@ -1,4 +1,5 @@
 ﻿#include "Game.h"
+#include "Gameboard.h"
 
 void Game::EndGame()
 {
@@ -40,10 +41,7 @@ void Game::StartGame()
     m_isGameOver = false;
     std::cout << "Starting the game..." << std::endl;
 
-    // Creăm un pinguin pentru fiecare jucător
-    for (auto& player : m_players) {
-        AddPenguin(player);
-    }
+    InitializePlayers();
 }
 
 void Game::AddPlayer(Player* player)
@@ -68,7 +66,7 @@ Player* Game::GetWinner()
             }
             else 
             {
-                return nullptr; // Nu există un singur câștigător
+                return nullptr; // Nu exista un singur castigator
             }
         }
     }
@@ -105,5 +103,24 @@ void Game::ShowLeaderboard()
 
     for (auto& player : m_players) {
         std::cout << player->GetName() << " - " << player->GetPoints() << " points" << std::endl;
+    }
+}
+
+
+void Game::InitializePlayers() {
+    auto startingPositions = m_gameBoard.GetStartingPositions();
+
+    if (m_players.size() > startingPositions.size()) {
+        throw std::runtime_error("Too many players for available starting positions!");
+    }
+
+    for (size_t i = 0; i < m_players.size(); ++i) {
+        auto& player = m_players[i];
+        auto position = startingPositions[i]; 
+
+        Penguin* newPenguin = new Penguin(player, position, 4000);
+        m_penguins.push_back(newPenguin);
+
+        std::cout << "Player " << player->GetName() << " placed at ("<< position.first << ", " << position.second << ")." << std::endl;
     }
 }

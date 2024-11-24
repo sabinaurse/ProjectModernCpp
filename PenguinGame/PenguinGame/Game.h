@@ -14,6 +14,7 @@ public:
 	void Update();
 	void AddPenguin(Player* player);
 	void AddPlayer(Player* player);
+	void InitializePlayers();
 	Player* GetWinner();
 	Penguin* GetPenguinForPlayer(const Player& player);
 	std::vector<Player*>& GetPlayers() { return m_players; }

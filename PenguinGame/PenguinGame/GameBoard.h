@@ -32,6 +32,7 @@ public:
 	Cell getCell(int x, int y) const;
 	void setCell(int x, int y, Cell cellType);
 	void destroyCell(int x, int y);
+	std::vector<std::pair<int, int>> GetStartingPositions();
 
 	void detonateBomb(int x, int y);
 	void triggerExplosion(int x, int y);

@@ -1,4 +1,5 @@
 ﻿#include "GameBoard.h"
+#include <stdexcept>
 
 GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs, int minDistanceBombs)
 	: m_rows{ rows }, m_cols{ cols },
@@ -54,6 +55,30 @@ void GameBoard::initializeBoard()
 			}
 
 		}
+}
+
+std::vector<std::pair<int, int>> GameBoard::GetStartingPositions() {
+	std::vector<std::pair<int, int>> startingPositions;
+
+	if (isWithinBounds(0, 0) && getCell(0, 0) == Cell::Empty) {
+		startingPositions.emplace_back(0, 0);
+	}
+	if (isWithinBounds(m_rows - 1, m_cols - 1) && getCell(m_rows - 1, m_cols - 1) == Cell::Empty) {
+		startingPositions.emplace_back(m_rows - 1, m_cols - 1);
+	}
+	if (isWithinBounds(0, m_cols - 1) && getCell(0, m_cols - 1) == Cell::Empty) {
+		startingPositions.emplace_back(0, m_cols - 1);
+	}
+	if (isWithinBounds(m_rows - 1, 0) && getCell(m_rows - 1, 0) == Cell::Empty) {
+		startingPositions.emplace_back(m_rows - 1, 0);
+	}
+	
+
+	if (startingPositions.size() < 4) {
+		throw std::runtime_error("Not enough free corners to place players!");
+	}
+
+	return startingPositions;
 }
 
 void GameBoard::printBoard()
