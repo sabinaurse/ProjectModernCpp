@@ -1,4 +1,5 @@
 ﻿#include "GameBoard.h"
+#include "Penguin.h"
 #include <stdexcept>
 
 GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs, int minDistanceBombs)
@@ -170,9 +171,13 @@ void GameBoard::setCell(int x, int y, Cell cellType)
 	else
 		throw std::out_of_range("Coordonatele sunt în afara limitelor tabelei de joc");
 }
+void GameBoard::destroyCell(int x, int y) {
+	if (isWithinBounds(x, y)) {
+		m_board[x][y] = Cell::Empty; // Sau altă logică de distrugere
+	}
+}
 
-void GameBoard::destroyCell(int x, int y)
-{
+void GameBoard::destroyCell(int x, int y, std::vector<Penguin*>& penguins) {
 	if (isWithinBounds(x, y))
 	{
 		Cell currentCell = m_board[x][y];
@@ -183,13 +188,14 @@ void GameBoard::destroyCell(int x, int y)
 		}
 		else if (currentCell == Cell::Hidden_Bomb)
 		{
-			triggerExplosion(x, y);
+			triggerExplosion(x, y, penguins);
 			m_board[x][y] = Cell::Empty;
 		}
 	}
 }
 
-void GameBoard::triggerExplosion(int x, int y)
+
+void GameBoard::triggerExplosion(int x, int y, std::vector<Penguin*>& penguins)
 {
 	const int explosionRadius = 10;
 
@@ -203,10 +209,60 @@ void GameBoard::triggerExplosion(int x, int y)
 
 			if (distance <= explosionRadius)
 			{
-				//daca jucator lipseste
-				{
 					m_board[nx][ny] = Cell::Empty;
-				}
+			}
+		}
+	}
+
+	for (Penguin* penguin : penguins) {
+		if (!penguin->IsAlive()) continue; // trecem peste pinguinii deja morti
+
+		auto position = penguin->GetPosition();
+		int px = position.first;  
+		int py = position.second;
+
+		int dx = px - x;
+		int dy = py - y;
+		double distance = std::sqrt(dx * dx + dy * dy);
+
+		if (distance <= explosionRadius) {
+			penguin->TakeDamage(3); // ii luam toate cele 3 vieti pt a-l reseta
+			std::cout << "Penguin at position (" << px << ", " << py<< ") was hit by the explosion!" << std::endl;
+		}
+	}
+}
+
+void GameBoard::triggerExplosion(int x, int y) {
+	const int explosionRadius = 10;
+
+	for (int nx = 0; nx < m_rows; ++nx) {
+		for (int ny = 0; ny < m_cols; ++ny) {
+			int dx = nx - x;
+			int dy = ny - y;
+			double distance = std::sqrt(dx * dx + dy * dy);
+
+			if (distance <= explosionRadius) {
+				m_board[nx][ny] = Cell::Empty;
+			}
+		}
+	}
+}
+
+
+
+void GameBoard::detonateBomb(int x, int y) {
+	const int explosionRadius = 10;
+
+	std::vector<Penguin*> emptyPenguins;
+
+	for (int i = 0; i < m_rows; ++i) {
+		for (int j = 0; j < m_cols; ++j) {
+			int dx = i - x;
+			int dy = j - y;
+			double distance = std::sqrt(dx * dx + dy * dy);
+
+			if (distance <= explosionRadius) {
+				destroyCell(i, j, emptyPenguins); 
 			}
 		}
 	}

@@ -1,8 +1,11 @@
 ﻿#include "Penguin.h"
+#include "Snowball.h"
+
+#define RADIUS_OF_COLLISION 15.0f
 
 Penguin::Penguin(Player* player, std::pair<int, int> initialPosition, int fireRate) :
-	m_player(player),m_lives(3),m_initialPosition(initialPosition), m_position(initialPosition), 
-	m_isAlive(true), m_weapon(fireRate), m_speedBoostCount(0), m_weaponBoostCount(0),m_resetCount(0) {}
+	m_player(player),m_initialPosition(initialPosition), m_position(initialPosition),m_points(0),m_score(0), m_enemiesEliminated(0),
+	m_isAlive(true), m_weapon(fireRate), m_lives(3), m_speedBoostCount(0), m_weaponBoostCount(0),m_resetCount(0) {}
 
 void Penguin::Fire(int mouseX, int mouseY, bool isMouseControlled, char keyboardDirection)
 {
@@ -18,7 +21,7 @@ void Penguin::Fire(int mouseX, int mouseY, bool isMouseControlled, char keyboard
 			else if (direction.second > 0) directionString = "down";
 			else if (direction.second < 0) directionString = "up";
 
-			m_snowballs.emplace_back(std::make_tuple(m_position.first, m_position.second), directionString);
+			m_snowballs.emplace_back(std::make_pair(m_position.first, m_position.second), directionString);
 			std::cout << "Penguin fired a snowball from position (" << m_position.first << ", " << m_position.second << ")." << std::endl;
 		}
 		m_weapon.ResetTimeSinceLastShot();
@@ -59,28 +62,71 @@ void Penguin::UpgradeFireRate() {
 	}
 }
 
-#define RADIUS_OF_COLLISION 15.0f
-bool Penguin::CollidesWith(Penguin* penguin)
-{
-	// Verificăm dacă pinguinul este valid și în viață
-	if (!penguin || !penguin->IsAlive()) {
-		return false;  // Dacă pinguinul nu este valid sau este mort, nu există coliziune
+
+bool Penguin::CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const std::vector<Snowball>& snowballs) {
+	// Verificam coliziunile cu alti pinguini
+	if (otherPenguin && otherPenguin->IsAlive()) {
+		auto myPosition = GetPosition();
+		auto otherPosition = otherPenguin->GetPosition();
+
+		int distanceX = myPosition.first - otherPosition.first;
+		int distanceY = myPosition.second - otherPosition.second;
+		float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
+
+		if (distance < RADIUS_OF_COLLISION) {
+			std::cout << "Penguin collision detected." << std::endl;
+			return true;
+		}
 	}
 
-	// Calculăm distanța între bulgărele de zăpadă și pinguin
-	int distanceX = m_position.first - penguin->GetPosition().first;
-	int distanceY = m_position.second - penguin->GetPosition().second;
-	float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
+	// Verificam coliziunile cu bulgarii de zapada
+	for (const auto& snowball : snowballs) {
+		if (snowball.IsActive()) {
+			auto snowballPosition = snowball.GetPosition();
+			int distanceX = GetPosition().first - snowballPosition.first;
+			int distanceY = GetPosition().second - snowballPosition.second;
+			float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
 
-	// Verificăm dacă distanța este mai mică decât raza de coliziune
-	return distance < RADIUS_OF_COLLISION;
-	//nu stiu daca putem altfel
+			if (distance < RADIUS_OF_COLLISION) {
+				std::cout << "Snowball collision detected." << std::endl;
+				return true;
+			}
+		}
+	}
+
+	// Verificam coliziunile cu elementele de pe harta
+	auto myPosition = GetPosition();
+	int px = myPosition.first;
+	int py = myPosition.second;
+
+	if (gameBoard.isWithinBounds(px, py)) {
+		Cell cell = gameBoard.getCell(px, py);
+
+		switch (cell) {
+		case Cell::Destructible_Wall:
+			std::cout << "Collision with destructible wall at (" << px << ", " << py << ")." << std::endl;
+			return true;
+		case Cell::Hidden_Bomb: {
+			std::vector<Penguin*> affectedPenguins = { this };
+			gameBoard.triggerExplosion(px, py, affectedPenguins);
+			return true;
+		}
+		case Cell::Indestructible_Wall:
+			std::cout << "Collision with indestructible wall at (" << px << ", " << py << ")." << std::endl;
+			return true;
+		default:
+			break;
+		}
+	}
+
+	return false; // Nicio coliziune detectata
 }
+
 
 void Penguin::EliminateEnemy()
 {
-	m_enemiesEliminated++;  // Incrementăm numărul de inamici eliminați
-	m_score += 100;  // Adăugăm 100 de puncte pentru fiecare inamic eliminat
+	m_enemiesEliminated++;  // Incrementam numarul de inamici eliminati
+	m_score += 100;  // Adugam 100 de puncte pentru fiecare inamic eliminat
 	std::cout << "Penguin eliminated an enemy! Total enemies eliminated: " << m_enemiesEliminated << std::endl;
 }
 

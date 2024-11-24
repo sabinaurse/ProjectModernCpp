@@ -19,6 +19,7 @@ public:
 	Penguin* GetPenguinForPlayer(const Player& player);
 	std::vector<Player*>& GetPlayers() { return m_players; }
 	void ShowLeaderboard();
+	void CheckForCollisions();
 private:
 	GameBoard m_gameBoard;
 	std::vector<Player*> m_players;

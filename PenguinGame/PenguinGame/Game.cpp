@@ -18,7 +18,7 @@ void Game::EndGame()
         std::cout << "No winner found!" << std::endl;
     }
 
-    // Determinăm locul 2
+    // Determinam locul 2
     Player* secondPlace = nullptr;
     int maxPoints = -1;
     for (auto& player : m_players) {

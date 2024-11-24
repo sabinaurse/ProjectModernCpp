@@ -1,6 +1,6 @@
 #include "Snowball.h"
 
-Snowball::Snowball(const std::tuple<int, int>& startPosition, const std::string& launchDirection, float launchSpeed)
+Snowball::Snowball(const std::pair<int, int>& startPosition, const std::string& launchDirection, float launchSpeed)
     : m_position(startPosition), m_direction(launchDirection), m_speed(launchSpeed),
     m_active(true), m_lastUpdate(std::chrono::steady_clock::now()) {}
 
@@ -61,7 +61,7 @@ bool Snowball::CheckCollision(GameBoard& gameBoard, const std::vector<Snowball>&
 
 
 
-std::tuple<int, int> Snowball::getNextPosition() const
+std::pair<int, int> Snowball::getNextPosition() const
 {
     int x = std::get<0>(m_position);
     int y = std::get<1>(m_position);
@@ -71,7 +71,7 @@ std::tuple<int, int> Snowball::getNextPosition() const
     else if (m_direction == "left") --x;
     else if (m_direction == "right") ++x;
 
-    return { x,y };
+    return std::make_pair(x, y);
 }
 
 

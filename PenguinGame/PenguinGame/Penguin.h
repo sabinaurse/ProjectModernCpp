@@ -23,7 +23,7 @@ public:
 	std::pair<int, int> GetPosition() const { return m_position; }
 	void ResetCharacter();
 	void ResetState();
-	bool CollidesWith(Penguin* penguin);
+	bool CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const std::vector<Snowball>& snowballs);
 
 	Player* GetPlayer() const { return m_player; }  // Metoda pentru a obt jucatorul asociat
 	void EliminateEnemy();

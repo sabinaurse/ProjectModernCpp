@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 
+class Penguin;
 
 enum class Cell {
 	Empty,               //0
@@ -31,11 +32,14 @@ public:
 	bool isWithinBounds(int x, int y) const;
 	Cell getCell(int x, int y) const;
 	void setCell(int x, int y, Cell cellType);
-	void destroyCell(int x, int y);
+	void destroyCell(int x, int y, std::vector<Penguin*>& penguins);
+	void destroyCell(int x, int y); 
 	std::vector<std::pair<int, int>> GetStartingPositions();
 
 	void detonateBomb(int x, int y);
+	void triggerExplosion(int x, int y, std::vector<Penguin*>& penguins);
 	void triggerExplosion(int x, int y);
+
 private:
 	int m_rows = 0;
 	int m_cols = 0;
