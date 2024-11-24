@@ -1,8 +1,8 @@
 ﻿#include "Penguin.h"
 
 Penguin::Penguin(Player* player, std::pair<int, int> initialPosition, int fireRate) :
-	m_player(player), // Setăm jucătorul
-	m_lives(3), m_position(initialPosition), m_isAlive(true), m_weapon(fireRate), m_speedBoostCount(0), m_weaponBoostCount(0) {}
+	m_player(player),m_lives(3),m_initialPosition(initialPosition), m_position(initialPosition), 
+	m_isAlive(true), m_weapon(fireRate), m_speedBoostCount(0), m_weaponBoostCount(0),m_resetCount(0) {}
 
 void Penguin::Fire(int mouseX, int mouseY, bool isMouseControlled, char keyboardDirection)
 {
@@ -37,7 +37,7 @@ void Penguin::CheckForWeaponUpgrade() {
 	{
 		m_speedBoostCount++;
 		for (auto& snowball : m_snowballs) {
-			snowball.DoubleSpeed(); // Aplicăm dublarea vitezei pe fiecare bulgăre}
+			snowball.DoubleSpeed(); // Aplicam dublarea vitezei pe fiecare bulgare
 		}
 		std::cout << "Bullet speed doubled!" << std::endl;
 	}
@@ -98,11 +98,27 @@ void Penguin::TakeDamage(int damage)
 	}
 }
 
-void Penguin::ResetCharacter() {
+void Penguin::ResetState()
+{
 	m_lives = 3;
-	m_position = { 0,0 };
+	m_position = m_initialPosition; 
 	m_isAlive = true;
-	std::cout << "Penguin has been reset" << std::endl;
+
+	std::cout << "Penguin reset to initial position (" << m_initialPosition.first<< ", " << m_initialPosition.second << ")." << std::endl;
+}
+
+void Penguin::ResetCharacter() {
+	m_resetCount++;
+
+	if (m_resetCount >= m_maxResets)
+	{
+		m_isAlive = false;
+		std::cout << "Penguin has been permanently eliminated after " << m_resetCount << " resets" << std::endl;
+		return;
+	}
+
+	ResetState();
+	std::cout << "Penguin has been reset. Reset count: " << m_resetCount<< " / " << m_maxResets << "." << std::endl;
 }
 
 void Penguin::Move(int dx, int dy)

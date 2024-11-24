@@ -14,16 +14,18 @@ public:
 
 	void Fire(int mouseX, int mouseY, bool isMouseControlled, char keyboardDirection);
 	void UpdateWeapon();
+	void UpgradeFireRate();
+
 	void TakeDamage(int damage);
 	bool IsAlive() const { return m_isAlive; }
 	void Move(int dx, int dy);
 	int GetScore() const { return m_score; }
 	std::pair<int, int> GetPosition() const { return m_position; }
 	void ResetCharacter();
-	void UpgradeFireRate();
+	void ResetState();
 	bool CollidesWith(Penguin* penguin);
 
-	Player* GetPlayer() const { return m_player; }  // Metodă pentru a obține jucătorul asociat
+	Player* GetPlayer() const { return m_player; }  // Metoda pentru a obt jucatorul asociat
 	void EliminateEnemy();
 private:
 	//Metoda pentru a calcula directia bulgarelui de zapada
@@ -31,13 +33,16 @@ private:
 	void CheckForWeaponUpgrade();
 
 private:
-	Player* m_player; // jucătorul care controlează acest pinguin
+	Player* m_player; // jucatorul care controleaza acest pinguin
 
 	int m_lives;
 	int m_points;
 	int m_score = 0;
+	std::pair<int, int> m_initialPosition;
 	std::pair<int, int> m_position;
 	bool m_isAlive;
+	int m_resetCount = 0;
+	const int m_maxResets = 3;
 	Weapon m_weapon;
 
 	int m_enemiesEliminated;  // Numarul de inamici eliminati
