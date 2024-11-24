@@ -32,6 +32,9 @@ public:
 	Position GetPosition() const { return m_position; }
 	float GetBulletSpeed() const; // Returnează viteza curentă a gloanțelor
 	Player* GetPlayer() const { return m_player; }  // Metoda pentru a obt jucatorul asociat
+	std::vector<Snowball>& GetSnowballs();
+	const std::vector<Snowball>& GetSnowballs() const;
+	void RemoveInactiveSnowballs();
 
 private:
 	//void CheckForWeaponUpgrade();

@@ -198,3 +198,19 @@ bool Penguin::CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const st
 float Penguin::GetBulletSpeed() const {
 	return m_bulletSpeed;
 }
+
+std::vector<Snowball>& Penguin::GetSnowballs() {
+	return m_snowballs;
+}
+
+const std::vector<Snowball>& Penguin::GetSnowballs() const {
+	return m_snowballs;
+}
+
+void Penguin::RemoveInactiveSnowballs() {
+	m_snowballs.erase(
+		std::remove_if(m_snowballs.begin(), m_snowballs.end(),
+			[](const Snowball& snowball) { return !snowball.IsActive(); }),
+		m_snowballs.end()
+	);
+}
