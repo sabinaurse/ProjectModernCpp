@@ -25,8 +25,8 @@ void Penguin::Move(char direction, const GameBoard& board) {
 	Position newPosition = { m_position.first + delta.first, m_position.second + delta.second };
 
 	// Verificăm dacă poziția este validă și liberă.
-	if (board.isWithinBounds(newPosition.first, newPosition.second) &&
-		board.getCell(newPosition.first, newPosition.second) == Cell::Empty) {
+	if (board.IsWithinBounds(newPosition.first, newPosition.second) &&
+		board.GetCell(newPosition.first, newPosition.second) == Cell::Empty) {
 		m_position = newPosition; // Actualizăm poziția.
 		m_currentDirection = direction; // Actualizăm direcția curentă.
 		std::cout << "Penguin moved to (" << newPosition.first << ", " << newPosition.second
@@ -172,8 +172,8 @@ bool Penguin::CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const st
 	int px = myPosition.first;
 	int py = myPosition.second;
 
-	if (gameBoard.isWithinBounds(px, py)) {
-		Cell cell = gameBoard.getCell(px, py);
+	if (gameBoard.IsWithinBounds(px, py)) {
+		Cell cell = gameBoard.GetCell(px, py);
 
 		switch (cell) {
 		case Cell::Destructible_Wall:
@@ -181,7 +181,7 @@ bool Penguin::CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const st
 			return true;
 		case Cell::Hidden_Bomb: {
 			std::vector<Penguin*> affectedPenguins = { this };
-			gameBoard.triggerExplosion(px, py, affectedPenguins);
+			gameBoard.TriggerExplosion(px, py, affectedPenguins);
 			return true;
 		}
 		case Cell::Indestructible_Wall:

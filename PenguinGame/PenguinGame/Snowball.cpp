@@ -24,8 +24,8 @@ bool Snowball::CheckCollision(GameBoard& gameBoard, const std::vector<Snowball>&
     int x = std::get<0>(m_position);
     int y = std::get<1>(m_position);
 
-    if (gameBoard.isWithinBounds(x, y)) {
-        Cell cell = gameBoard.getCell(x, y);
+    if (gameBoard.IsWithinBounds(x, y)) {
+        Cell cell = gameBoard.GetCell(x, y);
 
         switch (cell) {
         case Cell::Destructible_Wall:
@@ -33,7 +33,7 @@ bool Snowball::CheckCollision(GameBoard& gameBoard, const std::vector<Snowball>&
             return true;
 
         case Cell::Hidden_Bomb:
-            gameBoard.triggerExplosion(x, y);
+            gameBoard.TriggerExplosion(x, y);
             return true;
 
         case Cell::Indestructible_Wall:

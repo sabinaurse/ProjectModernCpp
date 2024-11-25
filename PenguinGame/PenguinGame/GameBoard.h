@@ -17,28 +17,27 @@ class GameBoard
 {
 public:
 	GameBoard() = default;
-	GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs, int minDistanceBombs);
+	GameBoard(int rows, int cols, int bombChance, int destructibleWallChance, int indestructibleWallChance, int maxBombs, int minDistanceBombs);
 
-	void  initializeBoard();
-	void printBoard();
+	void InitializeBoard();
+	void PrintBoard();
+	int GetRows() const;
+	int GetCols() const;
 
-	int getRows() const;
-	int getCols() const;
+	int GetBombChance() const;
+	int GetDestructiblWallChance() const;
+	int GetIndestructiblWallChance() const;
 
-	int getBombChance() const;
-	int getDestructiblWallChance() const;
-	int getIndestructiblWallChance() const;
-
-	bool isWithinBounds(int x, int y) const;
-	Cell getCell(int x, int y) const;
-	void setCell(int x, int y, Cell cellType);
-	void destroyCell(int x, int y, std::vector<Penguin*>& penguins);
-	void destroyCell(int x, int y); 
+	bool IsWithinBounds(int x, int y) const;
+	Cell GetCell(int x, int y) const;
+	void SetCell(int x, int y, Cell cellType);
+	void DestroyCell(int x, int y, std::vector<Penguin*>& penguins);
+	void DestroyCell(int x, int y); 
 	std::vector<std::pair<int, int>> GetStartingPositions();
 
-	void detonateBomb(int x, int y);
-	void triggerExplosion(int x, int y, std::vector<Penguin*>& penguins);
-	void triggerExplosion(int x, int y);
+	void DetonateBomb(int x, int y);
+	void TriggerExplosion(int x, int y, std::vector<Penguin*>& penguins);
+	void TriggerExplosion(int x, int y);
 
 private:
 	int m_rows = 0;
