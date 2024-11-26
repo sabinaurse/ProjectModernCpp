@@ -115,42 +115,14 @@ void Penguin::TakeDamage()
 
 void Penguin::ResetState()
 {
-	m_lives = 3;
 	m_position = m_initialPosition;
 	m_isAlive = true;
 	m_snowballs.clear();
 	std::cout << "Penguin reset to initial position (" << m_initialPosition.first << ", " << m_initialPosition.second << ")." << std::endl;
 }
 
-void Penguin::ResetCharacter() {
-	m_resetCount++;
-
-	if (m_resetCount >= m_maxResets)
-	{
-		m_isAlive = false;
-		std::cout << "Penguin has been permanently eliminated after " << m_resetCount << " resets" << std::endl;
-		return;
-	}
-
-	ResetState();
-	std::cout << "Penguin has been reset. Reset count: " << m_resetCount << " / " << m_maxResets << "." << std::endl;
-}
-
-bool Penguin::CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const std::vector<Snowball>& snowballs) {
-	// Verificam coliziunile cu alti pinguini
-	if (otherPenguin && otherPenguin->IsAlive()) {
-		auto myPosition = GetPosition();
-		auto otherPosition = otherPenguin->GetPosition();
-
-		int distanceX = myPosition.first - otherPosition.first;
-		int distanceY = myPosition.second - otherPosition.second;
-		float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
-
-		if (distance < RADIUS_OF_COLLISION) {
-			std::cout << "Penguin collision detected." << std::endl;
-			return true;
-		}
-	}
+bool Penguin::CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const std::vector<Snowball>& snowballs) 
+{
 
 	// Verificam coliziunile cu bulgarii de zapada
 	for (const auto& snowball : snowballs) {

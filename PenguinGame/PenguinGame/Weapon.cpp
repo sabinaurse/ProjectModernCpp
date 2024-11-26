@@ -19,10 +19,8 @@ void Weapon::ResetTimeSinceLastShot()
 
 void Weapon::UpgradeFireRate() // nesigur daca trb si asta sau doar snowball speed?
 {
-	if (m_fireRate > 100) { // Asiguram un minim pentru m_fireRate, de exemplu 100 ms
 		m_fireRate /= 2;
 		std::cout << "Weapon fire rate upgraded! New fire rate: " << m_fireRate << " ms" << std::endl;
-	}
 }
 
 void Weapon::SetFireRate(int fireRate)

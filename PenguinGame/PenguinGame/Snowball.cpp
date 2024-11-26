@@ -55,6 +55,7 @@ bool Snowball::CheckCollision(GameBoard& gameBoard, const std::vector<Snowball>&
             return true;
         }
     }
+    //coliziunea cu un pinguin
 
     return false; // nicio coliziune
 }

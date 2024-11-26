@@ -8,7 +8,7 @@ GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChan
 	m_indestructiblWallChance{ indestructiblWallChance }, m_maxBombs{ maxBombs },
 	m_minDistanceBombs{ minDistanceBombs }
 {
-	InitializeBoard();
+	initializeBoard();
 }
 
 

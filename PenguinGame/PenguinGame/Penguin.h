@@ -17,14 +17,12 @@ public:
 
 	void Fire();
 	void UpgradeBulletSpeed(); // Metodă pentru dublarea vitezei gloanțelor
-	void UpdateWeapon();
 	void UpgradeFireRate();
 
 	bool CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const std::vector<Snowball>& snowballs);
 	void EliminateEnemy();
 
 	void TakeDamage();
-	void ResetCharacter();
 	void ResetState();
 
 	bool IsAlive() const { return m_isAlive; }
@@ -60,8 +58,5 @@ private:
 	int m_weaponBoostCount = 0;
 	std::vector<Snowball> m_snowballs;
 
-	// Resetare
-	int m_resetCount = 0;
-	const int m_maxResets = 3;
 };
 

@@ -14,7 +14,6 @@ public:
     bool CheckCollision(GameBoard& gameBoard, const std::vector<Snowball>& activeSnowballs);
     bool IsActive() const { return m_active; }
     void Deactivate() { m_active = false; }
-    void DoubleSpeed() { m_speed *= 2; }
     std::pair<int, int> GetPosition() const { return m_position; }
 
 private:

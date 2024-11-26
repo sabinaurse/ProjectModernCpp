@@ -14,7 +14,6 @@ public:
 
 	void AddPoints(int points);
 	void SetScore(int score);
-	void UpdateScore();
 	void SetName(const std::string &name);
 	~Player() = default;
 private:
