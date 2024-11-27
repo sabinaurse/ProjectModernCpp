@@ -8,7 +8,7 @@ GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChan
 	m_indestructiblWallChance{ indestructiblWallChance }, m_maxBombs{ maxBombs },
 	m_minDistanceBombs{ minDistanceBombs }
 {
-	initializeBoard();
+	InitializeBoard();
 }
 
 
@@ -218,7 +218,7 @@ void GameBoard::TriggerExplosion(int x, int y, std::vector<Penguin*>& penguins)
 		double distance = std::sqrt(dx * dx + dy * dy);
 
 		if (distance <= explosionRadius) {
-			penguin->ResetCharacter(); // ii luam toate cele 3 vieti pt a-l reseta
+			penguin->ResetState(); // ii luam toate cele 3 vieti pt a-l reseta
 			std::cout << "Penguin at position (" << px << ", " << py << ") was hit by the explosion!" << std::endl;
 		}
 	}

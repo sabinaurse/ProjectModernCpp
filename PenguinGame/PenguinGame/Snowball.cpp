@@ -29,7 +29,7 @@ bool Snowball::CheckCollision(GameBoard& gameBoard, const std::vector<Snowball>&
 
         switch (cell) {
         case Cell::Destructible_Wall:
-            gameBoard.destroyCell(x, y);
+            gameBoard.DestroyCell(x, y);
             return true;
 
         case Cell::Hidden_Bomb:

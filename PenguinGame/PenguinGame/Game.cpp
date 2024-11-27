@@ -185,7 +185,7 @@ void Game::CheckForCollisions() {
             Cell cell = m_gameBoard.GetCell(pos.first, pos.second);
             switch (cell) {
             case Cell::Destructible_Wall:
-                m_gameBoard.destroyCell(pos.first, pos.second);
+                m_gameBoard.DestroyCell(pos.first, pos.second);
                 snowball.Deactivate();
                 break;
             case Cell::Indestructible_Wall:
