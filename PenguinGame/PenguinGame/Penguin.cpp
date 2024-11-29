@@ -77,7 +77,7 @@ void Penguin::UpgradeBulletSpeed() {
 }
 
 void Penguin::CheckBulletSpeedUpgrade() {
-	if (m_score >= 10 && !m_speedBoostApplied) {
+	if (m_player->GetScore() >= 10 && !m_speedBoostApplied) {
 		UpgradeBulletSpeed();
 		m_speedBoostApplied = true;
 	}
@@ -86,29 +86,34 @@ void Penguin::CheckBulletSpeedUpgrade() {
 void Penguin::EliminateEnemy()
 {
 	m_enemiesEliminated++;
-	m_points += 100;  // Adugam 100 de puncte pentru fiecare inamic eliminat
-	std::cout << "Penguin eliminated an enemy! Total enemies eliminated: " << m_enemiesEliminated << std::endl;
+	m_player->AddPoints(100);  // Adugam 100 de puncte pentru fiecare inamic eliminat
+	std::cout << "Player " << m_player->GetName() << " eliminated an enemy! Total points: " << m_player->GetPoints() << std::endl;
 }
 
-void Penguin::UpgradeFireRate() {
-	if (m_points >= 500 && m_weaponBoostCount < 4) {
-		m_points -= 500;
+void Penguin::UpgradeFireRate() 
+{
+	if (m_player->GetPoints() >= 500 && m_weaponBoostCount < 4) {
+		m_player->AddPoints(-500); // Consumă puncte din contul jucătorului
 		m_weaponBoostCount++;
-
 		m_weapon.UpgradeFireRate();
-
-		std::cout << "Weapon fire rate improved!"<< std::endl;
+		std::cout << "Fire rate upgraded for " << m_player->GetName() << "!" << std::endl;
 	}
 	else {
-		std::cout << "Not enough points or max upgrades reached." << std::endl;
+		std::cout << "Not enough points or max upgrades reached for " << m_player->GetName() << "." << std::endl;
 	}
 }
 
 void Penguin::TakeDamage()
 {
 	if (!m_isAlive) return;
-	if (--m_lives <= 0) { // Scădem o viață și verificăm dacă mai are vieți rămase.
+	if (--m_lives <= 0) 
+	{
 		m_isAlive = false;
+
+		// Marchează pinguinul ca eliminat
+		static int eliminationCount = 0;
+		MarkAsEliminated(++eliminationCount);
+
 		std::cout << "Penguin has been defeated!" << std::endl;
 	}
 }
@@ -185,4 +190,12 @@ void Penguin::RemoveInactiveSnowballs() {
 			[](const Snowball& snowball) { return !snowball.IsActive(); }),
 		m_snowballs.end()
 	);
+}
+
+void Penguin::MarkAsEliminated(int eliminationOrder) {
+	m_eliminationOrder = eliminationOrder;
+}
+
+int Penguin::GetEliminationOrder() const {
+	return m_eliminationOrder;
 }

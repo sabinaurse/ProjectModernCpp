@@ -20,7 +20,7 @@ void Game::EndGame()
     if (winner != nullptr) 
     {
         winner->AddPoints(200);
-        winner->SetScore(2);
+        winner->AddScores(2);
 
         std::cout << winner->GetName() << " wins with " << winner->GetPoints() << " points!" << std::endl;
     }
@@ -29,21 +29,21 @@ void Game::EndGame()
         std::cout << "No winner found!" << std::endl;
     }
 
-    // Determinam locul 2
-    Player* secondPlace = nullptr;
-    int maxPoints = -1;
-    for (auto& player : m_players) {
-        if (player != winner) {
-            if (player->GetPoints() > maxPoints) {
-                secondPlace = player;
-                maxPoints = player->GetPoints();
-            }
+    // Determină locul 2 pe baza ultimei eliminări
+    Penguin* secondPlacePenguin = nullptr;
+    int lastEliminationOrder = -1;
+
+    for (auto* penguin : m_penguins) {
+        if (!penguin->IsAlive() && penguin->GetEliminationOrder() > lastEliminationOrder) {
+            secondPlacePenguin = penguin;
+            lastEliminationOrder = penguin->GetEliminationOrder();
         }
     }
 
-    if (secondPlace != nullptr) {
-        secondPlace->SetScore(1);
-        std::cout << secondPlace->GetName() << " finishes second with " << secondPlace->GetPoints() << " points!" << std::endl;
+    if (secondPlacePenguin != nullptr) {
+        Player* secondPlacePlayer = secondPlacePenguin->GetPlayer();
+        secondPlacePlayer->AddScores(1); // Locul 2 primește 1 punct
+        std::cout << secondPlacePlayer->GetName() << " finishes second!" << std::endl;
     }
 }
 

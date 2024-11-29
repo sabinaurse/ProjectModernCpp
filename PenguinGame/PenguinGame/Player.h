@@ -5,7 +5,7 @@
 class Player
 {
 public:
-	Player(const std::string& name, const std::string& password);
+	Player(const std::string& name);
 	Player(const game_database::GamePlayer& dbPlayer);
 	
 	std::string GetName() const;
@@ -13,12 +13,12 @@ public:
 	int GetScore() const;
 
 	void AddPoints(int points);
+	void AddScores(int scores);
 	void SetScore(int score);
 	void SetName(const std::string &name);
 	~Player() = default;
 private:
 	std::string m_name;
-	std::string m_password;
 	int m_points=0;
 	int m_score=0;
 };

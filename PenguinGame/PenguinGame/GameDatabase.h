@@ -9,7 +9,6 @@ namespace game_database
 	{
 		int id;
 		std::string name;
-		std::string password;
 		int points;
 		int score;
 	};
@@ -31,7 +30,6 @@ namespace game_database
 				"players",
 				make_column("id", &GamePlayer::id, primary_key().autoincrement()),
 				make_column("name", &GamePlayer::name),
-				make_column("password", &GamePlayer::password),
 				make_column("points", &GamePlayer::points),
 				make_column("score", &GamePlayer::score)
 			),

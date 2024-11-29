@@ -10,13 +10,13 @@ void Routing::Run(int port)
 		});
 
 	// Ruta pentru adaugarea unui jucator
-	CROW_ROUTE(m_app, "/addPlayer/<string>/<string>")([this](const std::string& name, const std::string& password) {
+	CROW_ROUTE(m_app, "/addPlayer/<string>")([this](const std::string& name) {
 		try {
-			Player* newPlayer = new Player(name, password);
+			Player* newPlayer = new Player(name);
 			m_game.AddPlayer(newPlayer); // <- adaugarea in baza de date si adaugarea in joc a player-ului ar trebui sa fie in aceasi ruta ?
 
 			// Adaugam jucatorul si in baza de date
-			game_database::GamePlayer playerRecord{ -1, name, password, 0, 0 };
+			game_database::GamePlayer playerRecord{ -1, name, 0, 0 };
 			m_db.AddPlayer(playerRecord);
 
 			return crow::response("Player added: " + name);

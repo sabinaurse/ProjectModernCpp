@@ -26,7 +26,6 @@ public:
 	void ResetState();
 
 	bool IsAlive() const { return m_isAlive; }
-	int GetScore() const { return m_score; }
 	Position GetPosition() const { return m_position; }
 	float GetBulletSpeed() const; // Returnează viteza curentă a gloanțelor
 	Player* GetPlayer() const { return m_player; }  // Metoda pentru a obt jucatorul asociat
@@ -34,8 +33,10 @@ public:
 	const std::vector<Snowball>& GetSnowballs() const;
 	void RemoveInactiveSnowballs();
 
+	void MarkAsEliminated(int eliminationOrder);
+	int GetEliminationOrder() const;
+
 private:
-	//void CheckForWeaponUpgrade();
 	void CheckBulletSpeedUpgrade();
 
 private:
@@ -45,10 +46,8 @@ private:
 	Position m_position;
 	Position m_initialPosition;
 
-	// Statistici și scor
+	// Statistici 
 	int m_lives = 3;
-	int m_points = 0;
-	int m_score = 0;
 	int m_enemiesEliminated = 0;
 
 	// Arme
@@ -56,6 +55,7 @@ private:
 	float m_bulletSpeed = 0.25f;
 	bool m_speedBoostApplied = false;
 	int m_weaponBoostCount = 0;
+	int m_eliminationOrder = -1; // -1 indică faptul că pinguinul nu a fost eliminat încă
 	std::vector<Snowball> m_snowballs;
 
 };

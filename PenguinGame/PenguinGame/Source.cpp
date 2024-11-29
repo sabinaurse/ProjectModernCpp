@@ -21,8 +21,8 @@ int main() {
     //Testare clasa Game
 
     // Creăm jucători
-    Player player1("Alice", "password123");
-    Player player2("Bob", "securepass");
+    Player player1("Alice");
+    Player player2("Bob");
 
     // Adăugăm jucători în joc
     game.AddPlayer(&player1);  // Adăugăm jucătorul în joc
