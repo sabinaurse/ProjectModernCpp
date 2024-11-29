@@ -17,7 +17,7 @@ class GameBoard
 {
 public:
 	GameBoard() = default;
-	GameBoard(int rows, int cols, int bombChance, int destructibleWallChance, int indestructibleWallChance, int maxBombs, int minDistanceBombs);
+	GameBoard(int rows, int cols, int bombChance, int destructibleWallChance, int indestructibleWallChance, int emptyCellChance, int maxBombs, int minDistanceBombs);
 
 	void InitializeBoard();
 	void PrintBoard();
@@ -39,6 +39,10 @@ public:
 	void TriggerExplosion(int x, int y, std::vector<Penguin*>& penguins);
 	void TriggerExplosion(int x, int y);
 
+	void CreatePathsBetweenCorners();
+	void CreatePath(std::pair<int, int> start, std::pair<int, int> end);
+	bool AreCornersConnected() const;
+
 private:
 	int m_rows = 0;
 	int m_cols = 0;
@@ -46,6 +50,7 @@ private:
 	std::vector<std::pair<int, int>> m_bombPositions;
 
 	int m_bombChance = 0;
+	int m_cellEmptyChange = 0;
 	int m_destructiblWallChance = 0;
 	int m_indestructiblWallChance = 0;
 	int m_bombsPlaced = 0;
@@ -56,5 +61,6 @@ private:
 	bool willDestructibleWallAppear();
 	bool willIndestructibleWallAppear();
 	bool willBombAppear();
+	bool willCellBeEmptyAppear();
 
 };

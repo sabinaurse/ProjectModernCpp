@@ -2,10 +2,10 @@
 #include "Penguin.h"
 #include <stdexcept>
 
-GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance, int maxBombs, int minDistanceBombs)
+GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance,int emptyCellChance, int maxBombs, int minDistanceBombs)
 	: m_rows{ rows }, m_cols{ cols },
 	m_bombChance{ bombChance }, m_destructiblWallChance{ destructiblWallChance },
-	m_indestructiblWallChance{ indestructiblWallChance }, m_maxBombs{ maxBombs },
+	m_indestructiblWallChance{ indestructiblWallChance },m_cellEmptyChange(emptyCellChance), m_maxBombs{ maxBombs },
 	m_minDistanceBombs{ minDistanceBombs }
 {
 	InitializeBoard();
@@ -14,12 +14,26 @@ GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChan
 
 void GameBoard::InitializeBoard()
 {
-	m_board.resize(m_rows, std::vector<Cell>(m_cols, Cell::Empty));
+	m_board.clear();
+	m_board.resize(m_rows, std::vector<Cell>(m_cols, Cell::Indestructible_Wall));
+	m_bombPositions.clear();
+	m_bombsPlaced = 0;
+
+	// Creăm drumuri libere între colțuri
+	CreatePathsBetweenCorners();
 
 	for (int i = 0; i < m_rows; ++i)
 		for (int j = 0; j < m_cols; ++j)
 		{
-			if (willDestructibleWallAppear())
+			// Evităm să suprascriem drumurile libere
+			if (m_board[i][j] == Cell::Empty) {
+				continue;
+			}
+
+			if (willCellBeEmptyAppear()) {
+				m_board[i][j] = Cell::Empty;
+			}
+			else if (willDestructibleWallAppear())
 			{
 				if (m_bombsPlaced < m_maxBombs && willBombAppear() && isFarEnoughFromOtherBombs(i, j))
 				{
@@ -41,6 +55,10 @@ void GameBoard::InitializeBoard()
 			}
 
 		}
+	// Verificăm dacă colțurile sunt conectate
+	if (!AreCornersConnected()) {
+		throw std::runtime_error("The generated map does not have connected corners!");
+	}
 }
 
 void GameBoard::PrintBoard()
@@ -144,7 +162,7 @@ void GameBoard::DestroyCell(int x, int y, std::vector<Penguin*>& penguins) {
 	}
 }
 
-std::vector<std::pair<int, int>> GameBoard::GetStartingPositions() {
+/*std::vector<std::pair<int, int>> GameBoard::GetStartingPositions() {
 	std::vector<std::pair<int, int>> startingPositions;
 
 	if (IsWithinBounds(0, 0) && GetCell(0, 0) == Cell::Empty) {
@@ -166,8 +184,21 @@ std::vector<std::pair<int, int>> GameBoard::GetStartingPositions() {
 	}
 
 	return startingPositions;
-}
+}*/
 
+std::vector<std::pair<int, int>> GameBoard::GetStartingPositions() {
+	std::vector<std::pair<int, int>> startingPositions = {
+		{0, 0}, {0, m_cols - 1}, {m_rows - 1, m_cols - 1}, {m_rows - 1, 0}
+	};
+
+	for (const auto& pos : startingPositions) {
+		if (!IsWithinBounds(pos.first, pos.second) || GetCell(pos.first, pos.second) != Cell::Empty) {
+			throw std::runtime_error("Invalid starting position found!");
+		}
+	}
+
+	return startingPositions;
+}
 
 void GameBoard::DetonateBomb(int x, int y) {
 	const int explosionRadius = 10;
@@ -273,8 +304,74 @@ bool GameBoard::willBombAppear()
 	return std::rand() % 100 < m_bombChance;
 }
 
+bool GameBoard::willCellBeEmptyAppear() {
+	return std::rand() % 100 < m_cellEmptyChange;
+}
+
+void GameBoard::CreatePathsBetweenCorners() {
+	// Lista colțurilor (pozițiile de start)
+	std::vector<std::pair<int, int>> corners = {
+		{0, 0}, {0, m_cols - 1}, {m_rows - 1, m_cols - 1}, {m_rows - 1, 0}
+	};
+
+	// Conectăm fiecare colț cu următorul (circular)
+	for (size_t i = 0; i < corners.size(); ++i) {
+		auto start = corners[i];
+		auto end = corners[(i + 1) % corners.size()];
+		CreatePath(start, end);
+	}
+}
+
+void GameBoard::CreatePath(std::pair<int, int> start, std::pair<int, int> end) {
+	int x = start.first, y = start.second;
+	int targetX = end.first, targetY = end.second;
+
+	// Aleatorizăm direcția deplasărilor
+	while (x != targetX || y != targetY) {
+		m_board[x][y] = Cell::Empty; // Marcăm celula ca drum liber
+
+		if (std::rand() % 2 == 0) { // Alternăm între mișcările orizontale și verticale
+			if (x != targetX) {
+				x += (x < targetX) ? 1 : -1;
+			}
+			else if (y != targetY) {
+				y += (y < targetY) ? 1 : -1;
+			}
+		}
+		else {
+			if (y != targetY) {
+				y += (y < targetY) ? 1 : -1;
+			}
+			else if (x != targetX) {
+				x += (x < targetX) ? 1 : -1;
+			}
+		}
+	}
+
+	m_board[x][y] = Cell::Empty;
+}
 
 
+bool GameBoard::AreCornersConnected() const {
+	std::vector<std::vector<bool>> visited(m_rows, std::vector<bool>(m_cols, false));
+
+	// Funcție DFS pentru a explora harta
+	std::function<void(int, int)> dfs = [&](int x, int y) {
+		if (!IsWithinBounds(x, y) || visited[x][y] || m_board[x][y] != Cell::Empty) return;
+		visited[x][y] = true;
+		dfs(x + 1, y);
+		dfs(x - 1, y);
+		dfs(x, y + 1);
+		dfs(x, y - 1);
+		};
+
+	// Pornim din primul colț
+	dfs(0, 0);
+
+	// Verificăm dacă celelalte colțuri sunt vizitate
+	return visited[0][0] && visited[0][m_cols - 1] &&
+		visited[m_rows - 1][m_cols - 1] && visited[m_rows - 1][0];
+}
 
 
 
