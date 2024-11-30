@@ -18,8 +18,8 @@ int main() {
     Routing r(game, db);
     r.Run();
 
-    GameBoard board(15, 15, 50, 50, 30,50, 5, 3);
-    board.PrintBoard();
+    /*GameBoard board(50, 50, 30, 50, 5, 3);
+    board.PrintBoard();*/
 
     return 0;
 }

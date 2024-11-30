@@ -1,4 +1,4 @@
-#include "Requests.h"
+﻿#include "Requests.h"
 
 namespace ClientRequests {
     cpr::Response CreatePlayer(const std::string& name) {
@@ -20,5 +20,7 @@ namespace ClientRequests {
             cpr::Body{ R"({"name":")" + name + R"(", "score":)" + std::to_string(newScore) + R"(, "points":)" + std::to_string(newPoints) + R"(})" }
         );
     }
-   
+    cpr::Response GetMap() {
+        return cpr::Get(cpr::Url{ "http://localhost:18080/getMap" });
+    }   
 }

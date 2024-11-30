@@ -1,8 +1,20 @@
-#include <iostream>
+﻿#include <iostream>
 #include "Requests.h"
 #include "State.h"
 
 int main() {
+
+    /*cpr::Response res = ClientRequests::GetMap();
+
+    if (res.status_code == 200) {
+        std::cout << "The request was successful!" << std::endl;
+        std::cout << "Map data (raw JSON):" << std::endl;
+        std::cout << res.text << std::endl;  
+    }
+    else {
+        std::cerr << "Error retrieving the map! Status code: " << res.status_code << std::endl;
+    }*/
+
     ClientState state;
     int choice;
 

@@ -97,6 +97,16 @@ void Routing::Run(int port)
 			return crow::response(400, "Error: " + std::string(e.what()));
 		}
 			});
+
+	CROW_ROUTE(m_app, "/getMap")([this]() {
+		try {
+			crow::json::wvalue mapJson = m_game.GetBoard().SerializeBoard();
+			return crow::response(200, mapJson);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error: " + std::string(e.what()));
+		}
+		});
 	
 	m_app.port(18080).multithreaded().run();
 }

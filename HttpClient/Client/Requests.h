@@ -7,4 +7,5 @@ namespace ClientRequests {
     cpr::Response GetPlayer(const std::string& name);
     cpr::Response DeletePlayer(const std::string& name);
     cpr::Response UpdatePlayer(const std::string& name, int newScore, int newPoints);
+    cpr::Response GetMap();
 }
