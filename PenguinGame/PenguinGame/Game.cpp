@@ -74,6 +74,9 @@ void Game::ShowLeaderboard()
     }
 }
 
+GameBoard Game::GetBoard() const{
+    return m_gameBoard; 
+}
 
 void Game::AddPlayer(Player* player)
 {

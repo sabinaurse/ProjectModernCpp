@@ -2,22 +2,26 @@
 #include "Penguin.h"
 #include <stdexcept>
 
-GameBoard::GameBoard(int rows, int cols, int bombChance, int destructiblWallChance, int indestructiblWallChance,int emptyCellChance, int maxBombs, int minDistanceBombs)
-	: m_rows{ rows }, m_cols{ cols },
-	m_bombChance{ bombChance }, m_destructiblWallChance{ destructiblWallChance },
-	m_indestructiblWallChance{ indestructiblWallChance },m_cellEmptyChange(emptyCellChance), m_maxBombs{ maxBombs },
-	m_minDistanceBombs{ minDistanceBombs }
+GameBoard::GameBoard(int bombChance, int destructiblWallChance, int indestructiblWallChance,int emptyCellChance, int maxBombs, int minDistanceBombs)
+	: m_bombChance{ bombChance }, m_destructiblWallChance{ destructiblWallChance },
+	  m_indestructiblWallChance{ indestructiblWallChance },m_cellEmptyChange(emptyCellChance), m_maxBombs{ maxBombs },
+	  m_minDistanceBombs{ minDistanceBombs }
 {
+	std::srand(static_cast<unsigned int>(std::time(0)) ^ std::rand());
 	InitializeBoard();
 }
 
 
 void GameBoard::InitializeBoard()
 {
-	m_board.clear();
-	m_board.resize(m_rows, std::vector<Cell>(m_cols, Cell::Indestructible_Wall));
 	m_bombPositions.clear();
 	m_bombsPlaced = 0;
+
+	for (int i = 0; i < m_rows; ++i) {
+		for (int j = 0; j < m_cols; ++j) {
+			m_board[i][j] = Cell::Indestructible_Wall;
+		}
+	}
 
 	// Creăm drumuri libere între colțuri
 	CreatePathsBetweenCorners();
@@ -89,6 +93,33 @@ void GameBoard::PrintBoard()
 	}
 
 }
+
+crow::json::wvalue GameBoard::SerializeBoard() const 
+{
+	crow::json::wvalue jsonBoard;
+
+	jsonBoard["rows"] = m_rows;
+	jsonBoard["cols"] = m_cols;
+
+	auto& cells = jsonBoard["cells"];
+	for (int i = 0; i < m_rows; ++i) {
+		for (int j = 0; j < m_cols; ++j) {
+			cells[i][j] = static_cast<int>(m_board[i][j]); 
+		}
+	}
+
+	auto& bombs = jsonBoard["bombs"];
+	int bombIndex = 0;  
+	for (const auto& bomb : m_bombPositions) {
+		bombs[bombIndex++] = crow::json::wvalue{
+			{"x", bomb.first},
+			{"y", bomb.second}
+		};
+	}
+
+	return jsonBoard;
+}
+
 
 
 int GameBoard::GetRows() const

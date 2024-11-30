@@ -17,6 +17,8 @@ public:
 	void ShowLeaderboard();
 	//void Update();
 
+	GameBoard GetBoard() const;
+
 	void AddPenguin(Player* player);
 	void AddPlayer(Player* player);
 	void InitializePlayers();

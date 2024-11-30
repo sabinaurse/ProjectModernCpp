@@ -1,8 +1,10 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <array>
 #include <cstdlib>
 #include <ctime>
+#include "crow.h"
 
 class Penguin;
 
@@ -17,9 +19,10 @@ class GameBoard
 {
 public:
 	GameBoard() = default;
-	GameBoard(int rows, int cols, int bombChance, int destructibleWallChance, int indestructibleWallChance, int emptyCellChance, int maxBombs, int minDistanceBombs);
+	GameBoard(int bombChance, int destructibleWallChance, int indestructibleWallChance, int emptyCellChance, int maxBombs, int minDistanceBombs);
 
 	void InitializeBoard();
+	crow::json::wvalue SerializeBoard() const;
 	void PrintBoard();
 	int GetRows() const;
 	int GetCols() const;
@@ -44,9 +47,9 @@ public:
 	bool AreCornersConnected() const;
 
 private:
-	int m_rows = 0;
-	int m_cols = 0;
-	std::vector<std::vector<Cell>> m_board;
+	static constexpr int m_rows = 10;   
+	static constexpr int m_cols = 10;
+	std::array<std::array<Cell, m_rows>, m_cols> m_board;
 	std::vector<std::pair<int, int>> m_bombPositions;
 
 	int m_bombChance = 0;
