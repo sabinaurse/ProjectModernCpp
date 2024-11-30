@@ -75,8 +75,14 @@ namespace game_database
 	void PlayerDatabase::DeletePlayer(const std::string& name) {
 		try {
 			
-			auto player = storage.get<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name)); // Verifică dacă jucătorul există
-			storage.remove<GamePlayer>(player.id); // Șterge jucătorul
+			auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
+
+			if (players.empty()) {
+				throw std::runtime_error("Player not found");
+			}
+
+			auto player = players.front();
+			storage.remove<GamePlayer>(player.id);
 
 		}
 		catch (const std::runtime_error& e) {
