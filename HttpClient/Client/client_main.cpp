@@ -21,9 +21,9 @@ int main() {
     do {
         std::cout << "1. Create Player\n";
         std::cout << "2. Get Player Details\n";
-        std::cout << "3. Exit\n";
         std::cout << "3. Delete Player\n";
         std::cout << "4. Update Player\n";
+        std::cout << "5. Start Game\n";
         std::cout << "Choose an option: ";
         std::cin >> choice;
 
@@ -89,7 +89,16 @@ int main() {
                 std::cout << "Error updating player: " << response.text << "\n";
             }
         }
-    } while (choice != 5);
+        else if (choice == 5) {
+            auto response = ClientRequests::StartGame();
+            if (response.status_code == 200) {
+                std::cout << "Game started successfully!\n";
+            }
+            else {
+                std::cout << "Error starting game: " << response.text << "\n";
+            }
+        }
+    } while (choice != 6);
     
 
     std::cout << "Goodbye!\n";

@@ -20,7 +20,13 @@ namespace ClientRequests {
             cpr::Body{ R"({"name":")" + name + R"(", "score":)" + std::to_string(newScore) + R"(, "points":)" + std::to_string(newPoints) + R"(})" }
         );
     }
+
     cpr::Response GetMap() {
         return cpr::Get(cpr::Url{ "http://localhost:18080/getMap" });
-    }   
+    }
+
+    cpr::Response StartGame()
+    {
+        return cpr::Post(cpr::Url{ "http://localhost:18080/startGame" });
+    }
 }

@@ -8,4 +8,5 @@ namespace ClientRequests {
     cpr::Response DeletePlayer(const std::string& name);
     cpr::Response UpdatePlayer(const std::string& name, int newScore, int newPoints);
     cpr::Response GetMap();
+    cpr::Response StartGame();
 }
