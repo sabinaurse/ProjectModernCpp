@@ -41,21 +41,21 @@ private:
 
 private:
 	Player* m_player;
-	bool m_isAlive = true;
-	char m_currentDirection = 'W';
+	bool m_isAlive{ true };
+	char m_currentDirection{ 'W' };
 	Position m_position;
 	Position m_initialPosition;
 
 	// Statistici 
-	int m_lives = 3;
-	int m_enemiesEliminated = 0;
+	int m_lives{ 3 };
+	int m_enemiesEliminated{ 0 };
 
 	// Arme
 	Weapon m_weapon;
-	float m_bulletSpeed = 0.25f;
-	bool m_speedBoostApplied = false;
-	int m_weaponBoostCount = 0;
-	int m_eliminationOrder = -1; // -1 indică faptul că pinguinul nu a fost eliminat încă
+	float m_bulletSpeed{ 0.25f };
+	bool m_speedBoostApplied{ false };
+	int m_weaponBoostCount{ 0 };
+	int m_eliminationOrder{ -1 }; // -1 indică faptul că pinguinul nu a fost eliminat încă
 	std::vector<Snowball> m_snowballs;
 
 };

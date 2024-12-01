@@ -56,16 +56,16 @@ private:
 	bool WillCellBeEmptyAppear();
 
 private:
-	static constexpr int m_rows = 10;   
-	static constexpr int m_cols = 10;
+	static constexpr int m_rows{ 10 };
+	static constexpr int m_cols{ 10 };
 	std::array<std::array<Cell, m_rows>, m_cols> m_board;
 	std::vector<Position> m_bombPositions;
 
-	uint16_t m_bombChance = 0;
-	uint16_t m_cellEmptyChance = 0;
-	uint16_t m_destructiblWallChance = 0;
-	uint16_t m_indestructiblWallChance = 0;
-	uint16_t m_bombsPlaced = 0;
-	uint16_t m_maxBombs = 0;
-	uint16_t m_minDistanceBombs = 0;
+	uint16_t m_bombChance{ 0 };
+	uint16_t m_cellEmptyChance{ 0 };
+	uint16_t m_destructiblWallChance{ 0 };
+	uint16_t m_indestructiblWallChance{ 0 };
+	uint16_t m_bombsPlaced{ 0 };
+	uint16_t m_maxBombs{ 0 };
+	uint16_t m_minDistanceBombs{ 0 };
 };

@@ -19,7 +19,7 @@ public:
 	~Player() = default;
 private:
 	std::string m_name;
-	int m_points=0;
-	int m_score=0;
+	int m_points{ 0 };
+	int m_score{ 0 };
 };
 
