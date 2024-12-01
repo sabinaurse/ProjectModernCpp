@@ -1,22 +1,23 @@
 #pragma once
 #include <vector>
+#include <algorithm>
+#include <cstdint>
 #include "Penguin.h"
 #include "Player.h"
 #include "GameBoard.h"
-#include <algorithm>
 
+using Position = std::pair<std::uint32_t, std::uint32_t>; // maybe uint32_t??
+using PlayerList = std::vector<Player*>; 
+using PenguinList = std::vector<Penguin*>; 
 
 class Game
 {
 public:
-	// Game() : m_isGameOver(false) {}
 	void StartGame();
 	void EndGame();
 	void RestartGame();
 	void CheckForCollisions();
 	void ShowLeaderboard();
-	//void Update();
-
 	GameBoard GetBoard() const;
 
 	void AddPenguin(Player* player);
@@ -29,8 +30,8 @@ public:
 
 private:
 	GameBoard m_gameBoard;
-	std::vector<Player*> m_players;
-	std::vector<Penguin*> m_penguins;
+	PlayerList m_players;
+	PenguinList m_penguins;
 	bool m_isGameOver{ false };
 };
 

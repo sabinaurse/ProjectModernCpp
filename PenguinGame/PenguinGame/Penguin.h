@@ -6,7 +6,7 @@
 #include "Player.h"
 #include "Snowball.h"
 
-using Position = std::pair<int, int>;
+using Position = std::pair<std::uint32_t, std::uint32_t>;
 
 class Penguin
 {
@@ -24,8 +24,8 @@ public:
 
 	void TakeDamage();
 	void ResetState();
-
 	bool IsAlive() const { return m_isAlive; }
+
 	Position GetPosition() const { return m_position; }
 	float GetBulletSpeed() const; // Returnează viteza curentă a gloanțelor
 	Player* GetPlayer() const { return m_player; }  // Metoda pentru a obt jucatorul asociat

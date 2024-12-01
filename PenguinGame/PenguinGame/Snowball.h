@@ -17,7 +17,7 @@ public:
     std::pair<int, int> GetPosition() const { return m_position; }
 
 private:
-    std::pair<int, int> getNextPosition() const;
+    std::pair<int, int> GetNextPosition() const;
 
 private:
     std::pair<int, int> m_position;

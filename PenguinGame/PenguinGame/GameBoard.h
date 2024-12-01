@@ -6,6 +6,8 @@
 #include <ctime>
 #include "crow.h"
 
+using Position = std::pair<std::uint32_t, std::uint32_t>;
+
 class Penguin;
 
 enum class Cell {
@@ -19,51 +21,51 @@ class GameBoard
 {
 public:
 	GameBoard() = default;
-	GameBoard(int bombChance, int destructibleWallChance, int indestructibleWallChance, int emptyCellChance, int maxBombs, int minDistanceBombs);
+	GameBoard(uint16_t bombChance, uint16_t destructibleWallChance, uint16_t indestructibleWallChance, uint16_t emptyCellChance, uint16_t maxBombs, uint16_t minDistanceBombs);
 
 	void InitializeBoard();
 	crow::json::wvalue SerializeBoard() const;
 	void PrintBoard();
-	int GetRows() const;
-	int GetCols() const;
+	uint32_t GetRows() const;
+	uint32_t GetCols() const;
 
 	int GetBombChance() const;
 	int GetDestructiblWallChance() const;
 	int GetIndestructiblWallChance() const;
 
-	bool IsWithinBounds(int x, int y) const;
-	Cell GetCell(int x, int y) const;
-	void SetCell(int x, int y, Cell cellType);
-	void DestroyCell(int x, int y, std::vector<Penguin*>& penguins);
-	void DestroyCell(int x, int y); 
-	std::vector<std::pair<int, int>> GetStartingPositions();
+	bool IsWithinBounds(uint32_t x, uint32_t y) const;
+	Cell GetCell(uint32_t x, uint32_t  y) const;
+	void SetCell(uint32_t x, uint32_t  y, Cell cellType);
+	void DestroyCell(uint32_t  x, uint32_t  y, std::vector<Penguin*>& penguins);
+	void DestroyCell(uint32_t  x, uint32_t y);
+	std::vector<Position> GetStartingPositions();
 
-	void DetonateBomb(int x, int y);
-	void TriggerExplosion(int x, int y, std::vector<Penguin*>& penguins);
-	void TriggerExplosion(int x, int y);
+	void DetonateBomb(uint32_t x, uint32_t y);
+	void TriggerExplosion(uint32_t x, uint32_t y, std::vector<Penguin*>& penguins);
+	void TriggerExplosion(uint32_t x, uint32_t y);
 
 	void CreatePathsBetweenCorners();
-	void CreatePath(std::pair<int, int> start, std::pair<int, int> end);
+	void CreatePath(Position start, Position end);
 	bool AreCornersConnected() const;
+
+private:
+	bool IsFarEnoughFromOtherBombs(uint32_t x, uint32_t y);
+	bool WillDestructibleWallAppear();
+	bool WillIndestructibleWallAppear();
+	bool WillBombAppear();
+	bool WillCellBeEmptyAppear();
 
 private:
 	static constexpr int m_rows = 10;   
 	static constexpr int m_cols = 10;
 	std::array<std::array<Cell, m_rows>, m_cols> m_board;
-	std::vector<std::pair<int, int>> m_bombPositions;
+	std::vector<Position> m_bombPositions;
 
-	int m_bombChance = 0;
-	int m_cellEmptyChange = 0;
-	int m_destructiblWallChance = 0;
-	int m_indestructiblWallChance = 0;
-	int m_bombsPlaced = 0;
-	int m_maxBombs = 0;
-	int m_minDistanceBombs = 0;
-
-	bool isFarEnoughFromOtherBombs(int x, int y);
-	bool willDestructibleWallAppear();
-	bool willIndestructibleWallAppear();
-	bool willBombAppear();
-	bool willCellBeEmptyAppear();
-
+	uint16_t m_bombChance = 0;
+	uint16_t m_cellEmptyChance = 0;
+	uint16_t m_destructiblWallChance = 0;
+	uint16_t m_indestructiblWallChance = 0;
+	uint16_t m_bombsPlaced = 0;
+	uint16_t m_maxBombs = 0;
+	uint16_t m_minDistanceBombs = 0;
 };

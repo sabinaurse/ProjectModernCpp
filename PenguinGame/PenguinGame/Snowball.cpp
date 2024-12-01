@@ -12,7 +12,7 @@ void Snowball::UpdatePosition(GameBoard& gameBoard,const  std::vector<Snowball>&
 
     if (elapsedTime.count() >= 1.0f / m_speed) // folosim viteza pentru a calcula timpul necesar miscarii
     {
-        m_position = getNextPosition();
+        m_position = GetNextPosition();
         m_lastUpdate = currentTime;
 
         if (CheckCollision(gameBoard, activeSnowballs))
@@ -62,7 +62,7 @@ bool Snowball::CheckCollision(GameBoard& gameBoard, const std::vector<Snowball>&
 
 
 
-std::pair<int, int> Snowball::getNextPosition() const
+std::pair<int, int> Snowball::GetNextPosition() const
 {
     int x = std::get<0>(m_position);
     int y = std::get<1>(m_position);

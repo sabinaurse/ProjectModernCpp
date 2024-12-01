@@ -80,17 +80,27 @@ GameBoard Game::GetBoard() const{
 
 void Game::AddPlayer(Player* player)
 {
-    for (const auto& existingPlayer : m_players) {
-        if (existingPlayer->GetName() == player->GetName()) {
-            throw std::runtime_error("Player with the same name already exists in the game!");
-        }
+    if (std::any_of(m_players.begin(), m_players.end(),
+        [player](const auto& existingPlayer) { return existingPlayer->GetName() == player->GetName(); })) {
+        throw std::runtime_error("Player with the same name already exists in the game!");
     }
     m_players.push_back(player);
 }
 
 
+//void Game::AddPlayer(Player* player)
+//{
+//    for (const auto& existingPlayer : m_players) {
+//        if (existingPlayer->GetName() == player->GetName()) {
+//            throw std::runtime_error("Player with the same name already exists in the game!");
+//        }
+//    }
+//    m_players.push_back(player);
+//}
+
+
 void Game::InitializePlayers() {
-    auto startingPositions = m_gameBoard.GetStartingPositions();
+    const auto& startingPositions = m_gameBoard.GetStartingPositions();
 
     if (m_players.size() > startingPositions.size()) {
         throw std::runtime_error("Too many players for available starting positions!");

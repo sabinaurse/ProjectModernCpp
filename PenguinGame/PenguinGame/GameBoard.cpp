@@ -2,23 +2,22 @@
 #include "Penguin.h"
 #include <stdexcept>
 
-GameBoard::GameBoard(int bombChance, int destructiblWallChance, int indestructiblWallChance,int emptyCellChance, int maxBombs, int minDistanceBombs)
+GameBoard::GameBoard(uint16_t bombChance, uint16_t destructiblWallChance, uint16_t indestructiblWallChance, uint16_t emptyCellChance, uint16_t maxBombs, uint16_t minDistanceBombs)
 	: m_bombChance{ bombChance }, m_destructiblWallChance{ destructiblWallChance },
-	  m_indestructiblWallChance{ indestructiblWallChance },m_cellEmptyChange(emptyCellChance), m_maxBombs{ maxBombs },
-	  m_minDistanceBombs{ minDistanceBombs }
+	m_indestructiblWallChance{ indestructiblWallChance }, m_cellEmptyChance(emptyCellChance), m_maxBombs{ maxBombs },
+	m_minDistanceBombs{ minDistanceBombs }
 {
 	std::srand(static_cast<unsigned int>(std::time(0)) ^ std::rand());
 	InitializeBoard();
 }
-
 
 void GameBoard::InitializeBoard()
 {
 	m_bombPositions.clear();
 	m_bombsPlaced = 0;
 
-	for (int i = 0; i < m_rows; ++i) {
-		for (int j = 0; j < m_cols; ++j) {
+	for (uint32_t i = 0; i < m_rows; ++i) {
+		for (uint32_t j = 0; j < m_cols; ++j) {
 			m_board[i][j] = Cell::Indestructible_Wall;
 		}
 	}
@@ -26,20 +25,20 @@ void GameBoard::InitializeBoard()
 	// Creăm drumuri libere între colțuri
 	CreatePathsBetweenCorners();
 
-	for (int i = 0; i < m_rows; ++i)
-		for (int j = 0; j < m_cols; ++j)
+	for (uint32_t i = 0; i < m_rows; ++i)
+		for (uint32_t j = 0; j < m_cols; ++j)
 		{
 			// Evităm să suprascriem drumurile libere
 			if (m_board[i][j] == Cell::Empty) {
 				continue;
 			}
 
-			if (willCellBeEmptyAppear()) {
+			if (WillCellBeEmptyAppear()) {
 				m_board[i][j] = Cell::Empty;
 			}
-			else if (willDestructibleWallAppear())
+			else if (WillDestructibleWallAppear())
 			{
-				if (m_bombsPlaced < m_maxBombs && willBombAppear() && isFarEnoughFromOtherBombs(i, j))
+				if (m_bombsPlaced < m_maxBombs && WillBombAppear() && IsFarEnoughFromOtherBombs(i, j))
 				{
 
 					m_board[i][j] = Cell::Hidden_Bomb;
@@ -53,7 +52,7 @@ void GameBoard::InitializeBoard()
 				}
 
 			}
-			else if (willIndestructibleWallAppear())
+			else if (WillIndestructibleWallAppear())
 			{
 				m_board[i][j] = Cell::Indestructible_Wall;
 			}
@@ -67,9 +66,9 @@ void GameBoard::InitializeBoard()
 
 void GameBoard::PrintBoard()
 {
-	for (int i = 0; i < m_rows; ++i)
+	for (uint32_t i = 0; i < m_rows; ++i)
 	{
-		for (int j = 0; j < m_cols; ++j)
+		for (uint32_t j = 0; j < m_cols; ++j)
 
 			switch (m_board[i][j]) {
 			case Cell::Empty:
@@ -94,7 +93,7 @@ void GameBoard::PrintBoard()
 
 }
 
-crow::json::wvalue GameBoard::SerializeBoard() const 
+crow::json::wvalue GameBoard::SerializeBoard() const
 {
 	crow::json::wvalue jsonBoard;
 
@@ -102,14 +101,14 @@ crow::json::wvalue GameBoard::SerializeBoard() const
 	jsonBoard["cols"] = m_cols;
 
 	auto& cells = jsonBoard["cells"];
-	for (int i = 0; i < m_rows; ++i) {
-		for (int j = 0; j < m_cols; ++j) {
-			cells[i][j] = static_cast<int>(m_board[i][j]); 
+	for (uint32_t i = 0; i < m_rows; ++i) {
+		for (uint32_t j = 0; j < m_cols; ++j) {
+			cells[i][j] = static_cast<uint32_t>(m_board[i][j]);
 		}
 	}
 
 	auto& bombs = jsonBoard["bombs"];
-	int bombIndex = 0;  
+	int bombIndex = 0;
 	for (const auto& bomb : m_bombPositions) {
 		bombs[bombIndex++] = crow::json::wvalue{
 			{"x", bomb.first},
@@ -122,12 +121,12 @@ crow::json::wvalue GameBoard::SerializeBoard() const
 
 
 
-int GameBoard::GetRows() const
+uint32_t GameBoard::GetRows() const
 {
 	return m_rows;
 }
 
-int GameBoard::GetCols() const
+uint32_t GameBoard::GetCols() const
 {
 	return m_cols;
 }
@@ -148,12 +147,12 @@ int GameBoard::GetIndestructiblWallChance() const
 }
 
 
-bool GameBoard::IsWithinBounds(int x, int y) const
+bool GameBoard::IsWithinBounds(uint32_t x, uint32_t y) const
 {
 	return x >= 0 && x < m_rows && y >= 0 && y < m_cols;
 }
 
-Cell GameBoard::GetCell(int x, int y) const
+Cell GameBoard::GetCell(uint32_t x, uint32_t y) const
 {
 	if (IsWithinBounds(x, y))
 		return m_board[x][y];
@@ -161,7 +160,7 @@ Cell GameBoard::GetCell(int x, int y) const
 	throw std::out_of_range("Coordonatele sunt în afara limitelor tabelei de joc");
 }
 
-void GameBoard::SetCell(int x, int y, Cell cellType)
+void GameBoard::SetCell(uint32_t x, uint32_t y, Cell cellType)
 {
 	if (IsWithinBounds(x, y))
 		m_board[x][y] = cellType;
@@ -170,13 +169,13 @@ void GameBoard::SetCell(int x, int y, Cell cellType)
 }
 
 
-void GameBoard::DestroyCell(int x, int y) {
+void GameBoard::DestroyCell(uint32_t x, uint32_t y) {
 	if (IsWithinBounds(x, y)) {
 		m_board[x][y] = Cell::Empty; // Sau altă logică de distrugere
 	}
 }
 
-void GameBoard::DestroyCell(int x, int y, std::vector<Penguin*>& penguins) {
+void GameBoard::DestroyCell(uint32_t x, uint32_t y, std::vector<Penguin*>& penguins) {
 	if (IsWithinBounds(x, y))
 	{
 		Cell currentCell = m_board[x][y];
@@ -217,8 +216,8 @@ void GameBoard::DestroyCell(int x, int y, std::vector<Penguin*>& penguins) {
 	return startingPositions;
 }*/
 
-std::vector<std::pair<int, int>> GameBoard::GetStartingPositions() {
-	std::vector<std::pair<int, int>> startingPositions = {
+std::vector<Position> GameBoard::GetStartingPositions() {
+	std::vector<Position> startingPositions = {
 		{0, 0}, {0, m_cols - 1}, {m_rows - 1, m_cols - 1}, {m_rows - 1, 0}
 	};
 
@@ -231,34 +230,34 @@ std::vector<std::pair<int, int>> GameBoard::GetStartingPositions() {
 	return startingPositions;
 }
 
-void GameBoard::DetonateBomb(int x, int y) {
+void GameBoard::DetonateBomb(uint32_t x, uint32_t y) {
 	const int explosionRadius = 10;
 
 	std::vector<Penguin*> emptyPenguins;
 
-	for (int i = 0; i < m_rows; ++i) {
-		for (int j = 0; j < m_cols; ++j) {
+	for (uint32_t i = 0; i < m_rows; ++i) {
+		for (uint32_t j = 0; j < m_cols; ++j) {
 			int dx = i - x;
 			int dy = j - y;
-			double distance = std::sqrt(dx * dx + dy * dy);
+			double distanceSquared = dx * dx + dy * dy;
 
-			if (distance <= explosionRadius) {
+			if (distanceSquared <= explosionRadius* explosionRadius) {
 				DestroyCell(i, j, emptyPenguins);
 			}
 		}
 	}
 }
 
-void GameBoard::TriggerExplosion(int x, int y, std::vector<Penguin*>& penguins)
+void GameBoard::TriggerExplosion(uint32_t x, uint32_t y, std::vector<Penguin*>& penguins)
 {
 	const int explosionRadius = 10;
 
-	for (int nx = 0; nx < m_rows; ++nx)
+	for (uint32_t nx = 0; nx < m_rows; ++nx)
 	{
-		for (int ny = 0; ny < m_cols; ++ny)
+		for (uint32_t ny = 0; ny < m_cols; ++ny)
 		{
-			int dx = nx - x;
-			int dy = ny - y;
+			uint32_t dx = nx - x;
+			uint32_t dy = ny - y;
 			double distance = std::sqrt(dx * dx + dy * dy);
 
 			if (distance <= explosionRadius)
@@ -272,11 +271,11 @@ void GameBoard::TriggerExplosion(int x, int y, std::vector<Penguin*>& penguins)
 		if (!penguin->IsAlive()) continue; // trecem peste pinguinii deja morti
 
 		auto position = penguin->GetPosition();
-		int px = position.first;
-		int py = position.second;
+		uint32_t px = position.first;
+		uint32_t py = position.second;
 
-		int dx = px - x;
-		int dy = py - y;
+		uint32_t dx = px - x;
+		uint32_t dy = py - y;
 		double distance = std::sqrt(dx * dx + dy * dy);
 
 		if (distance <= explosionRadius) {
@@ -286,14 +285,14 @@ void GameBoard::TriggerExplosion(int x, int y, std::vector<Penguin*>& penguins)
 	}
 }
 
-void GameBoard::TriggerExplosion(int x, int y) {
+void GameBoard::TriggerExplosion(uint32_t x, uint32_t y) {
 	const int explosionRadius = 10;
 
 	// Distrugem celulele din raza exploziei
-	for (int nx = 0; nx < m_rows; ++nx) {
-		for (int ny = 0; ny < m_cols; ++ny) {
-			int dx = nx - x;
-			int dy = ny - y;
+	for (uint32_t nx = 0; nx < m_rows; ++nx) {
+		for (uint32_t ny = 0; ny < m_cols; ++ny) {
+			uint32_t dx = nx - x;
+			uint32_t dy = ny - y;
 			double distance = std::sqrt(dx * dx + dy * dy);
 
 			if (distance <= explosionRadius) {
@@ -304,12 +303,12 @@ void GameBoard::TriggerExplosion(int x, int y) {
 }
 
 
-bool GameBoard::isFarEnoughFromOtherBombs(int x, int y)
+bool GameBoard::IsFarEnoughFromOtherBombs(uint32_t x, uint32_t y)
 {
 	for (const auto& bomb : m_bombPositions)
 	{
-		int dx = bomb.first - x;
-		int dy = bomb.second - y;
+		uint32_t dx = bomb.first - x;
+		uint32_t dy = bomb.second - y;
 		double distance = std::sqrt(dx * dx + dy * dy);
 
 		if (distance < m_minDistanceBombs)
@@ -320,23 +319,23 @@ bool GameBoard::isFarEnoughFromOtherBombs(int x, int y)
 	return true;
 }
 
-bool GameBoard::willDestructibleWallAppear()
+bool GameBoard::WillDestructibleWallAppear()
 {
 	return std::rand() % 100 < m_destructiblWallChance;
 }
 
-bool GameBoard::willIndestructibleWallAppear()
+bool GameBoard::WillIndestructibleWallAppear()
 {
 	return std::rand() % 100 < m_indestructiblWallChance;
 }
 
-bool GameBoard::willBombAppear()
+bool GameBoard::WillBombAppear()
 {
 	return std::rand() % 100 < m_bombChance;
 }
 
-bool GameBoard::willCellBeEmptyAppear() {
-	return std::rand() % 100 < m_cellEmptyChange;
+bool GameBoard::WillCellBeEmptyAppear() {
+	return std::rand() % 100 < m_cellEmptyChance;
 }
 
 void GameBoard::CreatePathsBetweenCorners() {
@@ -353,9 +352,9 @@ void GameBoard::CreatePathsBetweenCorners() {
 	}
 }
 
-void GameBoard::CreatePath(std::pair<int, int> start, std::pair<int, int> end) {
-	int x = start.first, y = start.second;
-	int targetX = end.first, targetY = end.second;
+void GameBoard::CreatePath(Position start, Position end) {
+	uint32_t x = start.first; uint32_t y = start.second;
+	uint32_t targetX = end.first; uint32_t targetY = end.second;
 
 	// Aleatorizăm direcția deplasărilor
 	while (x != targetX || y != targetY) {
@@ -403,6 +402,4 @@ bool GameBoard::AreCornersConnected() const {
 	return visited[0][0] && visited[0][m_cols - 1] &&
 		visited[m_rows - 1][m_cols - 1] && visited[m_rows - 1][0];
 }
-
-
 
