@@ -24,6 +24,7 @@ int main() {
         std::cout << "3. Delete Player\n";
         std::cout << "4. Update Player\n";
         std::cout << "5. Start Game\n";
+        std::cout << "6. Reset Game\n";
         std::cout << "Choose an option: ";
         std::cin >> choice;
 
@@ -98,7 +99,16 @@ int main() {
                 std::cout << "Error starting game: " << response.text << "\n";
             }
         }
-    } while (choice != 6);
+        else if (choice == 6) {
+            auto response = ClientRequests::ResetGame();
+            if (response.status_code == 200) {
+                std::cout << "Game reset successfully!\n";
+            }
+            else {
+                std::cout << "Error resetting game: " << response.text << "\n";
+            }
+        }
+    } while (choice != 7);
     
 
     std::cout << "Goodbye!\n";

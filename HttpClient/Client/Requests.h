@@ -9,4 +9,5 @@ namespace ClientRequests {
     cpr::Response UpdatePlayer(const std::string& name, int newScore, int newPoints);
     cpr::Response GetMap();
     cpr::Response StartGame();
+    cpr::Response ResetGame();
 }

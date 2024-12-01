@@ -29,4 +29,8 @@ namespace ClientRequests {
     {
         return cpr::Post(cpr::Url{ "http://localhost:18080/startGame" });
     }
+    cpr::Response ResetGame()
+    {
+        return cpr::Post(cpr::Url{ "http://localhost:18080/resetGame" });
+    }
 }

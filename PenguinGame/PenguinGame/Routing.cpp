@@ -117,6 +117,16 @@ void Routing::Run(int port)
 			return crow::response(500, "Error starting game: " + std::string(e.what()));
 		}
 		});
+
+	CROW_ROUTE(m_app, "/resetGame").methods("POST"_method)([this]() {
+		try {
+			m_game.RestartGame();
+			return crow::response(200, "Game reset successfully.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error resetting game: " + std::string(e.what()));
+		}
+		});
 	
 	m_app.port(18080).multithreaded().run();
 }
