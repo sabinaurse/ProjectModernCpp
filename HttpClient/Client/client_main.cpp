@@ -25,6 +25,7 @@ int main() {
         std::cout << "4. Update Player\n";
         std::cout << "5. Start Game\n";
         std::cout << "6. Reset Game\n";
+        std::cout << "7. Show Leaderboard\n";
         std::cout << "Choose an option: ";
         std::cin >> choice;
 
@@ -108,7 +109,16 @@ int main() {
                 std::cout << "Error resetting game: " << response.text << "\n";
             }
         }
-    } while (choice != 7);
+        else if (choice == 7) {
+            auto response = ClientRequests::GetLeaderboard();
+            if (response.status_code == 200) {
+                std::cout << "Leaderboard:\n" << response.text << "\n";
+            }
+            else {
+                std::cout << "Error retrieving leaderboard: " << response.text << "\n";
+            }
+        }
+    } while (choice != 8);
     
 
     std::cout << "Goodbye!\n";

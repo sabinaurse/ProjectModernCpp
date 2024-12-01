@@ -10,4 +10,5 @@ namespace ClientRequests {
     cpr::Response GetMap();
     cpr::Response StartGame();
     cpr::Response ResetGame();
+    cpr::Response GetLeaderboard();
 }

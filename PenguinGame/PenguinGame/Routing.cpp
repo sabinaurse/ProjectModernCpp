@@ -127,6 +127,27 @@ void Routing::Run(int port)
 			return crow::response(500, "Error resetting game: " + std::string(e.what()));
 		}
 		});
+
+	CROW_ROUTE(m_app, "/leaderboard") ([this]() {
+		try {
+			std::ostringstream leaderboard;
+			leaderboard << "Leaderboard:\n";
+
+			auto players = m_game.GetPlayers();
+			std::sort(players.begin(), players.end(), [](Player* a, Player* b) {
+				return a->GetPoints() > b->GetPoints();
+				});
+
+			for (const auto& player : players) {
+				leaderboard << player->GetName() << " - " << player->GetPoints() << " points\n";
+			}
+
+			return crow::response(200, leaderboard.str());
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error retrieving leaderboard: " + std::string(e.what()));
+		}
+		});
 	
 	m_app.port(18080).multithreaded().run();
 }

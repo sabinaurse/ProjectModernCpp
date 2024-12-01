@@ -33,4 +33,8 @@ namespace ClientRequests {
     {
         return cpr::Post(cpr::Url{ "http://localhost:18080/resetGame" });
     }
+    cpr::Response GetLeaderboard()
+    {
+        return cpr::Get(cpr::Url{ "http://localhost:18080/leaderboard" });
+    }
 }
