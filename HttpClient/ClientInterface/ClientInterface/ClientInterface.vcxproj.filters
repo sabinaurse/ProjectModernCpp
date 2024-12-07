@@ -26,9 +26,6 @@
     <QtRcc Include="ClientInterface.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
-    <QtUic Include="ClientInterface.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
     <QtMoc Include="ClientInterface.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -46,6 +43,12 @@
     <ClCompile Include="ClientState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LoginPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientState.h">
@@ -56,5 +59,19 @@
     <QtMoc Include="ClientRequests.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="LoginPage.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="MainPage.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="LoginPage.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="MainPage.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>

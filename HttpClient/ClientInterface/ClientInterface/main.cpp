@@ -1,10 +1,11 @@
 #include "ClientInterface.h"
+#include "LoginPage.h"
 #include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    ClientInterface w;
-    w.show();
+    LoginPage loginPage;
+    loginPage.show();
     return a.exec();
 }

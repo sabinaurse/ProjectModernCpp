@@ -92,15 +92,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MainPage.cpp" />
     <QtRcc Include="ClientInterface.qrc" />
-    <QtUic Include="ClientInterface.ui" />
     <QtMoc Include="ClientInterface.h" />
     <ClCompile Include="ClientInterface.cpp" />
     <ClCompile Include="ClientRequests.cpp" />
     <ClCompile Include="ClientState.cpp" />
+    <ClCompile Include="LoginPage.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="LoginPage.ui" />
+    <QtUic Include="MainPage.ui" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="MainPage.h" />
+    <QtMoc Include="LoginPage.h" />
     <QtMoc Include="ClientRequests.h" />
     <ClInclude Include="ClientState.h" />
   </ItemGroup>
