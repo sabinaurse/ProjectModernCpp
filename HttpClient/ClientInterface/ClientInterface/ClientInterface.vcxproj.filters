@@ -73,5 +73,8 @@
     <QtUic Include="MainPage.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="ClientInterface.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>

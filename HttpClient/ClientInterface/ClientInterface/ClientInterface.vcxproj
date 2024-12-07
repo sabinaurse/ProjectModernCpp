@@ -36,14 +36,14 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>QT6.7.3</QtInstall>
+    <QtInstall>6.7.3_msvc2022_64</QtInstall>
     <QtModules>core;gui;network;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtModules>core;gui;network;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
-    <QtInstall>QT6.7.3</QtInstall>
+    <QtInstall>6.7.3_msvc2022_64</QtInstall>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
     <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
@@ -100,6 +100,7 @@
     <ClCompile Include="ClientState.cpp" />
     <ClCompile Include="LoginPage.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="ClientInterface.ui" />
     <QtUic Include="LoginPage.ui" />
     <QtUic Include="MainPage.ui" />
   </ItemGroup>
