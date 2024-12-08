@@ -144,6 +144,51 @@ void Routing::Run(int port)
 			return crow::response(500, "Error retrieving leaderboard: " + std::string(e.what()));
 		}
 		});
-	
+
+	CROW_ROUTE(m_app, "/movePlayer").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object");
+			}
+
+			if (!body.has("direction")) {
+				return crow::response(400, "Direction not provided");
+			}
+
+			std::string direction = body["direction"].s();
+			if (direction.empty()) {
+				return crow::response(400, "Direction cannot be empty");
+			}
+
+			char directionChar = direction[0]; 
+
+			if (directionChar != 'W' && directionChar != 'A' && directionChar != 'S' && directionChar != 'D') {
+				return crow::response(400, "Invalid direction. Use W, A, S, or D.");
+			}
+
+			std::string playerName = body["playerName"].s();
+			Player* player = m_game.GetPlayerByName(playerName);
+
+			if (!player) {
+				return crow::response(404, "Player not found");
+			}
+
+			Penguin* penguin = m_game.GetPenguinForPlayer(*player);
+
+			if (!penguin) {
+				return crow::response(404, "Penguin not found");
+			}
+
+			penguin->Move(directionChar, m_game.GetBoard());
+			return crow::response(200, "Player moved successfully");
+
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error moving player: " + std::string(e.what()));
+		}
+			});
+
 	m_app.port(18080).multithreaded().run();
 }

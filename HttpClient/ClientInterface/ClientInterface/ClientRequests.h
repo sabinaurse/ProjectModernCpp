@@ -20,10 +20,10 @@ public:
     void StartGame();
     void ResetGame();
     void GetLeaderboard();
+    void MovePlayer(const QString& playerName, const QString& direction);
 signals:
     void requestCompleted(const QString& response);
     void requestFailed(const QString& error);
-
 private slots:
     void onReplyFinished(QNetworkReply* reply);
 

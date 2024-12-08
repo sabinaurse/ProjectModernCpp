@@ -241,5 +241,13 @@ void Game::CheckForCollisions() {
     }
 }
 
-
+Player* Game::GetPlayerByName(const std::string& playerName)
+{
+    for (auto* player : m_players) {
+        if (player->GetName() == playerName) {
+            return player;
+        }
+    }
+    return nullptr; 
+}
 

@@ -75,3 +75,17 @@ void ClientRequests::onReplyFinished(QNetworkReply* reply) {
     }
     reply->deleteLater();
 }
+
+void ClientRequests::MovePlayer(const QString& playerName, const QString& direction) {
+
+    QUrl url("http://localhost:18080/movePlayer");
+
+    QJsonObject json;
+    json["playerName"] = playerName;
+    json["direction"] = direction;
+
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    networkManager->post(request, QJsonDocument(json).toJson());
+}

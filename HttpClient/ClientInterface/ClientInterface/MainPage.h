@@ -4,7 +4,9 @@
 #include <QWidget>
 #include <QLabel>
 #include "ClientState.h"
+#include "ClientRequests.h"
 #include <QVBoxLayout>
+#include <QKeyEvent>
 
 
 class MainPage : public QWidget {
@@ -15,9 +17,11 @@ public:
     ~MainPage();
 
     void displayPlayerInfo(const QString& playerInfo);
+    void keyPressEvent(QKeyEvent* event);
 
 private:
     QLabel* playerInfoLabel;  
+    ClientRequests* clientRequests;
 };
 
 #endif 
