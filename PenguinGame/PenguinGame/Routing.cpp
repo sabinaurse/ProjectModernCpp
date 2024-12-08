@@ -25,7 +25,7 @@ void Routing::Run(int port)
 		catch (...) {
 			return crow::response(500, "Unknown error occurred.");
 		}
-		}); 
+		});
 
 	CROW_ROUTE(m_app, "/getPlayer/<string>")([this](const std::string& name) {
 		try {
@@ -39,7 +39,7 @@ void Routing::Run(int port)
 
 			delete player;
 
-			return crow::response(response); 
+			return crow::response(response);
 
 		}
 		catch (const std::runtime_error& e) {
@@ -162,7 +162,7 @@ void Routing::Run(int port)
 				return crow::response(400, "Direction cannot be empty");
 			}
 
-			char directionChar = direction[0]; 
+			char directionChar = direction[0];
 
 			if (directionChar != 'W' && directionChar != 'A' && directionChar != 'S' && directionChar != 'D') {
 				return crow::response(400, "Invalid direction. Use W, A, S, or D.");
@@ -189,6 +189,45 @@ void Routing::Run(int port)
 			return crow::response(500, "Error moving player: " + std::string(e.what()));
 		}
 			});
+
+	CROW_ROUTE(m_app, "/fire").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object");
+			}
+
+			std::string playerName = body["playerName"].s();
+			Player* player = m_game.GetPlayerByName(playerName);
+			if (!player) {
+				return crow::response(404, "Player not found.");
+			}
+
+			Penguin* penguin = m_game.GetPenguinForPlayer(*player);
+			if (!penguin) {
+				return crow::response(404, "Penguin not found.");
+			}
+
+			penguin->Fire();
+			return crow::response(200, "Snowball fired.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error firing snowball: " + std::string(e.what()));
+		}
+			});
+
+	CROW_ROUTE(m_app, "/checkCollisions").methods("POST"_method)
+		([this]() {
+		try {
+			m_game.CheckForCollisions();
+			return crow::response(200, "Collisions checked.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error checking collisions: " + std::string(e.what()));
+		}
+			});
+
 
 	m_app.port(18080).multithreaded().run();
 }
