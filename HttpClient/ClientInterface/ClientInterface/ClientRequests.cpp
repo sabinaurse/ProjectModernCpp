@@ -89,3 +89,15 @@ void ClientRequests::MovePlayer(const QString& playerName, const QString& direct
 
     networkManager->post(request, QJsonDocument(json).toJson());
 }
+
+void ClientRequests::Fire(const QString& playerName) {
+    QUrl url("http://localhost:18080/fire");
+
+    QJsonObject json;
+    json["playerName"] = playerName;
+
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    networkManager->post(request, QJsonDocument(json).toJson());
+}

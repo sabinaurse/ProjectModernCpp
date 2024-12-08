@@ -24,25 +24,31 @@ void MainPage::displayPlayerInfo(const QString& playerInfo) {
 }
 
 void MainPage::keyPressEvent(QKeyEvent* event) {
-    QString direction;
-
-    if (event->key() == Qt::Key_W) {
-        direction = "W";
-    }
-    else if (event->key() == Qt::Key_S) {
-        direction = "S";
-    }
-    else if (event->key() == Qt::Key_A) {
-        direction = "A";
-    }
-    else if (event->key() == Qt::Key_D) {
-        direction = "D";
-    }
-
     QString playerName = ClientState::instance().GetCurrentPlayer();
 
-    if (!direction.isEmpty() && !playerName.isEmpty()) {
-        clientRequests->MovePlayer(playerName, direction);
+    if (event->key() == Qt::Key_F) {
+        if (!playerName.isEmpty()) {
+            clientRequests->Fire(playerName);
+        }
+    }
+    else {
+        QString direction;
+        if (event->key() == Qt::Key_W) {
+            direction = "W";
+        }
+        else if (event->key() == Qt::Key_S) {
+            direction = "S";
+        }
+        else if (event->key() == Qt::Key_A) {
+            direction = "A";
+        }
+        else if (event->key() == Qt::Key_D) {
+            direction = "D";
+        }
+
+        if (!direction.isEmpty() && !playerName.isEmpty()) {
+            clientRequests->MovePlayer(playerName, direction);
+        }
     }
 
     QWidget::keyPressEvent(event);

@@ -21,6 +21,8 @@ public:
     void ResetGame();
     void GetLeaderboard();
     void MovePlayer(const QString& playerName, const QString& direction);
+    void Fire(const QString& playerName);
+
 signals:
     void requestCompleted(const QString& response);
     void requestFailed(const QString& error);
