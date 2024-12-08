@@ -228,6 +228,48 @@ void Routing::Run(int port)
 		}
 			});
 
+	CROW_ROUTE(m_app, "/upgradeBulletSpeed").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object");
+			}
+
+			std::string playerName = body["playerName"].s();
+			Player* player = m_game.GetPlayerByName(playerName);
+			if (!player) {
+				return crow::response(404, "Player not found.");
+			}
+
+			Penguin* penguin = m_game.GetPenguinForPlayer(*player);
+			if (!penguin) {
+				return crow::response(404, "Penguin not found.");
+			}
+
+			penguin->UpgradeBulletSpeed();
+			return crow::response(200, "Bullet speed upgraded.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error upgrading bullet speed: " + std::string(e.what()));
+		}
+			});
+
+
+	CROW_ROUTE(m_app, "/stopGame").methods("POST"_method)
+		([this]() {
+		try {
+			m_game.EndGame();
+			return crow::response(200, "Game stopped successfully.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error stopping game: " + std::string(e.what()));
+		}
+			});
+
+
+
+
 
 	m_app.port(18080).multithreaded().run();
 }
