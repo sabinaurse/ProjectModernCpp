@@ -17,6 +17,7 @@ enum class GenericElementType {
     Player,       // Player cell
     Enemy,        // Enemy cell
     PowerUp,      // Power-up cell
+    Bomb,
     Obstacle,     // Obstacle cell
     Collectible,  // Collectible item cell
     Empty         // Empty cell
@@ -39,22 +40,28 @@ public:
     // Constructor
     Map(uint32_t rows, uint32_t cols);
 
-    // Method to generate a random map
-    void generateRandomMap(uint16_t wallChance, uint16_t bombChance);
+    // Generate a random map
+    void generateRandomMap();
 
-    // Method to create free paths on the map
-    void createPaths();
+    // Check if a bomb can be placed at a position
+    bool IsFarEnoughFromOtherBombs(uint32_t x, uint32_t y);
 
-    // Method to set a specific cell
+    // Methods to determine if specific elements should appear
+    bool WillDestructibleWallAppear();
+    bool WillIndestructibleWallAppear();
+    bool WillBombAppear(uint32_t x, uint32_t y);
+    bool WillCellBeEmptyAppear();
+
+    // Set a specific cell
     void setCell(uint32_t x, uint32_t y, GenericElementType type, WallType wallType = WallType::Indestructible);
 
-    // Method to get a specific cell
+    // Get a specific cell
     Cell getCell(uint32_t x, uint32_t y) const;
 
-    // Getter for the grid
+    // Getter for grid
     const std::vector<std::vector<Cell>>& getGrid() const;
 
-    // Getters for map dimensions
+    // Getters for dimensions
     uint32_t getRows() const;
     uint32_t getCols() const;
 
@@ -62,8 +69,3 @@ private:
     // Helper method to create a path between two points
     void createPath(std::pair<int, int> start, std::pair<int, int> end);
 };
-
-// Exported functions for DLL usage
-extern "C" __declspec(dllexport) Map GenerateRandomMap(uint32_t rows, uint32_t cols, uint16_t wallChance, uint16_t bombChance);
-extern "C" __declspec(dllexport) void CreatePaths(Map& gameMap);
-extern "C" __declspec(dllexport) void SetCell(Map& gameMap, uint32_t x, uint32_t y, Cell cellType);
