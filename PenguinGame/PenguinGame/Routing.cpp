@@ -267,6 +267,72 @@ void Routing::Run(int port)
 		}
 			});
 
+	CROW_ROUTE(m_app, "/addMapElement").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object.");
+			}
+
+			uint32_t x = body["x"].i();
+			uint32_t y = body["y"].i();
+			std::string elementType = body["elementType"].s();
+
+			if (!m_game.GetBoard().IsWithinBounds(x, y)) {
+				return crow::response(400, "Position out of bounds.");
+			}
+
+			Cell cellType;
+			if (elementType == "bomb") {
+				cellType = Cell::Hidden_Bomb;
+			}
+			else if (elementType == "destructible_wall") {
+				cellType = Cell::Destructible_Wall;
+			}
+			else if (elementType == "indestructible_wall") {
+				cellType = Cell::Indestructible_Wall;
+			}
+			else if (elementType == "empty") {
+				cellType = Cell::Empty;
+			}
+			else {
+				return crow::response(400, "Invalid element type.");
+			}
+
+			m_game.GetBoard().SetCell(x, y, cellType);
+			return crow::response(200, "Element added successfully.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error adding map element: " + std::string(e.what()));
+		}
+			});
+
+	CROW_ROUTE(m_app, "/removeMapElement").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object.");
+			}
+
+			uint32_t x = body["x"].i();
+			uint32_t y = body["y"].i();
+
+			if (!m_game.GetBoard().IsWithinBounds(x, y)) {
+				return crow::response(400, "Position out of bounds.");
+			}
+
+			m_game.GetBoard().SetCell(x, y, Cell::Empty);
+			return crow::response(200, "Element removed successfully.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error removing map element: " + std::string(e.what()));
+		}
+			});
+
+
+
 
 
 
