@@ -1,10 +1,11 @@
 ﻿#include "LoginPage.h"
 #include <QMessageBox>
+#include <iostream>
 
 LoginPage::LoginPage(QWidget* parent)
     : QWidget(parent), clientRequests(new ClientRequests(this)) 
 {
-    ui.setupUi(this);  
+    ui.setupUi(this);
 
     connect(ui.loginButton, &QPushButton::clicked, this, &LoginPage::onLoginClicked);
     connect(ui.registerButton, &QPushButton::clicked, this, &LoginPage::onRegisterClicked);
@@ -59,14 +60,8 @@ void LoginPage::onRequestCompleted(const QString& data) {
             ClientState::instance().SetPlayerScore(playerScore);
             ClientState::instance().SetPlayerPoints(playerPoints);
 
-            MainPage* mainPage = new MainPage();
-            mainPage->displayPlayerInfo(QString("Name: %1\nScore: %2\nPoints: %3")
-                .arg(playerName)
-                .arg(playerScore)
-                .arg(playerPoints));  
-
-            mainPage->show();
-            close();
+            emit loginSuccessful(playerName, playerScore, playerPoints);
+         
         }
     }
 }

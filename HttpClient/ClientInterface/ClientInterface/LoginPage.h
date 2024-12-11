@@ -6,6 +6,7 @@
 #include "MainPage.h"
 #include "ui_LoginPage.h"
 
+#include <QDebug>
 #include <QWidget>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -23,6 +24,8 @@ private slots:
     void onRegisterClicked();
     void onRequestCompleted(const QString& data);
     void onRequestFailed(const QString& error);
+signals:
+    void loginSuccessful(const QString& playerName, int playerScore, int playerPoints);
 
 private:
     Ui::LoginPage ui;  
