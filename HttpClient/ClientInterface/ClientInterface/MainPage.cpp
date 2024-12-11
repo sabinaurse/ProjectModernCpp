@@ -2,8 +2,14 @@
 
 MainPage::MainPage(QWidget* parent)
     : QWidget(parent), playerInfoLabel(new QLabel(this)) {
-    QVBoxLayout* layout = new QVBoxLayout(this);
-    layout->addWidget(playerInfoLabel);
+
+    setMinimumSize(400, 300); 
+
+    QGridLayout* layout = new QGridLayout(this);
+
+    layout->setContentsMargins(0, 0, 0, 0); 
+    layout->addWidget(playerInfoLabel, 0, 1, Qt::AlignTop | Qt::AlignRight);
+
     setLayout(layout);
 }
 

@@ -5,7 +5,7 @@
 #include <QLabel>
 #include "ClientState.h"
 #include "ClientRequests.h"
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QKeyEvent>
 
 

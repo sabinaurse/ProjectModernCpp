@@ -7,6 +7,8 @@ LoginPage::LoginPage(QWidget* parent)
 {
     ui.setupUi(this);
 
+    setMinimumSize(400, 300);
+
     connect(ui.loginButton, &QPushButton::clicked, this, &LoginPage::onLoginClicked);
     connect(ui.registerButton, &QPushButton::clicked, this, &LoginPage::onRegisterClicked);
 

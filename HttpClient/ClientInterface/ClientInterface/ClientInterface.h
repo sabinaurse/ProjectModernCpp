@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_ClientInterface.h"
+#include <QVBoxLayout>
 #include "LoginPage.h"
 #include "MainPage.h"
 
@@ -17,6 +18,8 @@ private slots:
 
 private:
     Ui::ClientInterfaceClass ui;
+    QWidget* centralWidget;
+    QVBoxLayout* mainLayout;
     LoginPage* loginPage;
     MainPage* mainPage;
 
