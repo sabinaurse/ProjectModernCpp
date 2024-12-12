@@ -2,9 +2,10 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_ClientInterface.h"
-#include <QVBoxLayout>
+#include <QStackedWidget>
 #include "LoginPage.h"
 #include "MainPage.h"
+#include "GamePage.h"
 
 class ClientInterface : public QMainWindow
 {
@@ -15,12 +16,15 @@ public:
     ~ClientInterface();
 private slots:
     void onLoginSuccessful(const QString& playerName, int playerScore, int playerPoints);
+    void onGameStartRequested();
 
 private:
     Ui::ClientInterfaceClass ui;
     QWidget* centralWidget;
-    QVBoxLayout* mainLayout;
+    QStackedWidget* stackedWidget;
+
     LoginPage* loginPage;
     MainPage* mainPage;
+    GamePage* gamePage;
 
 };

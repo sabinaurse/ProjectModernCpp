@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GamePage.cpp" />
     <ClCompile Include="MainPage.cpp" />
     <QtRcc Include="ClientInterface.qrc" />
     <QtMoc Include="ClientInterface.h" />
@@ -105,6 +106,7 @@
     <QtUic Include="MainPage.ui" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GamePage.h" />
     <QtMoc Include="MainPage.h" />
     <QtMoc Include="LoginPage.h" />
     <QtMoc Include="ClientRequests.h" />
