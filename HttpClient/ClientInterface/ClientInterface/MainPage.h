@@ -5,7 +5,10 @@
 #include <QLabel>
 #include "ClientState.h"
 #include "ClientRequests.h"
-#include <QGridLayout>
+#include "GamePage.h"
+#include "ui_MainPage.h"
+#include <QMessageBox>
+#include <QBoxLayout>
 #include <QKeyEvent>
 
 
@@ -19,7 +22,16 @@ public:
     void displayPlayerInfo(const QString& playerInfo);
     void keyPressEvent(QKeyEvent* event);
 
+signals:
+    void startGameRequested();
+
+private slots:
+    void onStartGameClicked();
+    void onRequestCompleted(const QString& response);
+    void onRequestFailed(const QString& error);
+
 private:
+    Ui::MainPage ui;
     QLabel* playerInfoLabel;  
     ClientRequests* clientRequests;
 };

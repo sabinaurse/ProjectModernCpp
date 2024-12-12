@@ -42,6 +42,19 @@ void ClientRequests::UpdatePlayer(const QString& name, int newScore, int newPoin
     networkManager->post(request, jsonDataBytes);
 }
 
+void ClientRequests::AddPlayerToGame(const QString& playerName)
+{
+    QUrl url("http://localhost:18080/addPlayerToGame");
+
+    QJsonObject json;
+    json["name"] = playerName;
+
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    networkManager->post(request, QJsonDocument(json).toJson());
+}
+
 void ClientRequests::GetMap() {
     QUrl url("http://localhost:18080/getMap");
     QNetworkRequest request(url);

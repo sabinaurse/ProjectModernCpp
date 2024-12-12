@@ -12,7 +12,6 @@ void Routing::Run(int port)
 	CROW_ROUTE(m_app, "/addPlayer/<string>")([this](const std::string& name) {
 		try {
 			Player* newPlayer = new Player(name);
-			m_game.AddPlayer(newPlayer); // <- adaugarea in baza de date si adaugarea in joc a player-ului ar trebui sa fie in aceasi ruta ?
 
 			game_database::GamePlayer playerRecord{ -1, name, 0, 0 };
 			m_db.AddPlayer(playerRecord);
@@ -93,6 +92,31 @@ void Routing::Run(int port)
 			return crow::response(400, "Error: " + std::string(e.what()));
 		}
 			});
+
+	CROW_ROUTE(m_app, "/addPlayerToGame").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object.");
+			}
+
+			std::string playerName = body["name"].s();
+
+			if (m_game.GetPlayerByName(playerName) != nullptr) {
+				return crow::response(400, "Player already in the game.");
+			}
+
+			Player* player = new Player(m_db.GetPlayerByName(playerName));
+			m_game.AddPlayer(player);
+
+			return crow::response(200, "Player added to the game successfully: " + playerName);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error adding player to game: " + std::string(e.what()));
+		}
+			});
+
 
 	CROW_ROUTE(m_app, "/getMap")([this]() {
 		try {

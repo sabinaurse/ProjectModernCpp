@@ -7,7 +7,22 @@ LoginPage::LoginPage(QWidget* parent)
 {
     ui.setupUi(this);
 
-    setMinimumSize(400, 300);
+    ui.loginInput->setFixedSize(160, 30);
+    ui.registerButton->setFixedSize(160, 30);  
+    ui.loginButton->setFixedSize(160, 30);
+
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->addStretch();
+    layout->addWidget(ui.loginInput);
+    layout->addWidget(ui.loginButton);
+    layout->addWidget(ui.registerButton);
+    layout->addStretch();
+
+    QHBoxLayout* centralLayout = new QHBoxLayout(this);
+    centralLayout->addStretch();  
+    centralLayout->addLayout(layout);  
+    centralLayout->addStretch();  
+
 
     connect(ui.loginButton, &QPushButton::clicked, this, &LoginPage::onLoginClicked);
     connect(ui.registerButton, &QPushButton::clicked, this, &LoginPage::onRegisterClicked);

@@ -16,6 +16,7 @@ public:
     void GetPlayer(const QString& name);
     void DeletePlayer(const QString& name);
     void UpdatePlayer(const QString& name, int newScore, int newPoints);
+    void AddPlayerToGame(const QString& playerName);
     void GetMap();
     void StartGame();
     void ResetGame();
