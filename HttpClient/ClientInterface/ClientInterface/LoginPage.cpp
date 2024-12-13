@@ -2,8 +2,8 @@
 #include <QMessageBox>
 #include <iostream>
 
-LoginPage::LoginPage(QWidget* parent)
-    : QWidget(parent), clientRequests(new ClientRequests(this)) 
+LoginPage::LoginPage(ClientRequests* requests, QWidget* parent)
+    : QWidget(parent), m_clientRequests(requests)
 {
     ui.setupUi(this);
 
@@ -27,12 +27,12 @@ LoginPage::LoginPage(QWidget* parent)
     connect(ui.loginButton, &QPushButton::clicked, this, &LoginPage::onLoginClicked);
     connect(ui.registerButton, &QPushButton::clicked, this, &LoginPage::onRegisterClicked);
 
-    connect(clientRequests, &ClientRequests::requestCompleted, this, &LoginPage::onRequestCompleted);
-    connect(clientRequests, &ClientRequests::requestFailed, this, &LoginPage::onRequestFailed);
+    connect(m_clientRequests, &ClientRequests::requestCompleted, this, &LoginPage::onRequestCompleted);
+    connect(m_clientRequests, &ClientRequests::requestFailed, this, &LoginPage::onRequestFailed);
 }
 
 LoginPage::~LoginPage() {
-    delete clientRequests;  
+    delete m_clientRequests;  
 }
 
 void LoginPage::onLoginClicked() 
@@ -44,7 +44,7 @@ void LoginPage::onLoginClicked()
         return;
     }
 
-    clientRequests->GetPlayer(playerName);
+    m_clientRequests->GetPlayer(playerName);
 }
 
 void LoginPage::onRegisterClicked() 
@@ -56,7 +56,7 @@ void LoginPage::onRegisterClicked()
         return;
     }
 
-    clientRequests->CreatePlayer(playerName);  
+    m_clientRequests->CreatePlayer(playerName);  
 }
 
 void LoginPage::onRequestCompleted(const QString& data) {

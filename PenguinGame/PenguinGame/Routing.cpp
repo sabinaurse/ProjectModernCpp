@@ -116,6 +116,25 @@ void Routing::Run(int port)
 			return crow::response(500, "Error adding player to game: " + std::string(e.what()));
 		}
 			});
+		
+	CROW_ROUTE(m_app, "/getGameState").methods("GET"_method)([this]() {
+		try {
+			crow::json::wvalue gameState;
+
+			const auto& penguins = m_game.GetPenguins();
+			for (size_t i = 0; i < penguins.size(); ++i) {
+				auto* penguin = penguins[i];
+				gameState["players"][i]["name"] = penguin->GetPlayer()->GetName(); 
+				gameState["players"][i]["x"] = penguin->GetPosition().first;      
+				gameState["players"][i]["y"] = penguin->GetPosition().second;     
+			}
+
+			return crow::response(200, gameState);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error retrieving game state: " + std::string(e.what()));
+		}
+		});
 
 
 	CROW_ROUTE(m_app, "/getMap")([this]() {
@@ -206,6 +225,9 @@ void Routing::Run(int port)
 			}
 
 			penguin->Move(directionChar, m_game.GetBoard());
+			crow::json::wvalue response;
+			response["x"] = penguin->GetPosition().first;
+			response["y"] = penguin->GetPosition().second;
 			return crow::response(200, "Player moved successfully");
 
 		}

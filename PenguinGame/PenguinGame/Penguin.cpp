@@ -25,7 +25,7 @@ void Penguin::Move(char direction, const GameBoard& board) {
 	Position newPosition = { m_position.first + delta.first, m_position.second + delta.second };
 
 	// Verificăm dacă poziția este validă și liberă.
-	if (board.IsWithinBounds(newPosition.first, newPosition.second) &&
+	/*if (board.IsWithinBounds(newPosition.first, newPosition.second) &&
 		board.GetCell(newPosition.first, newPosition.second) == Cell::Empty) {
 		m_position = newPosition; // Actualizăm poziția.
 		m_currentDirection = direction; // Actualizăm direcția curentă.
@@ -34,7 +34,7 @@ void Penguin::Move(char direction, const GameBoard& board) {
 	}
 	else {
 		std::cout << "Move blocked!" << std::endl;
-	}
+	}*/
 }
 
 void Penguin::Fire() {

@@ -16,7 +16,7 @@ class LoginPage : public QWidget {
     Q_OBJECT
 
 public:
-    explicit LoginPage(QWidget* parent = nullptr);
+    explicit LoginPage(ClientRequests* requests, QWidget* parent = nullptr);
     ~LoginPage();
 
 private slots:
@@ -29,7 +29,7 @@ signals:
 
 private:
     Ui::LoginPage ui;  
-    ClientRequests* clientRequests;
+    ClientRequests* m_clientRequests;
 };
 
 #endif

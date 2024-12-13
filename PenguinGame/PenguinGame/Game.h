@@ -26,6 +26,7 @@ public:
 
 	Player* GetWinner();
 	Penguin* GetPenguinForPlayer(const Player& player);
+	const std::vector<Penguin*>& GetPenguins() const {return m_penguins;}
 	std::vector<Player*>& GetPlayers() { return m_players; }
 	Player* GetPlayerByName(const std::string& playerName);
 private:

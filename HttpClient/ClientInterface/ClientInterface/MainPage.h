@@ -16,7 +16,7 @@ class MainPage : public QWidget {
     Q_OBJECT
 
 public:
-    explicit MainPage(QWidget* parent = nullptr);
+    explicit MainPage(ClientRequests* clientRequests, QWidget* parent = nullptr);
     ~MainPage();
 
     void displayPlayerInfo(const QString& playerInfo);
@@ -32,8 +32,8 @@ private slots:
 
 private:
     Ui::MainPage ui;
-    QLabel* playerInfoLabel;  
-    ClientRequests* clientRequests;
+    QLabel* m_playerInfoLabel;  
+    ClientRequests* m_clientRequests;
 };
 
 #endif 
