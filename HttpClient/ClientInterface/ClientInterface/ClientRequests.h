@@ -4,7 +4,9 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QJsonArray>
 #include <QJsonObject>
+#include <ClientState.h>
 
 class ClientRequests : public QObject {
     Q_OBJECT
@@ -16,6 +18,7 @@ public:
     void GetPlayer(const QString& name);
     void DeletePlayer(const QString& name);
     void UpdatePlayer(const QString& name, int newScore, int newPoints);
+    void GetGameState();
     void AddPlayerToGame(const QString& playerName);
     void GetMap();
     void StartGame();
@@ -25,6 +28,7 @@ public:
     void Fire(const QString& playerName);
 
 signals:
+    void gameStateUpdated();
     void requestCompleted(const QString& response);
     void requestFailed(const QString& error);
 private slots:

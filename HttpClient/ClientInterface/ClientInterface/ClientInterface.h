@@ -3,6 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_ClientInterface.h"
 #include <QStackedWidget>
+#include <ClientRequests.h>
 #include "LoginPage.h"
 #include "MainPage.h"
 #include "GamePage.h"
@@ -17,12 +18,12 @@ public:
 private slots:
     void onLoginSuccessful(const QString& playerName, int playerScore, int playerPoints);
     void onGameStartRequested();
-
 private:
     Ui::ClientInterfaceClass ui;
     QWidget* centralWidget;
     QStackedWidget* stackedWidget;
 
+    ClientRequests* m_clientRequests;
     LoginPage* loginPage;
     MainPage* mainPage;
     GamePage* gamePage;

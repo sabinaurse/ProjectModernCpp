@@ -52,12 +52,12 @@
     <ClCompile Include="GamePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Penguin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GamePage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -69,6 +69,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="MainPage.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Penguin.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="GamePage.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

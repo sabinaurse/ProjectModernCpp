@@ -2,9 +2,10 @@
 
 ClientInterface::ClientInterface(QWidget *parent)
     : QMainWindow(parent),
-    loginPage(new LoginPage(this)),
-    mainPage(new MainPage(this)),
-    gamePage(new GamePage(this)),
+    m_clientRequests(new ClientRequests(this)),
+    loginPage(new LoginPage(m_clientRequests, this)),
+    mainPage(new MainPage(m_clientRequests, this)),
+    gamePage(new GamePage(m_clientRequests, this)),
     stackedWidget(new QStackedWidget(this))
 {
     resize(800, 600); 

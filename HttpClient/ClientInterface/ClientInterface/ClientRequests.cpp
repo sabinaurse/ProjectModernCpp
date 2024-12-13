@@ -1,7 +1,9 @@
-#include "ClientRequests.h"
+﻿#include "ClientRequests.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QUrlQuery>
+
+#include<iostream>
 
 ClientRequests::ClientRequests(QObject* parent) : QObject(parent) {
     networkManager = new QNetworkAccessManager(this);
@@ -40,6 +42,12 @@ void ClientRequests::UpdatePlayer(const QString& name, int newScore, int newPoin
     QByteArray jsonDataBytes = jsonDoc.toJson();
 
     networkManager->post(request, jsonDataBytes);
+}
+
+void ClientRequests::GetGameState() {
+    QUrl url("http://localhost:18080/getGameState");
+    QNetworkRequest request(url);
+    networkManager->get(request);
 }
 
 void ClientRequests::AddPlayerToGame(const QString& playerName)
@@ -81,11 +89,33 @@ void ClientRequests::GetLeaderboard() {
 
 void ClientRequests::onReplyFinished(QNetworkReply* reply) {
     if (reply->error() == QNetworkReply::NoError) {
-        emit requestCompleted(reply->readAll());
+        QString data = reply->readAll();
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
+
+        if (jsonDoc.isObject()) {
+            QJsonObject jsonObj = jsonDoc.object();
+
+            if (jsonObj.contains("players")) {
+                QJsonArray playersArray = jsonObj["players"].toArray();
+
+                for (const auto& playerValue : playersArray) {
+                    QJsonObject playerObj = playerValue.toObject();
+                    QString name = playerObj["name"].toString();
+                    int x = playerObj["x"].toInt();
+                    int y = playerObj["y"].toInt();
+
+                    ClientState::instance().UpdatePlayerPosition(name, x, y);
+                }
+
+                emit gameStateUpdated(); 
+            }
+        }
+        emit requestCompleted(data);
     }
     else {
         emit requestFailed(reply->errorString());
     }
+
     reply->deleteLater();
 }
 
