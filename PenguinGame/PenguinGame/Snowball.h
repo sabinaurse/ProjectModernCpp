@@ -10,8 +10,7 @@ public:
     Snowball(const std::pair<int, int>& startPosition, const std::string& launchDirection, float launchSpeed = 0.25f);
     ~Snowball() = default;
 
-    void UpdatePosition(GameBoard& gameBoard, const std::vector<Snowball>& activeSnowballs);
-    bool CheckCollision(GameBoard& gameBoard, const std::vector<Snowball>& activeSnowballs);
+    void UpdatePosition(GameBoard& gameBoard);
     bool IsActive() const { return m_active; }
     void Deactivate() { m_active = false; }
     std::pair<int, int> GetPosition() const { return m_position; }

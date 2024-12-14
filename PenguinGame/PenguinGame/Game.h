@@ -18,7 +18,6 @@ public:
 	void RestartGame();
 	void CheckForCollisions();
 	void ShowLeaderboard();
-
 	GameBoard GetBoard() const;
 
 	void AddPenguin(Player* player);
@@ -33,7 +32,11 @@ public:
 
 	// Gestionarea upgrade-urilor
 	void UpgradePlayer(const std::string& playerName, const std::string& upgradeType);
-
+private:
+	void CheckPenguinCollisions();
+	void CheckObstacleCollisions();
+	void CheckSnowballCollisions();
+	void CheckPenguinToPenguinCollisions();
 private:
 	GameBoard m_gameBoard;
 	PlayerList m_players;

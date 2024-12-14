@@ -4,7 +4,7 @@ Snowball::Snowball(const std::pair<int, int>& startPosition, const std::string& 
     : m_position{ startPosition }, m_direction{ launchDirection }, m_speed{ launchSpeed },
     m_active{ true }, m_lastUpdate{ std::chrono::steady_clock::now() } {}
 
-void Snowball::UpdatePosition(GameBoard& gameBoard,const  std::vector<Snowball>& activeSnowballs)
+void Snowball::UpdatePosition(GameBoard& gameBoard)
 {
     // verificam daca a trecut suficient timp pentru a misca glontul
     auto currentTime = std::chrono::steady_clock::now();
@@ -14,53 +14,8 @@ void Snowball::UpdatePosition(GameBoard& gameBoard,const  std::vector<Snowball>&
     {
         m_position = GetNextPosition();
         m_lastUpdate = currentTime;
-
-        if (CheckCollision(gameBoard, activeSnowballs))
-            Deactivate();
     }
 }
-
-bool Snowball::CheckCollision(GameBoard& gameBoard, const std::vector<Snowball>& activeSnowballs) {
-    int x = std::get<0>(m_position);
-    int y = std::get<1>(m_position);
-
-    if (gameBoard.IsWithinBounds(x, y)) {
-        Cell cell = gameBoard.GetCell(x, y);
-
-        switch (cell) {
-        case Cell::Destructible_Wall:
-            gameBoard.DestroyCell(x, y);
-            return true;
-
-        case Cell::Hidden_Bomb:
-            gameBoard.TriggerExplosion(x, y);
-            return true;
-
-        case Cell::Indestructible_Wall:
-            return true;
-
-        case Cell::Empty:
-        default:
-            break;
-        }
-    }
-
-    // verificam coliziunea cu alti snowballs
-    // eventual mutata in game??
-    for (const auto& other : activeSnowballs) {
-        if (this != &other && other.IsActive() && m_position == other.GetPosition()) {
-            Deactivate();
-            const_cast<Snowball&>(other).Deactivate();
-            std::cout << "Two snowballs collided and were deactivated" << std::endl; // debugging
-            return true;
-        }
-    }
-    //coliziunea cu un pinguin
-
-    return false; // nicio coliziune
-}
-
-
 
 std::pair<int, int> Snowball::GetNextPosition() const
 {

@@ -135,52 +135,6 @@ void Penguin::ResetState()
 	std::cout << "Penguin reset to initial position (" << m_initialPosition.first << ", " << m_initialPosition.second << ")." << std::endl;
 }
 
-bool Penguin::CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const std::vector<Snowball>& snowballs) 
-{
-
-	// Verificam coliziunile cu bulgarii de zapada
-	for (const auto& snowball : snowballs) {
-		if (snowball.IsActive()) {
-			auto snowballPosition = snowball.GetPosition();
-			int distanceX = GetPosition().first - snowballPosition.first;
-			int distanceY = GetPosition().second - snowballPosition.second;
-			float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
-
-			if (distance < RADIUS_OF_COLLISION) {
-				std::cout << "Snowball collision detected." << std::endl;
-				return true;
-			}
-		}
-	}
-
-	// Verificam coliziunile cu elementele de pe harta
-	auto myPosition = GetPosition();
-	int px = myPosition.first;
-	int py = myPosition.second;
-
-	if (gameBoard.IsWithinBounds(px, py)) {
-		Cell cell = gameBoard.GetCell(px, py);
-
-		switch (cell) {
-		case Cell::Destructible_Wall:
-			std::cout << "Collision with destructible wall at (" << px << ", " << py << ")." << std::endl;
-			return true;
-		case Cell::Hidden_Bomb: {
-			std::vector<Penguin*> affectedPenguins = { this };
-			gameBoard.TriggerExplosion(px, py, affectedPenguins);
-			return true;
-		}
-		case Cell::Indestructible_Wall:
-			std::cout << "Collision with indestructible wall at (" << px << ", " << py << ")." << std::endl;
-			return true;
-		default:
-			break;
-		}
-	}
-
-	return false; // Nicio coliziune detectata
-}
-
 float Penguin::GetBulletSpeed() const {
 	return m_bulletSpeed;
 }

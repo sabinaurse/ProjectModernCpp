@@ -18,8 +18,6 @@ public:
 	void Fire();
 	void UpgradeBulletSpeed(); // Metodă pentru dublarea vitezei gloanțelor
 	void UpgradeFireRate();
-
-	bool CollidesWith(Penguin* otherPenguin, GameBoard& gameBoard, const std::vector<Snowball>& snowballs);
 	void EliminateEnemy();
 
 	void TakeDamage();

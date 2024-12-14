@@ -161,14 +161,22 @@ Penguin* Game::GetPenguinForPlayer(const Player& player)
     return nullptr;
 }
 
-
 void Game::CheckForCollisions() {
-    // 1. Coliziuni intre gloante si pinguini
+    CheckPenguinCollisions();
+    CheckObstacleCollisions();
+    CheckSnowballCollisions();
+    CheckPenguinToPenguinCollisions();
+
+    for (auto* penguin : m_penguins) {
+        penguin->RemoveInactiveSnowballs();
+    }
+}
+
+void Game::CheckPenguinCollisions() {
     for (auto* shooterPenguin : m_penguins) {
         for (auto& snowball : shooterPenguin->GetSnowballs()) {
             if (!snowball.IsActive()) continue;
 
-            // Verificam daca loveste alt pinguin
             for (auto* targetPenguin : m_penguins) {
                 if (targetPenguin == shooterPenguin || !targetPenguin->IsAlive()) continue;
 
@@ -183,13 +191,15 @@ void Game::CheckForCollisions() {
             }
         }
     }
+}
 
-    // 2. Coliziuni intre gloante ai obstacole
+
+void Game::CheckObstacleCollisions() {
     for (const auto& penguin : m_penguins) {
         for (auto& snowball : penguin->GetSnowballs()) {
             if (!snowball.IsActive()) continue;
 
-            Position pos{ snowball.GetPosition() };
+            auto pos = snowball.GetPosition();
             if (!m_gameBoard.IsWithinBounds(pos.first, pos.second)) {
                 snowball.Deactivate();
                 continue;
@@ -213,8 +223,9 @@ void Game::CheckForCollisions() {
             }
         }
     }
+}
 
-    // 3. Coliziuni intre gloante (de la pinguini diferiti)
+void Game::CheckSnowballCollisions() {
     for (size_t i = 0; i < m_penguins.size(); ++i) {
         auto* penguin1 = m_penguins[i];
         for (auto& snowball1 : penguin1->GetSnowballs()) {
@@ -234,12 +245,28 @@ void Game::CheckForCollisions() {
             }
         }
     }
+}
 
-    // 4. Eliminam gloantele inactive din fiecare pinguin
-    for (auto* penguin : m_penguins) {
-        penguin->RemoveInactiveSnowballs();
+void Game::CheckPenguinToPenguinCollisions() {
+    for (size_t i = 0; i < m_penguins.size(); ++i) {
+        auto* penguin1 = m_penguins[i];
+
+        for (size_t j = i + 1; j < m_penguins.size(); ++j) {
+            auto* penguin2 = m_penguins[j];
+
+            // Verificăm dacă cei doi pinguini au aceeași poziție
+            if (penguin1->GetPosition() == penguin2->GetPosition()) {
+                // Acțiune: pentru acest caz, decidem să nu facem nimic, doar logăm
+                std::cout << "Penguin " << penguin1->GetPlayer()->GetName()
+                    << " and Penguin " << penguin2->GetPlayer()->GetName()
+                    << " are on the same position (" << penguin1->GetPosition().first
+                    << ", " << penguin1->GetPosition().second << ")." << std::endl;
+                // Pinguinii pot trece unul peste altul fără alte acțiuni.
+            }
+        }
     }
 }
+
 
 Player* Game::GetPlayerByName(const std::string& playerName)
 {
