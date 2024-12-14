@@ -11,7 +11,7 @@ void Routing::Run(int port)
 
 	CROW_ROUTE(m_app, "/addPlayer/<string>")([this](const std::string& name) {
 		try {
-			Player* newPlayer = new Player(name);
+			auto player = std::make_unique<Player>(name);
 
 			game_database::GamePlayer playerRecord{ -1, name, 0, 0 };
 			m_db.AddPlayer(playerRecord);
@@ -29,7 +29,7 @@ void Routing::Run(int port)
 	CROW_ROUTE(m_app, "/getPlayer/<string>")([this](const std::string& name) {
 		try {
 			game_database::GamePlayer dbPlayer = m_db.GetPlayerByName(name);
-			Player* player = new Player(dbPlayer);
+			auto player = std::make_unique<Player>(dbPlayer);
 
 			crow::json::wvalue response;
 			response["name"] = player->GetName();
@@ -37,8 +37,6 @@ void Routing::Run(int port)
 			response["score"] = player->GetScore();
 			response["bullet_speed_level"] = player->GetBulletSpeedLevel();
 			response["cooldown_level"] = player->GetCooldownLevel();
-
-			delete player;
 
 			return crow::response(response);
 
@@ -108,9 +106,8 @@ void Routing::Run(int port)
 			if (m_game.GetPlayerByName(playerName) != nullptr) {
 				return crow::response(400, "Player already in the game.");
 			}
-
-			Player* player = new Player(m_db.GetPlayerByName(playerName));
-			m_game.AddPlayer(player);
+			auto player = std::make_unique<Player>(m_db.GetPlayerByName(playerName));
+			m_game.AddPlayer(std::move(player));
 
 			return crow::response(200, "Player added to the game successfully: " + playerName);
 		}
@@ -125,10 +122,10 @@ void Routing::Run(int port)
 
 			const auto& penguins = m_game.GetPenguins();
 			for (size_t i = 0; i < penguins.size(); ++i) {
-				auto* penguin = penguins[i];
-				gameState["players"][i]["name"] = penguin->GetPlayer()->GetName(); 
-				gameState["players"][i]["x"] = penguin->GetPosition().first;      
-				gameState["players"][i]["y"] = penguin->GetPosition().second;     
+				const auto* penguin = penguins[i].get();
+				gameState["players"][i]["name"] = penguin->GetPlayer()->GetName();
+				gameState["players"][i]["x"] = penguin->GetPosition().first;
+				gameState["players"][i]["y"] = penguin->GetPosition().second;
 			}
 
 			return crow::response(200, gameState);
@@ -174,14 +171,15 @@ void Routing::Run(int port)
 			std::ostringstream leaderboard;
 			leaderboard << "Leaderboard:\n";
 
-			auto players = m_game.GetPlayers();
-			std::sort(players.begin(), players.end(), [](Player* a, Player* b) {
+			auto& players = m_game.GetPlayers();
+			std::sort(players.begin(), players.end(), [](const std::unique_ptr<Player>& a, const std::unique_ptr<Player>& b) {
 				return a->GetPoints() > b->GetPoints();
 				});
 
 			for (const auto& player : players) {
 				leaderboard << player->GetName() << " - " << player->GetPoints() << " points\n";
 			}
+
 
 			return crow::response(200, leaderboard.str());
 		}
@@ -383,9 +381,9 @@ void Routing::Run(int port)
 		([this]() {
 		try {
 			const auto& penguins = m_game.GetPenguins();
-			for (auto* penguin : penguins) {
+			for (const auto& penguin : penguins) {
 				if (penguin) {
-					penguin->ResetState();  // Resetează viețile și pozițiile jucătorilor.
+					penguin->ResetState(); // Resetează viețile și pozițiile jucătorilor.
 				}
 			}
 

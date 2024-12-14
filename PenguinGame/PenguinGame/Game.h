@@ -2,13 +2,14 @@
 #include <vector>
 #include <algorithm>
 #include <cstdint>
+#include <memory>
 #include "Penguin.h"
 #include "Player.h"
 #include "GameBoard.h"
 
 using Position = std::pair<std::uint32_t, std::uint32_t>; // maybe uint32_t??
-using PlayerList = std::vector<Player*>; 
-using PenguinList = std::vector<Penguin*>; 
+using PlayerList = std::vector<std::unique_ptr<Player>>;
+using PenguinList = std::vector<std::unique_ptr<Penguin>>;
 
 class Game
 {
@@ -20,17 +21,15 @@ public:
 	void ShowLeaderboard();
 	GameBoard GetBoard() const;
 
-	void AddPenguin(Player* player);
-	void AddPlayer(Player* player);
+	void AddPenguin(std::unique_ptr<Penguin> penguin);
+	void AddPlayer(std::unique_ptr<Player> player);
 	void InitializePlayers();
 
 	Player* GetWinner();
 	Penguin* GetPenguinForPlayer(const Player& player);
-	const std::vector<Penguin*>& GetPenguins() const {return m_penguins;}
-	std::vector<Player*>& GetPlayers() { return m_players; }
+	const std::vector<std::unique_ptr<Penguin>>& GetPenguins() const { return m_penguins; }
+	std::vector<std::unique_ptr<Player>>& GetPlayers() { return m_players; }
 	Player* GetPlayerByName(const std::string& playerName);
-
-	// Gestionarea upgrade-urilor
 	void UpgradePlayer(const std::string& playerName, const std::string& upgradeType);
 private:
 	void CheckPenguinCollisions();

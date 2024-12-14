@@ -17,14 +17,14 @@ void Game::EndGame()
     std::cout << "Game Over!" << std::endl;
 
     Player* winner = GetWinner();
-    if (winner != nullptr) 
+    if (winner != nullptr)
     {
         winner->AddPoints(200);
         winner->AddScores(2);
 
         std::cout << winner->GetName() << " wins with " << winner->GetPoints() << " points!" << std::endl;
     }
-    else 
+    else
     {
         std::cout << "No winner found!" << std::endl;
     }
@@ -33,16 +33,16 @@ void Game::EndGame()
     Penguin* secondPlacePenguin = nullptr;
     int lastEliminationOrder = -1;
 
-    for (auto* penguin : m_penguins) {
+    for (const auto& penguin : m_penguins) {
         if (!penguin->IsAlive() && penguin->GetEliminationOrder() > lastEliminationOrder) {
-            secondPlacePenguin = penguin;
+            secondPlacePenguin = penguin.get();
             lastEliminationOrder = penguin->GetEliminationOrder();
         }
     }
 
     if (secondPlacePenguin != nullptr) {
         Player* secondPlacePlayer = secondPlacePenguin->GetPlayer();
-        secondPlacePlayer->AddScores(1); // Locul 2 primește 1 punct
+        secondPlacePlayer->AddScores(1);
         std::cout << secondPlacePlayer->GetName() << " finishes second!" << std::endl;
     }
 }
@@ -51,7 +51,7 @@ void Game::EndGame()
 void Game::RestartGame() {
     m_isGameOver = false;
 
-    for (auto* penguin : m_penguins) {
+    for (const auto& penguin : m_penguins) {
         penguin->ResetState();
     }
 
@@ -64,27 +64,24 @@ void Game::RestartGame() {
 void Game::ShowLeaderboard()
 {
     std::cout << "Leaderboard:" << std::endl;
-    auto comparePlayers = [](const auto& a, const auto& b) {
-        return a->GetPoints() > b->GetPoints();
-        };
-    std::sort(m_players.begin(), m_players.end(), comparePlayers);
+    std::sort(m_players.begin(), m_players.end(),
+        [](const auto& a, const auto& b) { return a->GetPoints() > b->GetPoints(); });
 
-    for (auto& player : m_players) {
+    for (const auto& player : m_players) {
         std::cout << player->GetName() << " - " << player->GetPoints() << " points" << std::endl;
     }
 }
 
-GameBoard Game::GetBoard() const{
-    return m_gameBoard; 
+GameBoard Game::GetBoard() const {
+    return m_gameBoard;
 }
 
-void Game::AddPlayer(Player* player)
-{
+void Game::AddPlayer(std::unique_ptr<Player> player) {
     if (std::any_of(m_players.begin(), m_players.end(),
-        [player](const auto& existingPlayer) { return existingPlayer->GetName() == player->GetName(); })) {
+        [&player](const auto& existingPlayer) { return existingPlayer->GetName() == player->GetName(); })) {
         throw std::runtime_error("Player with the same name already exists in the game!");
     }
-    m_players.push_back(player);
+    m_players.push_back(std::move(player));
 }
 
 
@@ -111,73 +108,61 @@ void Game::InitializePlayers() {
         //auto position = startingPositions[i];
         Position position{ startingPositions[i] };
 
-        Penguin* newPenguin = new Penguin{ player, position, 500 };
-        m_penguins.push_back(newPenguin);
-
+        m_penguins.push_back(std::make_unique<Penguin>(player.get(), position, 500));
         std::cout << "Player " << player->GetName() << " placed at (" << position.first << ", " << position.second << ")." << std::endl;
     }
 }
 
-
-void Game::AddPenguin(Player* player)
-{
-    Penguin* newPenguin = new Penguin(player, { 0, 0 }, 3);
-    m_penguins.push_back(newPenguin);
+void Game::AddPenguin(std::unique_ptr<Penguin> penguin) {
+    m_penguins.push_back(std::move(penguin));
 }
 
-
-Player* Game::GetWinner()
-{
+Player* Game::GetWinner() {
     Penguin* winnerPenguin = nullptr;
 
-    for (auto* penguin : m_penguins) {
+    for (const auto& penguin : m_penguins) {
         if (penguin->IsAlive()) {
-            if (winnerPenguin == nullptr)
-            {
-                winnerPenguin = penguin;
+            if (winnerPenguin == nullptr) {
+                winnerPenguin = penguin.get();
             }
-            else 
-            {
-                return nullptr; // Nu exista un singur castigator
+            else {
+                return nullptr;
             }
         }
     }
 
-    if (winnerPenguin != nullptr) {
-        return winnerPenguin->GetPlayer();
-    }
-
-    return nullptr;
+    return winnerPenguin ? winnerPenguin->GetPlayer() : nullptr;
 }
 
 
 Penguin* Game::GetPenguinForPlayer(const Player& player)
 {
-    for (auto* penguin : m_penguins) {
+    for (const auto& penguin : m_penguins) {
         if (penguin->GetPlayer() == &player) {
-            return penguin;
+            return penguin.get();
         }
     }
     return nullptr;
 }
 
-void Game::CheckForCollisions() {
+void Game::CheckForCollisions()
+{
     CheckPenguinCollisions();
     CheckObstacleCollisions();
     CheckSnowballCollisions();
     CheckPenguinToPenguinCollisions();
 
-    for (auto* penguin : m_penguins) {
+    for (const auto& penguin : m_penguins) {
         penguin->RemoveInactiveSnowballs();
     }
 }
 
 void Game::CheckPenguinCollisions() {
-    for (auto* shooterPenguin : m_penguins) {
+    for (const auto& shooterPenguin : m_penguins) {
         for (auto& snowball : shooterPenguin->GetSnowballs()) {
             if (!snowball.IsActive()) continue;
 
-            for (auto* targetPenguin : m_penguins) {
+            for (const auto& targetPenguin : m_penguins) {
                 if (targetPenguin == shooterPenguin || !targetPenguin->IsAlive()) continue;
 
                 if (targetPenguin->GetPosition() == snowball.GetPosition()) {
@@ -227,12 +212,12 @@ void Game::CheckObstacleCollisions() {
 
 void Game::CheckSnowballCollisions() {
     for (size_t i = 0; i < m_penguins.size(); ++i) {
-        auto* penguin1 = m_penguins[i];
+        auto* penguin1 = m_penguins[i].get();
         for (auto& snowball1 : penguin1->GetSnowballs()) {
             if (!snowball1.IsActive()) continue;
 
             for (size_t j = i + 1; j < m_penguins.size(); ++j) {
-                auto* penguin2 = m_penguins[j];
+                auto* penguin2 = m_penguins[j].get();
                 for (auto& snowball2 : penguin2->GetSnowballs()) {
                     if (!snowball2.IsActive()) continue;
 
@@ -249,33 +234,19 @@ void Game::CheckSnowballCollisions() {
 
 void Game::CheckPenguinToPenguinCollisions() {
     for (size_t i = 0; i < m_penguins.size(); ++i) {
-        auto* penguin1 = m_penguins[i];
+        auto* penguin1 = m_penguins[i].get();
 
         for (size_t j = i + 1; j < m_penguins.size(); ++j) {
-            auto* penguin2 = m_penguins[j];
+            auto* penguin2 = m_penguins[j].get();
 
-            // Verificăm dacă cei doi pinguini au aceeași poziție
             if (penguin1->GetPosition() == penguin2->GetPosition()) {
-                // Acțiune: pentru acest caz, decidem să nu facem nimic, doar logăm
                 std::cout << "Penguin " << penguin1->GetPlayer()->GetName()
                     << " and Penguin " << penguin2->GetPlayer()->GetName()
                     << " are on the same position (" << penguin1->GetPosition().first
                     << ", " << penguin1->GetPosition().second << ")." << std::endl;
-                // Pinguinii pot trece unul peste altul fără alte acțiuni.
             }
         }
     }
-}
-
-
-Player* Game::GetPlayerByName(const std::string& playerName)
-{
-    for (auto* player : m_players) {
-        if (player->GetName() == playerName) {
-            return player;
-        }
-    }
-    return nullptr; 
 }
 
 void Game::UpgradePlayer(const std::string& playerName, const std::string& upgradeType)
@@ -300,3 +271,14 @@ void Game::UpgradePlayer(const std::string& playerName, const std::string& upgra
         throw std::invalid_argument("Invalid upgrade type!");
     }
 }
+
+Player* Game::GetPlayerByName(const std::string& playerName)
+{
+    for (const auto& player : m_players) {
+        if (player->GetName() == playerName) {
+            return player.get();
+        }
+    }
+    return nullptr;
+}
+

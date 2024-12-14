@@ -285,6 +285,42 @@ void GameBoard::TriggerExplosion(uint32_t x, uint32_t y, std::vector<Penguin*>& 
 	}
 }
 
+void GameBoard::TriggerExplosion(uint32_t x, uint32_t y, std::vector<std::unique_ptr<Penguin>>& penguins)
+{
+	const int explosionRadius = 10;
+
+	for (uint32_t nx = 0; nx < m_rows; ++nx) {
+		for (uint32_t ny = 0; ny < m_cols; ++ny) {
+			uint32_t dx = nx > x ? nx - x : x - nx;
+			uint32_t dy = ny > y ? ny - y : y - ny;
+			double distance = std::sqrt(dx * dx + dy * dy);
+
+			if (distance <= explosionRadius) {
+				m_board[nx][ny] = Cell::Empty;
+			}
+		}
+	}
+
+	for (const auto& penguin : penguins) {
+		if (!penguin->IsAlive()) continue;
+
+		auto position = penguin->GetPosition();
+		uint32_t px = position.first;
+		uint32_t py = position.second;
+
+		uint32_t dx = px > x ? px - x : x - px;
+		uint32_t dy = py > y ? py - y : y - py;
+		double distance = std::sqrt(dx * dx + dy * dy);
+
+		if (distance <= explosionRadius) {
+			penguin->ResetState();
+			std::cout << "Penguin at position (" << px << ", " << py << ") was hit by the explosion!" << std::endl;
+		}
+	}
+}
+
+
+
 void GameBoard::TriggerExplosion(uint32_t x, uint32_t y) {
 	const int explosionRadius = 10;
 

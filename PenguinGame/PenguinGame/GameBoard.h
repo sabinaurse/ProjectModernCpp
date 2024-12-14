@@ -44,6 +44,9 @@ public:
 	void TriggerExplosion(uint32_t x, uint32_t y, std::vector<Penguin*>& penguins);
 	void TriggerExplosion(uint32_t x, uint32_t y);
 
+	//ca sa faci su tu Sabi cu unique_ptr
+	void TriggerExplosion(uint32_t x, uint32_t y, std::vector<std::unique_ptr<Penguin>>& penguins);
+
 	void CreatePathsBetweenCorners();
 	void CreatePath(Position start, Position end);
 	bool AreCornersConnected() const;
