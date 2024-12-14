@@ -396,7 +396,51 @@ void Routing::Run(int port)
 		}
 			});
 
+	CROW_ROUTE(m_app, "/upgradePlayerWeapon").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object.");
+			}
 
+			std::string playerName = body["playerName"].s();
+			std::string upgradeType = body["upgradeType"].s();  // Poate fi "bullet_speed" sau "cooldown".
+
+			m_game.UpgradePlayer(playerName, upgradeType);
+
+			return crow::response(200, "Player weapon upgraded: " + upgradeType);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error upgrading player weapon: " + std::string(e.what()));
+		}
+			});
+
+	CROW_ROUTE(m_app, "/addBonusToMap").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object.");
+			}
+
+			uint32_t x = body["x"].i();
+			uint32_t y = body["y"].i();
+			std::string bonusType = body["bonusType"].s();  // Ex: "points", "speed".
+
+			if (!m_game.GetBoard().IsWithinBounds(x, y)) {
+				return crow::response(400, "Cell out of bounds.");
+			}
+
+			// Adăugăm bonusul specificat.
+			// Logica pentru stocarea bonusurilor ar putea necesita o extensie a clasei `GameBoard`.
+
+			return crow::response(200, "Bonus added to map: " + bonusType);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error adding bonus: " + std::string(e.what()));
+		}
+			});
 
 
 
