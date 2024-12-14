@@ -18,6 +18,7 @@ public:
 	void RestartGame();
 	void CheckForCollisions();
 	void ShowLeaderboard();
+
 	GameBoard GetBoard() const;
 
 	void AddPenguin(Player* player);
@@ -29,6 +30,10 @@ public:
 	const std::vector<Penguin*>& GetPenguins() const {return m_penguins;}
 	std::vector<Player*>& GetPlayers() { return m_players; }
 	Player* GetPlayerByName(const std::string& playerName);
+
+	// Gestionarea upgrade-urilor
+	void UpgradePlayer(const std::string& playerName, const std::string& upgradeType);
+
 private:
 	GameBoard m_gameBoard;
 	PlayerList m_players;

@@ -3,9 +3,14 @@
 
 #define RADIUS_OF_COLLISION 15.0f
 
-Penguin::Penguin(Player* player,Position initialPosition, int fireRate) :
-	m_player{ player }, m_initialPosition{ initialPosition }, m_position{ initialPosition },
-	m_weapon{ fireRate } {}
+Penguin::Penguin(Player* player, Position initialPosition, int fireRate)
+	: m_player{ player }, m_initialPosition{ initialPosition }, m_position{ initialPosition },
+	m_weapon(player->GetBulletSpeedLevel(), player->GetCooldownLevel()) // Setăm direct nivelurile
+{
+	// Sincronizăm viteza glonțului cu nivelul jucătorului
+	m_bulletSpeed = m_weapon.GetBulletSpeed();
+}
+
 
 void Penguin::Move(char direction, const GameBoard& board) {
 	if (!m_isAlive) return; // Nu poate să se miște dacă e mort.
@@ -66,15 +71,19 @@ void Penguin::Fire() {
 }
 
 void Penguin::UpgradeBulletSpeed() {
-	if (!m_speedBoostApplied) {
-		m_bulletSpeed *= 2; // Dublăm viteza.
-		m_speedBoostApplied = true;
-		std::cout << "Bullet speed upgraded to " << m_bulletSpeed << " m/s." << std::endl;
+	int currentLevel = m_player->GetBulletSpeedLevel();
+	if (currentLevel < 3) { 
+		m_player->SetBulletSpeedLevel(currentLevel + 1);
+		m_weapon.SetBulletSpeedLevel(currentLevel + 1);
+		m_bulletSpeed = m_weapon.GetBulletSpeed();
+		std::cout << "Bullet speed upgraded to level " << currentLevel + 1
+			<< " with speed " << m_bulletSpeed << " m/s." << std::endl;
 	}
 	else {
-		std::cout << "Bullet speed upgrade already applied." << std::endl;
+		std::cout << "Bullet speed is already at the maximum level!" << std::endl;
 	}
 }
+
 
 void Penguin::CheckBulletSpeedUpgrade() {
 	if (m_player->GetScore() >= 10 && !m_speedBoostApplied) {
@@ -90,16 +99,16 @@ void Penguin::EliminateEnemy()
 	std::cout << "Player " << m_player->GetName() << " eliminated an enemy! Total points: " << m_player->GetPoints() << std::endl;
 }
 
-void Penguin::UpgradeFireRate() 
-{
-	if (m_player->GetPoints() >= 500 && m_weaponBoostCount < 4) {
-		m_player->AddPoints(-500); // Consumă puncte din contul jucătorului
-		m_weaponBoostCount++;
-		m_weapon.UpgradeFireRate();
-		std::cout << "Fire rate upgraded for " << m_player->GetName() << "!" << std::endl;
+void Penguin::UpgradeFireRate() {
+	int currentLevel = m_player->GetCooldownLevel();
+	if (currentLevel < 3) {
+		m_player->SetCooldownLevel(currentLevel + 1);
+		m_weapon.SetCooldownLevel(currentLevel + 1);
+		std::cout << "Cooldown upgraded to level " << currentLevel + 1
+			<< " with fire rate " << m_weapon.GetCooldown() << " ms." << std::endl;
 	}
 	else {
-		std::cout << "Not enough points or max upgrades reached for " << m_player->GetName() << "." << std::endl;
+		std::cout << "Cooldown is already at the maximum level!" << std::endl;
 	}
 }
 

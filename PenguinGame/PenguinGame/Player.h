@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 #include "GameDatabase.h"
 
@@ -17,9 +17,17 @@ public:
 	void SetScore(int score);
 	void SetName(const std::string &name);
 	~Player() = default;
+
+	int GetBulletSpeedLevel() const;
+	void SetBulletSpeedLevel(int level);
+
+	int GetCooldownLevel() const;
+	void SetCooldownLevel(int level);
 private:
 	std::string m_name;
 	int m_points{ 0 };
 	int m_score{ 0 };
+	int m_bulletSpeedLevel{ 0 };
+	int m_cooldownLevel{ 0 };
 };
 

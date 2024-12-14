@@ -251,3 +251,25 @@ Player* Game::GetPlayerByName(const std::string& playerName)
     return nullptr; 
 }
 
+void Game::UpgradePlayer(const std::string& playerName, const std::string& upgradeType)
+{
+    Player* player = GetPlayerByName(playerName);
+    if (!player) {
+        throw std::runtime_error("Player not found!");
+    }
+
+    Penguin* penguin = GetPenguinForPlayer(*player);
+    if (!penguin) {
+        throw std::runtime_error("Penguin not found for player!");
+    }
+
+    if (upgradeType == "bullet_speed") {
+        penguin->UpgradeBulletSpeed();
+    }
+    else if (upgradeType == "cooldown") {
+        penguin->UpgradeFireRate();
+    }
+    else {
+        throw std::invalid_argument("Invalid upgrade type!");
+    }
+}

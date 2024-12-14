@@ -1,18 +1,31 @@
-#pragma once
+﻿#pragma once
 #include "Snowball.h"
 #include <chrono> // introd in c++ 11, utila pt gestionare timp
 
 class Weapon
 {
 public:
-	Weapon(int fireRate);
+	Weapon(int bulletSpeedLevel, int cooldownLevel);
+
 	bool CanShoot() const;
 	void ResetTimeSinceLastShot();
-	void UpgradeFireRate(); // posibil unnecessary daca nu e nevoie de un upgrade special, putem pastra doar snowball speed upgraded
-	int GetFireRate() const { return m_fireRate; }
-	void SetFireRate(int fireRate);
+
+	void SetBulletSpeedLevel(int level);
+	void SetCooldownLevel(int level);
+
+	float GetBulletSpeed() const;
+	int GetCooldown() const;
+
 private:
-	int m_fireRate;
+
+	int m_bulletSpeedLevel{ 0 }; 
+	int m_cooldownLevel{ 0 };     
+	float m_bulletSpeed{ 0.25f }; 
+	int m_cooldown{ 4000 };       
 	std::chrono::steady_clock::time_point m_timeSinceLastShot;
+
+	void UpdateBulletSpeed();
+	void UpdateCooldown();
+	
 };
 

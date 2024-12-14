@@ -8,7 +8,9 @@ Player::Player(const std::string& name)
 Player::Player(const game_database::GamePlayer& dbPlayer)
     : m_name(dbPlayer.name),
     m_points(dbPlayer.points),
-    m_score(dbPlayer.score) {}
+    m_score(dbPlayer.score),
+    m_bulletSpeedLevel(dbPlayer.bullet_speed_level),
+    m_cooldownLevel(dbPlayer.cooldown_level) {}
 
 
 std::string Player::GetName() const
@@ -45,4 +47,20 @@ void Player::AddScores(int scores)
 void Player::SetScore(int score)
 {
     m_score = score;
+}
+
+int Player::GetBulletSpeedLevel() const {
+    return m_bulletSpeedLevel;
+}
+
+void Player::SetBulletSpeedLevel(int level) {
+    m_bulletSpeedLevel = level;
+}
+
+int Player::GetCooldownLevel() const {
+    return m_cooldownLevel;
+}
+
+void Player::SetCooldownLevel(int level) {
+    m_cooldownLevel = level;
 }

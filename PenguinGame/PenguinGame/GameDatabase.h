@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <sqlite_orm/sqlite_orm.h>
 #include <string>
 #include <vector>
@@ -11,6 +11,8 @@ namespace game_database
 		std::string name;
 		int points;
 		int score;
+		int bullet_speed_level;
+		int cooldown_level;
 	};
 
 	struct WeaponUpgrade {
@@ -31,7 +33,9 @@ namespace game_database
 				make_column("id", &GamePlayer::id, primary_key().autoincrement()),
 				make_column("name", &GamePlayer::name),
 				make_column("points", &GamePlayer::points),
-				make_column("score", &GamePlayer::score)
+				make_column("score", &GamePlayer::score),
+				make_column("bullet_speed_level", &GamePlayer::bullet_speed_level, default_value(0)),
+				make_column("cooldown_level", &GamePlayer::cooldown_level, default_value(0))
 			),
 			make_table(
 				"weapon_upgrades",
