@@ -35,6 +35,8 @@ void Routing::Run(int port)
 			response["name"] = player->GetName();
 			response["points"] = player->GetPoints();
 			response["score"] = player->GetScore();
+			response["bullet_speed_level"] = player->GetBulletSpeedLevel();
+			response["cooldown_level"] = player->GetCooldownLevel();
 
 			delete player;
 
@@ -374,6 +376,23 @@ void Routing::Run(int port)
 		}
 		catch (const std::exception& e) {
 			return crow::response(500, "Error removing map element: " + std::string(e.what()));
+		}
+			});
+
+	CROW_ROUTE(m_app, "/resetPlayerLives").methods("POST"_method)
+		([this]() {
+		try {
+			const auto& penguins = m_game.GetPenguins();
+			for (auto* penguin : penguins) {
+				if (penguin) {
+					penguin->ResetState();  // Resetează viețile și pozițiile jucătorilor.
+				}
+			}
+
+			return crow::response(200, "All player lives have been reset.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error resetting player lives: " + std::string(e.what()));
 		}
 			});
 
