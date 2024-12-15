@@ -11,6 +11,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
+#include <QRegularExpression>
 
 class LoginPage : public QWidget {
     Q_OBJECT
@@ -30,6 +31,7 @@ signals:
 private:
     Ui::LoginPage ui;  
     ClientRequests* m_clientRequests;
+    QRegularExpression m_nameRegex;
 };
 
 #endif

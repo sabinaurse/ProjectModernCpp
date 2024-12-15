@@ -3,7 +3,8 @@
 #include <iostream>
 
 LoginPage::LoginPage(ClientRequests* requests, QWidget* parent)
-    : QWidget(parent), m_clientRequests(requests)
+    : QWidget(parent), m_clientRequests(requests),
+    m_nameRegex(QRegularExpression("^[a-zA-Z0-9]{5,18}$"))
 {
     ui.setupUi(this);
 
@@ -44,6 +45,12 @@ void LoginPage::onLoginClicked()
         return;
     }
 
+    if (!m_nameRegex.match(playerName).hasMatch()) {
+        QMessageBox::warning(this, "Invalid Name",
+            "Name must be 5-18 characters long, contain only letters and digits, and have no spaces or special characters.");
+        return;
+    }
+
     m_clientRequests->GetPlayer(playerName);
 }
 
@@ -53,6 +60,12 @@ void LoginPage::onRegisterClicked()
 
     if (playerName.isEmpty()) {
         QMessageBox::warning(this, "Input Error", "Please enter a player name.");
+        return;
+    }
+
+    if (!m_nameRegex.match(playerName).hasMatch()) {
+        QMessageBox::warning(this, "Invalid Name",
+            "Name must be 5-18 characters long, contain only letters and digits, and have no spaces or special characters.");
         return;
     }
 
