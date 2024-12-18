@@ -1,18 +1,23 @@
 #include "Penguin.h"
 
+
 Penguin::Penguin(ClientRequests* requests, QGraphicsPixmapItem* parent)
     : QObject(nullptr), QGraphicsPixmapItem(parent), m_clientRequests(requests) {
-    setPixmap(QPixmap("HttpClient/ClientInterface/sprites/Penguin_front.png"));
-    resizePenguin(80, 80);
+
+    m_sprites["front"] = resizePixmap(QPixmap("sprites/Penguin_front.png"), 80, 80);
+    m_sprites["back"] = resizePixmap(QPixmap("sprites/Penguin_back.png"), 80, 80);
+    m_sprites["left"] = resizePixmap(QPixmap("sprites/Penguin_left.png"), 80, 80);
+    m_sprites["right"] = resizePixmap(QPixmap("sprites/Penguin_right.png"), 80, 80);;
+
+    setPixmap(m_sprites["front"]);
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
 }
 
-void Penguin::resizePenguin(int width, int height) {
-    QPixmap currentPixmap = pixmap(); 
-    QPixmap scaledPixmap = currentPixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::FastTransformation);
-    setPixmap(scaledPixmap);
+QPixmap Penguin::resizePixmap(const QPixmap& pixmap, int width, int height) {
+    return pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::FastTransformation);
 }
+
 
 void Penguin::keyPressEvent(QKeyEvent* event) {
     QString playerName = ClientState::instance().GetCurrentPlayer();
@@ -26,23 +31,19 @@ void Penguin::keyPressEvent(QKeyEvent* event) {
         QString direction;
         if (event->key() == Qt::Key_W) {
             direction = "W";
-            setPixmap(QPixmap("HttpClient/ClientInterface/sprites/Penguin_back.png"));
-            resizePenguin(80, 80);
+            setPixmap(m_sprites["back"]);
         }
         else if (event->key() == Qt::Key_S) {
             direction = "S";
-            setPixmap(QPixmap("HttpClient/ClientInterface/sprites/Penguin_front.png"));
-            resizePenguin(80, 80);
+            setPixmap(m_sprites["front"]);
         }
         else if (event->key() == Qt::Key_A) {
             direction = "A";
-            setPixmap(QPixmap("HttpClient/ClientInterface/sprites/Penguin_left.png"));
-            resizePenguin(80, 80);
+            setPixmap(m_sprites["left"]);
         }
         else if (event->key() == Qt::Key_D) {
             direction = "D";
-            setPixmap(QPixmap("HttpClient/ClientInterface/sprites/Penguin_right.png"));
-            resizePenguin(80, 80);
+            setPixmap(m_sprites["right"]);
         }
 
         if (!direction.isEmpty() && !playerName.isEmpty()) {

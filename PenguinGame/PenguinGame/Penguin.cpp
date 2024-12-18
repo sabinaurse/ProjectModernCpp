@@ -2,6 +2,7 @@
 #include "Snowball.h"
 
 #define RADIUS_OF_COLLISION 15.0f
+#define MOVE_STEP 10
 
 Penguin::Penguin(Player* player, Position initialPosition, int fireRate)
 	: m_player{ player }, m_initialPosition{ initialPosition }, m_position{ initialPosition },
@@ -18,10 +19,10 @@ void Penguin::Move(char direction, const GameBoard& board) {
 	Position delta{ 0, 0 };
 
 	switch (direction) {
-	case 'W': delta.second = -10; break; // Sus
-	case 'S': delta.second = 10; break;  // Jos
-	case 'A': delta.first = -10; break; // Stânga
-	case 'D': delta.first = 10; break;  // Dreapta
+	case 'W': delta.second = -MOVE_STEP; break; // Sus
+	case 'S': delta.second = MOVE_STEP; break;  // Jos
+	case 'A': delta.first = -MOVE_STEP; break; // Stânga
+	case 'D': delta.first = MOVE_STEP; break;  // Dreapta
 	default:
 		std::cout << "Invalid direction. Use W, A, S, D for movement." << std::endl;
 		return;

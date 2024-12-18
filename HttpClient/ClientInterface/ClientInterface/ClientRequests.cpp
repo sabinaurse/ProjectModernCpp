@@ -110,13 +110,12 @@ void ClientRequests::onReplyFinished(QNetworkReply* reply) {
                     qDebug() << ClientState::instance().GetPlayerPosition(playerName);
                     emit gameStateUpdated();
                 }
-                // NU emitem requestCompleted pentru coordonate!
+
                 reply->deleteLater();
                 return;
             }
         }
 
-        // Emit `requestCompleted` doar pentru răspunsurile relevante!
         qDebug() << "Emitting requestCompleted with data:" << data;
         emit requestCompleted(data);
     }
