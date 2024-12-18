@@ -14,6 +14,7 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
 
     m_penguin = new Penguin(m_requests);
     m_penguin->setPos(position.first, position.second);
+    m_penguin->setPos(0, 0);
     m_scene->addItem(m_penguin);
 
     connect(m_requests, &ClientRequests::gameStateUpdated, this, &GamePage::onGameStateUpdated);
@@ -27,6 +28,8 @@ void GamePage::onGameStateUpdated()
 {
     QString playerName = ClientState::instance().GetCurrentPlayer();
     auto position = ClientState::instance().GetPlayerPosition(playerName);
+
+    qDebug() << "Player:" << playerName << "Position:" << position.first << position.second;
 
     if (m_penguin) {
         m_penguin->setPos(position.first, position.second); 

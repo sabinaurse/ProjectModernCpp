@@ -1,9 +1,9 @@
 #include "Penguin.h"
 
 Penguin::Penguin(ClientRequests* requests, QGraphicsPixmapItem* parent)
-    : QObject(), QGraphicsPixmapItem(parent), m_clientRequests(requests) {
-    setPixmap(QPixmap("C:/Users/Diana/Desktop/sprites/Penguin_front.png"));
-    resizePenguin(100, 100);
+    : QObject(nullptr), QGraphicsPixmapItem(parent), m_clientRequests(requests) {
+    setPixmap(QPixmap("HttpClient/ClientInterface/sprites/Penguin_front.png"));
+    resizePenguin(80, 80);
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
 }
@@ -26,23 +26,23 @@ void Penguin::keyPressEvent(QKeyEvent* event) {
         QString direction;
         if (event->key() == Qt::Key_W) {
             direction = "W";
-            setPixmap(QPixmap("C:/Users/Diana/Desktop/sprites/Penguin_back.png"));
-            resizePenguin(100, 100);
+            setPixmap(QPixmap("HttpClient/ClientInterface/sprites/Penguin_back.png"));
+            resizePenguin(80, 80);
         }
         else if (event->key() == Qt::Key_S) {
             direction = "S";
-            setPixmap(QPixmap("C:/Users/Diana/Desktop/sprites/Penguin_front.png"));
-            resizePenguin(100, 100);
+            setPixmap(QPixmap("HttpClient/ClientInterface/sprites/Penguin_front.png"));
+            resizePenguin(80, 80);
         }
         else if (event->key() == Qt::Key_A) {
             direction = "A";
-            setPixmap(QPixmap("C:/Users/Diana/Desktop/sprites/Penguin_left.png"));
-            resizePenguin(100, 100);
+            setPixmap(QPixmap("HttpClient/ClientInterface/sprites/Penguin_left.png"));
+            resizePenguin(80, 80);
         }
         else if (event->key() == Qt::Key_D) {
             direction = "D";
-            setPixmap(QPixmap("C:/Users/Diana/Desktop/sprites/Penguin_right.png"));
-            resizePenguin(100, 100);
+            setPixmap(QPixmap("HttpClient/ClientInterface/sprites/Penguin_right.png"));
+            resizePenguin(80, 80);
         }
 
         if (!direction.isEmpty() && !playerName.isEmpty()) {
@@ -50,3 +50,5 @@ void Penguin::keyPressEvent(QKeyEvent* event) {
         }
     }
 }
+
+

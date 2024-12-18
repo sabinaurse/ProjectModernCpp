@@ -41,8 +41,10 @@ void ClientInterface::onLoginSuccessful(const QString& playerName, int playerSco
         .arg(playerPoints));
 
     stackedWidget->setCurrentWidget(mainPage);
+    qDebug() << "Switched to MainPage.";
 }
 
 void ClientInterface::onGameStartRequested() {
     stackedWidget->setCurrentWidget(gamePage);
+    qDebug() << "Switched to GamePage";
 }

@@ -33,7 +33,7 @@ void ClientState::UpdatePlayerPosition(const QString& name, int x, int y) {
     m_playerPositions[name] = { x, y };
 }
 
-std::pair<int, int> ClientState::GetPlayerPosition(const QString& name) const {
+std::pair<int,int> ClientState::GetPlayerPosition(const QString& name) const {
     if (m_playerPositions.contains(name)) {
         return m_playerPositions[name];
     }

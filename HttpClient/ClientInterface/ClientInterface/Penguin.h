@@ -12,7 +12,8 @@ class Penguin : public QObject, public QGraphicsPixmapItem {
 public:
     Penguin(ClientRequests* requests, QGraphicsPixmapItem* parent=nullptr);
     void resizePenguin(int width, int height);
-    void keyPressEvent(QKeyEvent* event);
+protected:
+    void keyPressEvent(QKeyEvent* event) override;
 private:
     ClientRequests* m_clientRequests;
 };

@@ -7,7 +7,7 @@
 #include "Player.h"
 #include "GameBoard.h"
 
-using Position = std::pair<std::uint32_t, std::uint32_t>; // maybe uint32_t??
+using Position = std::pair<std::int32_t, std::int32_t>; // maybe uint32_t??
 using PlayerList = std::vector<std::unique_ptr<Player>>;
 using PenguinList = std::vector<std::unique_ptr<Penguin>>;
 

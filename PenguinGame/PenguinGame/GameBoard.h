@@ -6,7 +6,7 @@
 #include <ctime>
 #include "crow.h"
 
-using Position = std::pair<std::uint32_t, std::uint32_t>;
+using Position = std::pair<int, int>;
 
 class Penguin;
 

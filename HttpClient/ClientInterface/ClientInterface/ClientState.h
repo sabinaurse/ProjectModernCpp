@@ -18,7 +18,7 @@ public:
     int GetPlayerPoints() const;
 
     void UpdatePlayerPosition(const QString& name, int x, int y);
-    std::pair<int, int> GetPlayerPosition(const QString& name) const;
+    std::pair<int,int> GetPlayerPosition(const QString& name) const;
 
 private:
 
@@ -27,7 +27,7 @@ private:
     QString m_currentPlayer;
     int m_playerScore;
     int m_playerPoints;
-    QMap<QString, std::pair<int, int>> m_playerPositions;
+    QMap<QString, std::pair<int,int>> m_playerPositions;
 
     ClientState(const ClientState&) = delete;
     ClientState& operator=(const ClientState&) = delete;

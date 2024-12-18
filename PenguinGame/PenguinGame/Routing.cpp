@@ -225,10 +225,12 @@ void Routing::Run(int port)
 			}
 
 			penguin->Move(directionChar, m_game.GetBoard());
+
 			crow::json::wvalue response;
 			response["x"] = penguin->GetPosition().first;
 			response["y"] = penguin->GetPosition().second;
-			return crow::response(200, "Player moved successfully");
+
+			return crow::response(response);
 
 		}
 		catch (const std::exception& e) {
@@ -321,8 +323,8 @@ void Routing::Run(int port)
 				return crow::response(400, "Invalid JSON object.");
 			}
 
-			uint32_t x = body["x"].i();
-			uint32_t y = body["y"].i();
+			int32_t x = body["x"].i();
+			int32_t y = body["y"].i();
 			std::string elementType = body["elementType"].s();
 
 			if (!m_game.GetBoard().IsWithinBounds(x, y)) {
@@ -362,8 +364,8 @@ void Routing::Run(int port)
 				return crow::response(400, "Invalid JSON object.");
 			}
 
-			uint32_t x = body["x"].i();
-			uint32_t y = body["y"].i();
+			int32_t x = body["x"].i();
+			int32_t y = body["y"].i();
 
 			if (!m_game.GetBoard().IsWithinBounds(x, y)) {
 				return crow::response(400, "Position out of bounds.");

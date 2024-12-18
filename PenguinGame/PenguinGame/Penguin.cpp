@@ -18,16 +18,17 @@ void Penguin::Move(char direction, const GameBoard& board) {
 	Position delta{ 0, 0 };
 
 	switch (direction) {
-	case 'W': delta.second = -1; break; // Sus
-	case 'S': delta.second = 1; break;  // Jos
-	case 'A': delta.first = -1; break; // Stânga
-	case 'D': delta.first = 1; break;  // Dreapta
+	case 'W': delta.second = -10; break; // Sus
+	case 'S': delta.second = 10; break;  // Jos
+	case 'A': delta.first = -10; break; // Stânga
+	case 'D': delta.first = 10; break;  // Dreapta
 	default:
 		std::cout << "Invalid direction. Use W, A, S, D for movement." << std::endl;
 		return;
 	}
 
 	Position newPosition = { m_position.first + delta.first, m_position.second + delta.second };
+	m_position = newPosition; 
 
 	// Verificăm dacă poziția este validă și liberă.
 	/*if (board.IsWithinBounds(newPosition.first, newPosition.second) &&

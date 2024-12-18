@@ -21,8 +21,8 @@ MainPage::MainPage(ClientRequests* clientRequests,QWidget* parent)
 
     connect(ui.startGameButton, &QPushButton::clicked, this, &MainPage::onStartGameClicked);
 
-    connect(m_clientRequests, &ClientRequests::requestCompleted, this, &MainPage::onRequestCompleted);
-    connect(m_clientRequests, &ClientRequests::requestFailed, this, &MainPage::onRequestFailed);
+    connect(m_clientRequests, &ClientRequests::requestCompleted, this, &MainPage::onRequestCompleted, Qt::UniqueConnection);
+    connect(m_clientRequests, &ClientRequests::requestFailed, this, &MainPage::onRequestFailed, Qt::UniqueConnection);
 }
 
 MainPage::~MainPage() {
@@ -42,7 +42,7 @@ void MainPage::onRequestCompleted(const QString& response) {
         qDebug() << "Player successfully added. Sending request to start game.";
 
         m_clientRequests->StartGame();
-        m_clientRequests->GetGameState();
+        /*m_clientRequests->GetGameState();*/
     }
     else if (response.contains("Game started")) {
         qDebug() << "Game started successfully. Opening GamePage.";
@@ -65,35 +65,4 @@ void MainPage::displayPlayerInfo(const QString& playerInfo) {
         .arg(playerName)
         .arg(playerScore)
         .arg(playerPoints));  
-}
-
-void MainPage::keyPressEvent(QKeyEvent* event) {
-    QString playerName = ClientState::instance().GetCurrentPlayer();
-
-    if (event->key() == Qt::Key_F) {
-        if (!playerName.isEmpty()) {
-            m_clientRequests->Fire(playerName);
-        }
-    }
-    else {
-        QString direction;
-        if (event->key() == Qt::Key_W) {
-            direction = "W";
-        }
-        else if (event->key() == Qt::Key_S) {
-            direction = "S";
-        }
-        else if (event->key() == Qt::Key_A) {
-            direction = "A";
-        }
-        else if (event->key() == Qt::Key_D) {
-            direction = "D";
-        }
-
-        if (!direction.isEmpty() && !playerName.isEmpty()) {
-            m_clientRequests->MovePlayer(playerName, direction);
-        }
-    }
-
-    QWidget::keyPressEvent(event);
 }

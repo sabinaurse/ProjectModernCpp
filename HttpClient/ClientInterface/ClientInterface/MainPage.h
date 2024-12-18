@@ -20,7 +20,6 @@ public:
     ~MainPage();
 
     void displayPlayerInfo(const QString& playerInfo);
-    void keyPressEvent(QKeyEvent* event);
 
 signals:
     void startGameRequested();
