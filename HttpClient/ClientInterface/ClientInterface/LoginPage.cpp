@@ -28,7 +28,7 @@ LoginPage::LoginPage(ClientRequests* requests, QWidget* parent)
     connect(ui.loginButton, &QPushButton::clicked, this, &LoginPage::onLoginClicked);
     connect(ui.registerButton, &QPushButton::clicked, this, &LoginPage::onRegisterClicked);
 
-    connect(m_clientRequests, &ClientRequests::requestCompleted, this, &LoginPage::onRequestCompleted);
+    connect(m_clientRequests, &ClientRequests::loginCompleted, this, &LoginPage::onRequestCompleted);
     connect(m_clientRequests, &ClientRequests::requestFailed, this, &LoginPage::onRequestFailed);
 }
 

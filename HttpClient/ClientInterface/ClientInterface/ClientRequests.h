@@ -29,6 +29,7 @@ public:
 
 signals:
     void gameStateUpdated();
+    void loginCompleted(const QString& data);
     void requestCompleted(const QString& response);
     void requestFailed(const QString& error);
 private slots:
@@ -36,6 +37,7 @@ private slots:
 
 private:
     QNetworkAccessManager* networkManager;
+    QMap<QNetworkReply*, QString> activeRequests;
 };
 
 #endif 

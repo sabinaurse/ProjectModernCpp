@@ -13,13 +13,15 @@ ClientRequests::ClientRequests(QObject* parent) : QObject(parent) {
 void ClientRequests::CreatePlayer(const QString& name) {
     QUrl url("http://localhost:18080/addPlayer/" + name);
     QNetworkRequest request(url);
-    networkManager->get(request);
+    QNetworkReply* reply = networkManager->get(request);
+    activeRequests[reply] = "createPlayer";
 }
 
 void ClientRequests::GetPlayer(const QString& name) {
     QUrl url("http://localhost:18080/getPlayer/" + name);
     QNetworkRequest request(url);
-    networkManager->get(request);
+    QNetworkReply* reply = networkManager->get(request);
+    activeRequests[reply] = "getPlayer";
 }
 
 void ClientRequests::DeletePlayer(const QString& name) {
@@ -88,7 +90,8 @@ void ClientRequests::GetLeaderboard() {
 }
 
 void ClientRequests::onReplyFinished(QNetworkReply* reply) {
-    qDebug() << "onReplyFinished called.";
+    QString requestType = activeRequests.value(reply, "Unknown");
+
     if (reply->error() == QNetworkReply::NoError) {
         QString data = reply->readAll();
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
@@ -116,14 +119,19 @@ void ClientRequests::onReplyFinished(QNetworkReply* reply) {
             }
         }
 
-        qDebug() << "Emitting requestCompleted with data:" << data;
-        emit requestCompleted(data);
+        if (requestType == "createPlayer" || requestType == "getPlayer") {
+            emit loginCompleted(data);  
+        }
+        else {
+            emit requestCompleted(data);  
+        }
     }
     else {
         qDebug() << "Error in reply:" << reply->errorString();
         emit requestFailed(reply->errorString());
     }
 
+    activeRequests.remove(reply);
     reply->deleteLater();
 }
 
