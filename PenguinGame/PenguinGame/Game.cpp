@@ -290,7 +290,7 @@ void Game::AddPlayerToQueue(Player* player) {
 
 void Game::TryStartMatch() {
     const size_t maxPlayersPerMatch = 4;
-    const size_t minPlayersToStart = 2;
+    const size_t minPlayersToStart = 1;
     const int waitTimeLimit = 30; // secunde
 
     std::vector<WaitingPlayer> tempQueue; // Coada temporara pentru jucatorii care raman
