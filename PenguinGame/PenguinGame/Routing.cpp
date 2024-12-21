@@ -93,7 +93,7 @@ void Routing::Run(int port)
 		}
 			});
 
-	CROW_ROUTE(m_app, "/addPlayerToGame").methods("POST"_method)
+	/*CROW_ROUTE(m_app, "/addPlayerToGame").methods("POST"_method)
 		([this](const crow::request& req) {
 		try {
 			auto body = crow::json::load(req.body);
@@ -110,6 +110,34 @@ void Routing::Run(int port)
 			m_game.AddPlayer(std::move(player));
 
 			return crow::response(200, "Player added to the game successfully: " + playerName);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error adding player to game: " + std::string(e.what()));
+		}
+			});*/
+	CROW_ROUTE(m_app, "/addPlayerToGame").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object.");
+			}
+
+			std::string playerName = body["name"].s();
+
+			if (m_game.GetPlayerByName(playerName) != nullptr) {
+				return crow::response(400, "Player already in a game.");
+			}
+
+			auto dbPlayer = m_db.GetPlayerByName(playerName);
+			auto player = std::make_unique<Player>(dbPlayer);
+
+			m_game.AddPlayerToQueue(player.get());
+			m_game.AddPlayer(std::move(player));
+
+			m_game.TryStartMatch();
+
+			return crow::response(200, "Player added to waiting queue: " + playerName);
 		}
 		catch (const std::exception& e) {
 			return crow::response(500, "Error adding player to game: " + std::string(e.what()));
