@@ -147,6 +147,11 @@
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MapGenerationDLL\MapGenerationDLL.vcxproj">
+      <Project>{54c822c6-b2fb-49c5-8271-7915ced09e73}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

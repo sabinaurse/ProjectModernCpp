@@ -1,27 +1,29 @@
-﻿#include "GameBoard.h"
-#include "Game.h"
-#include "Routing.h"
-#include <sqlite_orm/sqlite_orm.h>
-
-//Empty - 0
-//Destructible_Wall - 1
-//Indestructible_Wall - 2
-//Bomb - 3 
+﻿#include "../MapGenerationDLL/GameBoard.h"
+#include <iostream>
 
 int main() {
+    try {
+        MapGen::GameBoard board(20, 20); 
 
-    //Testare server
+        board.AddCellType(1, { "Destructible Wall", 50, nullptr }); 
+        board.AddCellType(2, { "Indestructible Wall", 30, nullptr }); 
+        board.AddCellType(3, { "Bomb", 20, [](uint32_t x, uint32_t y, const std::vector<std::vector<int>>& grid) {
+            return (x % 2 == 0 && y % 2 == 0);
+        } });
 
-    Game game;
-    game_database::PlayerDatabase db;
+        board.InitializeBoard();
 
-    Routing r(game, db);
-    r.Run();
+        std::cout << "Harta generata:\n";
+        board.PrintBoard();
 
-    /*GameBoard board(50, 50, 30, 50, 5, 3);
-    board.PrintBoard();*/
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Eroare: " << e.what() << std::endl;
+        return 1;
+    }
 
     return 0;
 }
+
 
 
