@@ -23,6 +23,10 @@ namespace MapGen {
         GameBoard(uint32_t rows, uint32_t cols);
         ~GameBoard();
 
+        uint32_t GetRows() const;
+        uint32_t GetCols() const;
+        std::vector<std::vector<int>>& GetBoard();
+
         void AddCellType(int id, const CellTypeDefinition& definition);
         void InitializeBoard();
         void PrintBoard() const;
@@ -32,6 +36,7 @@ namespace MapGen {
         void GenerateRectangleGroup(int id, int x, int y, int width, int height);
         bool CanPlaceGroup(int id, int x, int y, int width, int height) const;
         void ReserveCorners();
+
         void CreateRandomPaths();
         void CreateRandomPath(std::pair<int, int> start, std::pair<int, int> end);
         bool IsPathPossible(std::pair<int, int> start, std::pair<int, int> end) const;

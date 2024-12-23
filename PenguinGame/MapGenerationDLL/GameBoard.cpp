@@ -10,6 +10,11 @@
 
 namespace MapGen {
 
+    uint32_t GameBoard::GetRows() const { return m_rows; }
+    uint32_t GameBoard::GetCols() const { return m_cols; }
+    std::vector<std::vector<int>>& GameBoard::GetBoard() { return m_board; }
+
+
     GameBoard::GameBoard(uint32_t rows, uint32_t cols)
         : m_rows(rows), m_cols(cols), m_board(rows, std::vector<int>(cols, 0)) {
         std::srand(static_cast<unsigned int>(std::time(nullptr)));

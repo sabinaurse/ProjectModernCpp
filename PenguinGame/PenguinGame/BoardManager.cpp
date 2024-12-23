@@ -33,3 +33,76 @@ void BoardManager::InitializeCellTypes()
     m_gameBoard.AddCellType(2, indestructibleWall);
     m_gameBoard.AddCellType(3, bomb);
 }
+
+void BoardManager::BulletHit(int x, int y)
+{
+    if (x < 0 || x >= m_gameBoard.GetRows() || y < 0 || y >= m_gameBoard.GetCols()) {
+        std::cout << "Bullet hit outside the map boundaries.\n";
+        return;
+    }
+
+    int cellType = m_gameBoard.GetBoard()[x][y];
+    if (cellType == 1) {
+        std::cout << "Destructible wall hit at (" << x << ", " << y << ").\n";
+        DestroyCell(x, y);
+    }
+    else if (cellType == 2) {
+        std::cout << "Bullet hit indestructible wall at (" << x << ", " << y << ").\n";
+    }
+    else {
+        std::cout << "Bullet hit empty space at (" << x << ", " << y << ").\n";
+    }
+}
+
+void BoardManager::TriggerExplosion(int x, int y, int radius)
+{
+    for (int i = -radius; i <= radius; ++i) {
+        for (int j = -radius; j <= radius; ++j) {
+            int newX = x + i;
+            int newY = y + j;
+
+            if (newX >= 0 && newX < m_gameBoard.GetRows() &&
+                newY >= 0 && newY < m_gameBoard.GetCols() &&
+                (i * i + j * j <= radius * radius)) {
+
+                int cellType = m_gameBoard.GetBoard()[newX][newY];
+
+                if (cellType == 1 || cellType == 2) {
+                    DestroyCell(newX, newY);
+                }
+
+                CheckPlayersInExplosion(newX, newY);
+            }
+        }
+    }
+    std::cout << "Explosion triggered at (" << x << ", " << y << ") with radius " << radius << ".\n";
+}
+
+void BoardManager::CheckPlayersInExplosion(int x, int y)
+{
+    for (auto& penguin : m_penguins) {
+        Position penguinPos = penguin.GetPosition();
+
+        if (penguinPos.first == x && penguinPos.second == y) {
+            std::cout << "Player " << penguin.GetPlayer()->GetName()
+                << " was hit by the explosion at (" << x << ", " << y << ").\n";
+
+            penguin.TakeDamage();
+
+            if (!penguin.IsAlive()) {
+                penguin.ResetState();
+            }
+        }
+    }
+}
+
+void BoardManager::DestroyCell(int x, int y)
+{
+    if (x < 0 || x >= m_gameBoard.GetRows() || y < 0 || y >= m_gameBoard.GetCols()) {
+        std::cout << "Cannot destroy cell outside map boundaries.\n";
+        return;
+    }
+
+    m_gameBoard.GetBoard()[x][y] = 0; 
+    std::cout << "Cell at (" << x << ", " << y << ") destroyed.\n";
+}
