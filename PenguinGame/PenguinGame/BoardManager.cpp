@@ -71,30 +71,12 @@ void BoardManager::TriggerExplosion(int x, int y, int radius)
                     DestroyCell(newX, newY);
                 }
 
-                CheckPlayersInExplosion(newX, newY);
             }
         }
     }
     std::cout << "Explosion triggered at (" << x << ", " << y << ") with radius " << radius << ".\n";
 }
 
-void BoardManager::CheckPlayersInExplosion(int x, int y)
-{
-    for (auto& penguin : m_penguins) {
-        Position penguinPos = penguin.GetPosition();
-
-        if (penguinPos.first == x && penguinPos.second == y) {
-            std::cout << "Player " << penguin.GetPlayer()->GetName()
-                << " was hit by the explosion at (" << x << ", " << y << ").\n";
-
-            penguin.TakeDamage();
-
-            if (!penguin.IsAlive()) {
-                penguin.ResetState();
-            }
-        }
-    }
-}
 
 void BoardManager::DestroyCell(int x, int y)
 {

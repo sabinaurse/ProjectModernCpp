@@ -13,7 +13,7 @@ class Penguin
 public:
 	Penguin(Player* player,Position initialPosition, int fireRate);
 
-	void Move(char direction, const GameBoard& board);
+	void Move(char direction, MapGen::GameBoard& gameBoard);
 
 	void Fire();
 	void UpgradeBulletSpeed(); // Metodă pentru dublarea vitezei gloanțelor

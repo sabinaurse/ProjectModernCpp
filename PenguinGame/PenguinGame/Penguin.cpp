@@ -13,7 +13,7 @@ Penguin::Penguin(Player* player, Position initialPosition, int fireRate)
 }
 
 
-void Penguin::Move(char direction, const GameBoard& board) {
+void Penguin::Move(char direction, MapGen::GameBoard& gameBoard) {
 	if (!m_isAlive) return; // Nu poate să se miște dacă e mort.
 
 	Position delta{ 0, 0 };

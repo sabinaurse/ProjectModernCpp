@@ -6,7 +6,8 @@
 #include <ctime>
 #include "crow.h"
 #include "../MapGenerationDLL/GameBoard.h"
-#include "Penguin.h"
+
+class Penguin;
 
 class BoardManager
 {
@@ -21,9 +22,7 @@ public:
 
     void BulletHit(int x, int y);
     void TriggerExplosion(int x, int y, int radius);
-    void CheckPlayersInExplosion(int x, int y);
-    void InitializePenguins(const std::vector<Player*>& players, const std::vector<Position>& startPositions);
-
+   
 private:
     void InitializeCellTypes();
     void DestroyCell(int x, int y);
