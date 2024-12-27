@@ -7,7 +7,7 @@
 #include <memory>
 #include "Penguin.h"
 #include "Player.h"
-#include "GameBoard.h"
+#include "BoardManager.h"
 
 using Position = std::pair<std::int32_t, std::int32_t>; // maybe uint32_t??
 using PlayerList = std::vector<std::unique_ptr<Player>>;
@@ -33,7 +33,7 @@ public:
 	void RestartGame();
 	void CheckForCollisions();
 	void ShowLeaderboard();
-	GameBoard GetBoard() const;
+	const MapGen::GameBoard& GetBoard() const;
 
 	void AddPenguin(std::unique_ptr<Penguin> penguin);
 	void AddPlayer(std::unique_ptr<Player> player);
@@ -56,7 +56,7 @@ private:
 	void CheckSnowballCollisions();
 	void CheckPenguinToPenguinCollisions();
 private:
-	GameBoard m_gameBoard;
+	MapGen::GameBoard m_gameBoard;
 	PlayerList m_players;
 	PenguinList m_penguins;
 	bool m_isGameOver{ false };

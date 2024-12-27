@@ -129,7 +129,6 @@
   <ItemGroup>
     <ClInclude Include="BoardManager.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameBoard.h" />
     <ClInclude Include="GameDatabase.h" />
     <ClInclude Include="Penguin.h" />
     <ClInclude Include="Player.h" />
@@ -140,7 +139,6 @@
   <ItemGroup>
     <ClCompile Include="BoardManager.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameBoard.cpp" />
     <ClCompile Include="GameDatabase.cpp" />
     <ClCompile Include="Penguin.cpp" />
     <ClCompile Include="Player.cpp" />

@@ -1,6 +1,9 @@
 ﻿#include "Game.h"
 #include "Gameboard.h"
 
+const MapGen::GameBoard& Game::GetBoard() const {
+    return m_gameBoard;
+}
 
 void Game::StartGame()
 {
@@ -71,9 +74,6 @@ void Game::ShowLeaderboard()
     }
 }
 
-GameBoard Game::GetBoard() const {
-    return m_gameBoard;
-}
 
 void Game::AddPlayer(std::unique_ptr<Player> player) {
     if (std::any_of(m_players.begin(), m_players.end(),
