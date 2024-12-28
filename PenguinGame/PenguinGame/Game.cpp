@@ -1,8 +1,7 @@
 ﻿#include "Game.h"
-#include "Gameboard.h"
 
 const MapGen::GameBoard& Game::GetBoard() const {
-    return m_gameBoard;
+    return m_boardManager.GetGameBoard();
 }
 
 void Game::StartGame()
@@ -57,7 +56,7 @@ void Game::RestartGame() {
         penguin->ResetState();
     }
 
-    m_gameBoard.InitializeBoard();
+    m_boardManager.GenerateMap();
 
     std::cout << "Game restarted!" << std::endl;
 }
@@ -96,7 +95,7 @@ void Game::AddPlayer(std::unique_ptr<Player> player) {
 
 
 void Game::InitializePlayers() {
-    const auto& startingPositions = m_gameBoard.GetStartingPositions();
+    const auto& startingPositions = m_boardManager.GetStartingPositions();
 
     if (m_players.size() > startingPositions.size()) {
         throw std::runtime_error("Too many players for available starting positions!");
@@ -177,29 +176,28 @@ void Game::CheckPenguinCollisions() {
     }
 }
 
-
 void Game::CheckObstacleCollisions() {
     for (const auto& penguin : m_penguins) {
         for (auto& snowball : penguin->GetSnowballs()) {
             if (!snowball.IsActive()) continue;
 
             auto pos = snowball.GetPosition();
-            if (!m_gameBoard.IsWithinBounds(pos.first, pos.second)) {
+            if (!m_boardManager.IsWithinBounds(pos.first, pos.second)) {
                 snowball.Deactivate();
                 continue;
             }
 
-            Cell cell = m_gameBoard.GetCell(pos.first, pos.second);
+            int cell = m_boardManager.GetCell(pos.first, pos.second);
             switch (cell) {
-            case Cell::Destructible_Wall:
-                m_gameBoard.DestroyCell(pos.first, pos.second);
+            case 1:
+                m_boardManager.DestroyCell(pos.first, pos.second);
                 snowball.Deactivate();
                 break;
-            case Cell::Indestructible_Wall:
+            case 2:
                 snowball.Deactivate();
                 break;
-            case Cell::Hidden_Bomb:
-                m_gameBoard.TriggerExplosion(pos.first, pos.second, m_penguins);
+            case 3:
+                m_boardManager.TriggerExplosion(pos.first, pos.second, 10);
                 snowball.Deactivate();
                 break;
             default:

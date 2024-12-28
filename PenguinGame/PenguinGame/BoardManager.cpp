@@ -85,6 +85,27 @@ void BoardManager::DestroyCell(int x, int y)
         return;
     }
 
-    m_gameBoard.GetBoard()[x][y] = 0; 
+    m_gameBoard.GetBoard()[x][y] = 0;
     std::cout << "Cell at (" << x << ", " << y << ") destroyed.\n";
 }
+
+const MapGen::GameBoard& BoardManager::GetGameBoard() const {
+    return m_gameBoard;
+}
+
+std::vector<std::pair<int, int>> BoardManager::GetStartingPositions() const {
+    return GetStartingPositions();
+}
+
+bool BoardManager::IsWithinBounds(int x, int y) const {
+    return x >= 0 && x < static_cast<int>(m_gameBoard.GetRows()) &&
+        y >= 0 && y < static_cast<int>(m_gameBoard.GetCols());
+}
+
+int BoardManager::GetCell(int x, int y) const {
+    if (IsWithinBounds(x, y)) {
+        return m_gameBoard.GetBoard()[x][y];
+    }
+    throw std::out_of_range("Position is out of bounds");
+}
+

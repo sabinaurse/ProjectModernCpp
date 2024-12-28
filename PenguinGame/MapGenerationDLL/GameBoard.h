@@ -26,6 +26,8 @@ namespace MapGen {
         uint32_t GetRows() const;
         uint32_t GetCols() const;
         std::vector<std::vector<int>>& GetBoard();
+        const std::vector<std::vector<int>>& GetBoard() const;
+        std::vector<std::pair<int, int>> GetStartingPositions() const;
 
         void AddCellType(int id, const CellTypeDefinition& definition);
         void InitializeBoard();

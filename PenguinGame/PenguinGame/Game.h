@@ -27,6 +27,8 @@ class Game
 {
 public:
 	Game() = default;
+	Game(uint32_t rows, uint32_t cols)
+		: m_boardManager(rows, cols) {}
 
 	void StartGame();
 	void EndGame();
@@ -56,7 +58,7 @@ private:
 	void CheckSnowballCollisions();
 	void CheckPenguinToPenguinCollisions();
 private:
-	MapGen::GameBoard m_gameBoard;
+	BoardManager m_boardManager;
 	PlayerList m_players;
 	PenguinList m_penguins;
 	bool m_isGameOver{ false };

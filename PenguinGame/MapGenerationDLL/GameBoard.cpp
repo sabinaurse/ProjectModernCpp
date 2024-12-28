@@ -13,6 +13,7 @@ namespace MapGen {
     uint32_t GameBoard::GetRows() const { return m_rows; }
     uint32_t GameBoard::GetCols() const { return m_cols; }
     std::vector<std::vector<int>>& GameBoard::GetBoard() { return m_board; }
+    const std::vector<std::vector<int>>& GameBoard::GetBoard() const { return m_board; }
 
 
     GameBoard::GameBoard(uint32_t rows, uint32_t cols)
@@ -273,4 +274,15 @@ namespace MapGen {
             m_board[x][y] = 0;
         }
     }
+}
+
+std::vector<std::pair<int, int>> MapGen::GameBoard::GetStartingPositions() const {
+    std::vector<std::pair<int, int>> startingPositions = {
+        {0, 0},
+        {0, static_cast<int>(m_cols) - 1},
+        {static_cast<int>(m_rows) - 1, static_cast<int>(m_cols) - 1},
+        {static_cast<int>(m_rows) - 1, 0}
+    };
+
+    return startingPositions;
 }
