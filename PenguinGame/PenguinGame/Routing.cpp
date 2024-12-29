@@ -507,6 +507,51 @@ void Routing::Run(int port)
 		}
 		});
 
+	CROW_ROUTE(m_app, "/getCellDetails/<int>/<int>").methods("GET"_method)
+		([this](int x, int y) {
+		try {
+			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
+				return crow::response(400, "Position out of bounds.");
+			}
+
+			int cellType = m_game.GetBoardManager().GetCell(x, y);
+
+			crow::json::wvalue response;
+			response["x"] = x;
+			response["y"] = y;
+			response["cellType"] = cellType;
+
+			return crow::response(200, response);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error retrieving cell details: " + std::string(e.what()));
+		}
+			});
+
+	CROW_ROUTE(m_app, "/changeMapElement").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object.");
+			}
+
+			int x = body["x"].i();
+			int y = body["y"].i();
+			int newCellType = body["newCellType"].i();
+
+			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
+				return crow::response(400, "Position out of bounds.");
+			}
+
+			m_game.GetBoardManager().SetCell(x, y, newCellType);
+
+			return crow::response(200, "Cell updated successfully.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error updating map element: " + std::string(e.what()));
+		}
+			});
 
 
 
