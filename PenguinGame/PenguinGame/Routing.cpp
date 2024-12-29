@@ -471,6 +471,43 @@ void Routing::Run(int port)
 		}
 			});
 
+	CROW_ROUTE(m_app, "/getPenguinDetails").methods("GET"_method)([this]() {
+		try {
+			crow::json::wvalue penguinDetails;
+
+			const auto& penguins = m_game.GetPenguins();
+			for (size_t i = 0; i < penguins.size(); ++i) {
+				const auto* penguin = penguins[i].get();
+				penguinDetails[i]["name"] = penguin->GetPlayer()->GetName();
+				penguinDetails[i]["x"] = penguin->GetPosition().first;
+				penguinDetails[i]["y"] = penguin->GetPosition().second;
+				penguinDetails[i]["isAlive"] = penguin->IsAlive();
+				penguinDetails[i]["bulletSpeed"] = penguin->GetBulletSpeed();
+				penguinDetails[i]["eliminations"] = penguin->GetEliminationOrder();
+			}
+
+			return crow::response(200, penguinDetails);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error retrieving penguin details: " + std::string(e.what()));
+		}
+		});
+
+	CROW_ROUTE(m_app, "/resetPenguinPositions").methods("POST"_method)([this]() {
+		try {
+			const auto& penguins = m_game.GetPenguins();
+			for (const auto& penguin : penguins) {
+				penguin->ResetState(); // Resetează doar poziția și starea.
+			}
+
+			return crow::response(200, "All penguin positions reset to initial state.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error resetting penguin positions: " + std::string(e.what()));
+		}
+		});
+
+
 
 
 
