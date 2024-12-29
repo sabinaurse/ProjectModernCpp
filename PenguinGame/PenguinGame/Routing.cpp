@@ -164,18 +164,33 @@ void Routing::Run(int port)
 		});
 
 
-	CROW_ROUTE(m_app, "/getMap")([this]() {
+	CROW_ROUTE(m_app, "/getMap").methods("GET"_method)([this]() {
 		try {
-			crow::json::wvalue mapJson = m_game.GetBoardManager().SerializeBoard();
-			return crow::response(200, mapJson);
+			crow::json::wvalue response;
+			response["board"] = m_game.GetBoardManager().SerializeBoard();
+
+			response["cellTypes"] = {
+				{"0", "Empty"},
+				{"1", "Destructible Wall"},
+				{"2", "Indestructible Wall"},
+				{"3", "Bomb"}
+			};
+
+			return crow::response(200, response);
 		}
 		catch (const std::exception& e) {
-			return crow::response(500, "Error: " + std::string(e.what()));
+			return crow::response(500, "Error retrieving map: " + std::string(e.what()));
 		}
 		});
 
+
 	CROW_ROUTE(m_app, "/startGame").methods("POST"_method)([this]() {
 		try {
+			const auto& players = m_game.GetPlayers();
+			if (players.size() < 2) {
+				return crow::response(400, "Not enough players to start the game. At least 2 players are required.");
+			}
+
 			m_game.StartGame();
 			return crow::response(200, "Game started successfully.");
 		}
@@ -183,6 +198,7 @@ void Routing::Run(int port)
 			return crow::response(500, "Error starting game: " + std::string(e.what()));
 		}
 		});
+
 
 	CROW_ROUTE(m_app, "/resetGame").methods("POST"_method)([this]() {
 		try {
@@ -414,7 +430,7 @@ void Routing::Run(int port)
 			const auto& penguins = m_game.GetPenguins();
 			for (const auto& penguin : penguins) {
 				if (penguin) {
-					penguin->ResetState(); // Resetează viețile și pozițiile jucătorilor.
+					penguin->ResetState();
 				}
 			}
 
@@ -434,7 +450,7 @@ void Routing::Run(int port)
 			}
 
 			std::string playerName = body["playerName"].s();
-			std::string upgradeType = body["upgradeType"].s();  // Poate fi "bullet_speed" sau "cooldown".
+			std::string upgradeType = body["upgradeType"].s();
 
 			m_game.UpgradePlayer(playerName, upgradeType);
 
@@ -455,7 +471,7 @@ void Routing::Run(int port)
 
 			uint32_t x = body["x"].i();
 			uint32_t y = body["y"].i();
-			std::string bonusType = body["bonusType"].s();  // Ex: "points", "speed".
+			std::string bonusType = body["bonusType"].s();
 
 			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
 				return crow::response(400, "Cell out of bounds.");
@@ -497,7 +513,7 @@ void Routing::Run(int port)
 		try {
 			const auto& penguins = m_game.GetPenguins();
 			for (const auto& penguin : penguins) {
-				penguin->ResetState(); // Resetează doar poziția și starea.
+				penguin->ResetState();
 			}
 
 			return crow::response(200, "All penguin positions reset to initial state.");
@@ -553,7 +569,66 @@ void Routing::Run(int port)
 		}
 			});
 
+	
 
+	CROW_ROUTE(m_app, "/getStartingPositions").methods("GET"_method)([this]() {
+		try {
+			crow::json::wvalue response;
+			const auto& startingPositions = m_game.GetBoardManager().GetStartingPositions();
+
+			for (size_t i = 0; i < startingPositions.size(); ++i) {
+				response["positions"][i]["x"] = startingPositions[i].first;
+				response["positions"][i]["y"] = startingPositions[i].second;
+			}
+
+			return crow::response(200, response);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error retrieving starting positions: " + std::string(e.what()));
+		}
+		});
+
+	CROW_ROUTE(m_app, "/initializePenguins").methods("POST"_method)([this]() {
+		try {
+			const auto& startingPositions = m_game.GetBoardManager().GetStartingPositions();
+			const auto& players = m_game.GetPlayers();
+
+			if (players.size() != startingPositions.size()) {
+				return crow::response(400, "Mismatch between players and starting positions.");
+			}
+
+			for (size_t i = 0; i < players.size(); ++i) {
+				auto* player = players[i].get();
+				auto position = startingPositions[i];
+				m_game.GetBoardManager().AddPenguin(std::make_shared<Penguin>(player, position.first, position.second));
+			}
+
+			return crow::response(200, "Penguins initialized on starting positions.");
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error initializing penguins: " + std::string(e.what()));
+		}
+		});
+
+	CROW_ROUTE(m_app, "/getPenguins").methods("GET"_method)([this]() {
+		try {
+			crow::json::wvalue response;
+			const auto& penguins = m_game.GetPenguins();
+
+			for (size_t i = 0; i < penguins.size(); ++i) {
+				const auto* penguin = penguins[i].get();
+				response["penguins"][i]["name"] = penguin->GetPlayer()->GetName();
+				response["penguins"][i]["x"] = penguin->GetPosition().first;
+				response["penguins"][i]["y"] = penguin->GetPosition().second;
+				response["penguins"][i]["isAlive"] = penguin->IsAlive();
+			}
+
+			return crow::response(200, response);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error retrieving penguins: " + std::string(e.what()));
+		}
+		});
 
 
 
