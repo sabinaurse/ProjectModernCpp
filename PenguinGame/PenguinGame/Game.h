@@ -11,7 +11,7 @@
 
 using Position = std::pair<std::int32_t, std::int32_t>; // maybe uint32_t??
 using PlayerList = std::vector<std::unique_ptr<Player>>;
-using PenguinList = std::vector<std::unique_ptr<Penguin>>;
+using PenguinList = std::vector<std::shared_ptr<Penguin>>;
 
 struct WaitingPlayer {
 	Player* player;
@@ -30,6 +30,11 @@ public:
 	Game(uint32_t rows, uint32_t cols)
 		: m_boardManager(rows, cols) {}
 
+	Game(const Game&) = delete;
+	Game& operator=(const Game&) = delete;
+	Game(Game&&) noexcept = default;
+	Game& operator=(Game&&) noexcept = default;
+
 	void StartGame();
 	void EndGame();
 	void RestartGame();
@@ -45,7 +50,7 @@ public:
 	void InitializePlayers();
 	Player* GetWinner();
 	Penguin* GetPenguinForPlayer(const Player& player);
-	const std::vector<std::unique_ptr<Penguin>>& GetPenguins() const { return m_penguins; }
+	const std::vector<std::shared_ptr<Penguin>>& GetPenguins() const { return m_penguins; }
 	std::vector<std::unique_ptr<Player>>& GetPlayers() { return m_players; }
 	Player* GetPlayerByName(const std::string& playerName);
 	void UpgradePlayer(const std::string& playerName, const std::string& upgradeType);

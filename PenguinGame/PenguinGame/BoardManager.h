@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <memory>
 #include <array>
 #include <cstdlib>
 #include <ctime>
@@ -33,11 +34,15 @@ public:
     std::vector<std::pair<int, int>> GetStartingPositions() const;
     void SetCell(int x, int y, int value);
 
+    // Metode pentru manipulare pinguin
+    void AddPenguin(std::shared_ptr<Penguin> penguin);
+    void ClearPenguins();
+
 private:
     void InitializeCellTypes();
 
 private:
     MapGen::GameBoard m_gameBoard;
-    std::vector<Penguin> m_penguins;
+    std::vector<std::shared_ptr<Penguin>> m_penguins;
 };
 

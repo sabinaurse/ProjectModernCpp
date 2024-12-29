@@ -297,7 +297,7 @@ void Game::TryStartMatch() {
     auto now = std::chrono::steady_clock::now();
 
     while (!waitingQueue.empty()) {
-        auto waitingPlayer = waitingQueue.top();
+        const auto& waitingPlayer = waitingQueue.top();
         waitingQueue.pop();
 
         auto waitTime = std::chrono::duration_cast<std::chrono::seconds>(now - waitingPlayer.joinTime).count();
@@ -326,7 +326,7 @@ void Game::TryStartMatch() {
 void Game::StartMatch(const std::vector<Player*>& playersForMatch) {
     std::cout << "Starting a new match with " << playersForMatch.size() << " players." << std::endl;
 
-    Game newGame;
+    Game newGame(m_boardManager.GetGameBoard().GetRows(), m_boardManager.GetGameBoard().GetCols());
     for (auto* player : playersForMatch) {
         newGame.AddPlayer(std::make_unique<Player>(*player));
     }
