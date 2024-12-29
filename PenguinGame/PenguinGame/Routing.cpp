@@ -115,6 +115,7 @@ void Routing::Run(int port)
 			return crow::response(500, "Error adding player to game: " + std::string(e.what()));
 		}
 			});*/
+
 	CROW_ROUTE(m_app, "/addPlayerToGame").methods("POST"_method)
 		([this](const crow::request& req) {
 		try {
@@ -163,7 +164,6 @@ void Routing::Run(int port)
 		}
 		});
 
-
 	CROW_ROUTE(m_app, "/getMap").methods("GET"_method)([this]() {
 		try {
 			crow::json::wvalue response;
@@ -183,7 +183,6 @@ void Routing::Run(int port)
 		}
 		});
 
-
 	CROW_ROUTE(m_app, "/startGame").methods("POST"_method)([this]() {
 		try {
 			const auto& players = m_game.GetPlayers();
@@ -198,7 +197,6 @@ void Routing::Run(int port)
 			return crow::response(500, "Error starting game: " + std::string(e.what()));
 		}
 		});
-
 
 	CROW_ROUTE(m_app, "/resetGame").methods("POST"_method)([this]() {
 		try {
@@ -347,7 +345,6 @@ void Routing::Run(int port)
 		}
 			});
 
-
 	CROW_ROUTE(m_app, "/stopGame").methods("POST"_method)
 		([this]() {
 		try {
@@ -399,7 +396,6 @@ void Routing::Run(int port)
 			return crow::response(500, "Error adding map element: " + std::string(e.what()));
 		}
 			});
-
 
 	CROW_ROUTE(m_app, "/removeMapElement").methods("POST"_method)
 		([this](const crow::request& req) {
@@ -487,28 +483,6 @@ void Routing::Run(int port)
 		}
 			});
 
-	CROW_ROUTE(m_app, "/getPenguinDetails").methods("GET"_method)([this]() {
-		try {
-			crow::json::wvalue penguinDetails;
-
-			const auto& penguins = m_game.GetPenguins();
-			for (size_t i = 0; i < penguins.size(); ++i) {
-				const auto* penguin = penguins[i].get();
-				penguinDetails[i]["name"] = penguin->GetPlayer()->GetName();
-				penguinDetails[i]["x"] = penguin->GetPosition().first;
-				penguinDetails[i]["y"] = penguin->GetPosition().second;
-				penguinDetails[i]["isAlive"] = penguin->IsAlive();
-				penguinDetails[i]["bulletSpeed"] = penguin->GetBulletSpeed();
-				penguinDetails[i]["eliminations"] = penguin->GetEliminationOrder();
-			}
-
-			return crow::response(200, penguinDetails);
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error retrieving penguin details: " + std::string(e.what()));
-		}
-		});
-
 	CROW_ROUTE(m_app, "/resetPenguinPositions").methods("POST"_method)([this]() {
 		try {
 			const auto& penguins = m_game.GetPenguins();
@@ -569,8 +543,6 @@ void Routing::Run(int port)
 		}
 			});
 
-	
-
 	CROW_ROUTE(m_app, "/getStartingPositions").methods("GET"_method)([this]() {
 		try {
 			crow::json::wvalue response;
@@ -610,7 +582,7 @@ void Routing::Run(int port)
 		}
 		});
 
-	CROW_ROUTE(m_app, "/getPenguins").methods("GET"_method)([this]() {
+	CROW_ROUTE(m_app, "/getPenguins").methods("GET"_method)([this](const crow::request& req) {
 		try {
 			crow::json::wvalue response;
 			const auto& penguins = m_game.GetPenguins();
@@ -621,6 +593,10 @@ void Routing::Run(int port)
 				response["penguins"][i]["x"] = penguin->GetPosition().first;
 				response["penguins"][i]["y"] = penguin->GetPosition().second;
 				response["penguins"][i]["isAlive"] = penguin->IsAlive();
+
+				// Include detalii suplimentare dacă este necesar
+				response["penguins"][i]["bulletSpeed"] = penguin->GetBulletSpeed();
+				response["penguins"][i]["eliminations"] = penguin->GetEliminationOrder();
 			}
 
 			return crow::response(200, response);
@@ -629,6 +605,7 @@ void Routing::Run(int port)
 			return crow::response(500, "Error retrieving penguins: " + std::string(e.what()));
 		}
 		});
+
 
 
 
