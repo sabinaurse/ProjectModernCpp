@@ -6,6 +6,7 @@
 #include <ctime>
 #include "crow.h"
 #include "../MapGenerationDLL/GameBoard.h"
+#include <crow/json.h>
 
 class Penguin;
 
@@ -27,8 +28,10 @@ public:
     void TriggerExplosion(int x, int y, int radius);
     void DestroyCell(int x, int y);
 
+    crow::json::wvalue SerializeBoard() const;
     const MapGen::GameBoard& GetGameBoard() const;
     std::vector<std::pair<int, int>> GetStartingPositions() const;
+    void SetCell(int x, int y, int value);
 
 private:
     void InitializeCellTypes();

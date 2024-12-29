@@ -36,6 +36,9 @@ public:
 	void CheckForCollisions();
 	void ShowLeaderboard();
 	const MapGen::GameBoard& GetBoard() const;
+	BoardManager& GetBoardManager() { return m_boardManager; }
+	const BoardManager& GetBoardManager() const { return m_boardManager; }
+
 
 	void AddPenguin(std::unique_ptr<Penguin> penguin);
 	void AddPlayer(std::unique_ptr<Player> player);

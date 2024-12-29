@@ -109,3 +109,23 @@ int BoardManager::GetCell(int x, int y) const {
     throw std::out_of_range("Position is out of bounds");
 }
 
+crow::json::wvalue BoardManager::SerializeBoard() const {
+    crow::json::wvalue json;
+
+    const auto& board = m_gameBoard.GetBoard();
+    for (size_t i = 0; i < board.size(); ++i) {
+        for (size_t j = 0; j < board[i].size(); ++j) {
+            json["board"][i][j] = board[i][j];
+        }
+    }
+
+    return json;
+}
+void BoardManager::SetCell(int x, int y, int value) {
+    if (IsWithinBounds(x, y)) {
+        m_gameBoard.GetBoard()[x][y] = value;
+    }
+    else {
+        throw std::out_of_range("Position is out of bounds");
+    }
+}

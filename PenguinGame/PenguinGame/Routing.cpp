@@ -143,7 +143,7 @@ void Routing::Run(int port)
 			return crow::response(500, "Error adding player to game: " + std::string(e.what()));
 		}
 			});
-		
+
 	CROW_ROUTE(m_app, "/getGameState").methods("GET"_method)([this]() {
 		try {
 			crow::json::wvalue gameState;
@@ -166,7 +166,7 @@ void Routing::Run(int port)
 
 	CROW_ROUTE(m_app, "/getMap")([this]() {
 		try {
-			crow::json::wvalue mapJson = m_game.GetBoard().SerializeBoard();
+			crow::json::wvalue mapJson = m_game.GetBoardManager().SerializeBoard();
 			return crow::response(200, mapJson);
 		}
 		catch (const std::exception& e) {
@@ -355,34 +355,35 @@ void Routing::Run(int port)
 			int32_t y = body["y"].i();
 			std::string elementType = body["elementType"].s();
 
-			if (!m_game.GetBoard().IsWithinBounds(x, y)) {
+			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
 				return crow::response(400, "Position out of bounds.");
 			}
 
-			Cell cellType;
+			int cellType;
 			if (elementType == "bomb") {
-				cellType = Cell::Hidden_Bomb;
+				cellType = 3;
 			}
 			else if (elementType == "destructible_wall") {
-				cellType = Cell::Destructible_Wall;
+				cellType = 1;
 			}
 			else if (elementType == "indestructible_wall") {
-				cellType = Cell::Indestructible_Wall;
+				cellType = 2;
 			}
 			else if (elementType == "empty") {
-				cellType = Cell::Empty;
+				cellType = 0;
 			}
 			else {
 				return crow::response(400, "Invalid element type.");
 			}
 
-			m_game.GetBoard().SetCell(x, y, cellType);
+			m_game.GetBoardManager().DestroyCell(x, y);
 			return crow::response(200, "Element added successfully.");
 		}
 		catch (const std::exception& e) {
 			return crow::response(500, "Error adding map element: " + std::string(e.what()));
 		}
 			});
+
 
 	CROW_ROUTE(m_app, "/removeMapElement").methods("POST"_method)
 		([this](const crow::request& req) {
@@ -395,11 +396,11 @@ void Routing::Run(int port)
 			int32_t x = body["x"].i();
 			int32_t y = body["y"].i();
 
-			if (!m_game.GetBoard().IsWithinBounds(x, y)) {
+			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
 				return crow::response(400, "Position out of bounds.");
 			}
 
-			m_game.GetBoard().SetCell(x, y, Cell::Empty);
+			m_game.GetBoardManager().SetCell(x, y, 0);
 			return crow::response(200, "Element removed successfully.");
 		}
 		catch (const std::exception& e) {
@@ -456,7 +457,7 @@ void Routing::Run(int port)
 			uint32_t y = body["y"].i();
 			std::string bonusType = body["bonusType"].s();  // Ex: "points", "speed".
 
-			if (!m_game.GetBoard().IsWithinBounds(x, y)) {
+			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
 				return crow::response(400, "Cell out of bounds.");
 			}
 
