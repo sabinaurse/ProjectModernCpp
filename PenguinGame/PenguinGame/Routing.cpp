@@ -571,8 +571,8 @@ void Routing::Run(int port)
 
 			for (size_t i = 0; i < players.size(); ++i) {
 				auto* player = players[i].get();
-				auto position = startingPositions[i];
-				m_game.GetBoardManager().AddPenguin(std::make_shared<Penguin>(player, position.first, position.second));
+				Position position = { startingPositions[i].first, startingPositions[i].second };
+				m_game.GetBoardManager().AddPenguin(std::make_shared<Penguin>(player, position, 500));
 			}
 
 			return crow::response(200, "Penguins initialized on starting positions.");
@@ -593,8 +593,6 @@ void Routing::Run(int port)
 				response["penguins"][i]["x"] = penguin->GetPosition().first;
 				response["penguins"][i]["y"] = penguin->GetPosition().second;
 				response["penguins"][i]["isAlive"] = penguin->IsAlive();
-
-				// Include detalii suplimentare dacă este necesar
 				response["penguins"][i]["bulletSpeed"] = penguin->GetBulletSpeed();
 				response["penguins"][i]["eliminations"] = penguin->GetEliminationOrder();
 			}

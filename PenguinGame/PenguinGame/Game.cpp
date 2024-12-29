@@ -111,7 +111,7 @@ void Game::InitializePlayers() {
     }
 }
 
-void Game::AddPenguin(std::unique_ptr<Penguin> penguin) {
+void Game::AddPenguin(std::shared_ptr<Penguin> penguin) {
     m_penguins.push_back(std::move(penguin));
 }
 
