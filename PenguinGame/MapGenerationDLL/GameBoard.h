@@ -21,6 +21,8 @@ namespace MapGen {
     class GAMEBOARD_API GameBoard {
     public:
         GameBoard(uint32_t rows, uint32_t cols);
+        GameBoard(GameBoard&& other) noexcept;
+        GameBoard& operator=(GameBoard&& other) noexcept;
         ~GameBoard();
 
         uint32_t GetRows() const;

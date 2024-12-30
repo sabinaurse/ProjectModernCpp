@@ -21,6 +21,29 @@ namespace MapGen {
         std::srand(static_cast<unsigned int>(std::time(nullptr)));
     }
 
+    GameBoard::GameBoard(GameBoard&& other) noexcept
+        : m_rows(other.m_rows),
+        m_cols(other.m_cols),
+        m_board(std::move(other.m_board)),
+        m_cellDefinitions(std::move(other.m_cellDefinitions)) {
+        other.m_rows = 0;
+        other.m_cols = 0;
+    }
+
+    GameBoard& GameBoard::operator=(GameBoard&& other) noexcept {
+        if (this != &other) 
+        {
+            m_rows = other.m_rows;
+            m_cols = other.m_cols;
+            m_board = std::move(other.m_board);
+            m_cellDefinitions = std::move(other.m_cellDefinitions);
+
+            other.m_rows = 0;
+            other.m_cols = 0;
+        }
+        return *this;
+    }
+
     void GameBoard::AddCellType(int id, const CellTypeDefinition& definition) {
         m_cellDefinitions[id] = definition;
     }
