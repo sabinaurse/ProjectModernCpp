@@ -95,7 +95,7 @@ const MapGen::GameBoard& BoardManager::GetGameBoard() const {
 }
 
 std::vector<std::pair<int, int>> BoardManager::GetStartingPositions() const {
-	return GetStartingPositions();
+	return m_gameBoard.GetStartingPositions();
 }
 
 bool BoardManager::IsWithinBounds(int x, int y) const {

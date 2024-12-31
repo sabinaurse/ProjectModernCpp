@@ -186,7 +186,7 @@ void Routing::Run(int port)
 	CROW_ROUTE(m_app, "/startGame").methods("POST"_method)([this]() {
 		try {
 			const auto& players = m_game.GetPlayers();
-			if (players.size() < 2) {
+			if (players.size() < 1) {
 				return crow::response(400, "Not enough players to start the game. At least 2 players are required.");
 			}
 
