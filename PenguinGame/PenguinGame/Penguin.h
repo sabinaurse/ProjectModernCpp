@@ -5,6 +5,7 @@
 #include "Weapon.h"
 #include "Player.h"
 #include "Snowball.h"
+#include "BoardManager.h"
 
 using Position = std::pair<std::int32_t, std::int32_t>;
 

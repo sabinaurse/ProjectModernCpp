@@ -21,6 +21,7 @@ private:
         CreatePlayer,
         GetPlayer,
         UpdatePlayerPosition,
+        GetMap,
     };
 
     QNetworkAccessManager* networkManager;
@@ -30,6 +31,7 @@ private:
 private:
     RequestType toRequestType(const QString& requestType);
     void updatePlayerPositionFromJson(const QJsonObject& jsonObj);
+    void getMapFromJson(const QJsonObject& jsonObj);
     void initializeRequestActions();
 
 private slots:
@@ -54,6 +56,7 @@ public:
 signals:
     void gameStateUpdated();
     void loginCompleted(const QString& data);
+    void mapReceived(const std::vector<std::vector<int>>& mapData, std::unordered_map<int, std::string>& cellTypes);
     void requestCompleted(const QString& response);
     void requestFailed(const QString& error);
 };

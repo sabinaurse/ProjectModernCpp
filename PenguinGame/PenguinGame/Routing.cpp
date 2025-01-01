@@ -176,6 +176,9 @@ void Routing::Run(int port)
 				{"3", "Bomb"}
 			};
 
+			//std::string serializedResponse = response.dump();
+			//std::cout << "Response JSON: " << serializedResponse << std::endl;
+
 			return crow::response(200, response);
 		}
 		catch (const std::exception& e) {

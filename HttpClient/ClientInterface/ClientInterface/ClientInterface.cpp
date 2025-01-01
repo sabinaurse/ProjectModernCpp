@@ -8,8 +8,6 @@ ClientInterface::ClientInterface(QWidget *parent)
     gamePage(new GamePage(m_clientRequests, this)),
     stackedWidget(new QStackedWidget(this))
 {
-    resize(800, 600); 
-
     centralWidget = new QWidget(this);
 
     stackedWidget->addWidget(loginPage);

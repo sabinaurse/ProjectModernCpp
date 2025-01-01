@@ -17,6 +17,7 @@ public:
     BoardManager(uint32_t rows, uint32_t cols) : m_gameBoard(rows, cols)
     {
         InitializeCellTypes();
+        m_gameBoard.InitializeBoard();
     }
 
     void GenerateMap() { m_gameBoard.InitializeBoard(); }

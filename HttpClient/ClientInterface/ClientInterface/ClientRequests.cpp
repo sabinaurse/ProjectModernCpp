@@ -22,6 +22,14 @@ void ClientRequests::initializeRequestActions() {
             updatePlayerPositionFromJson(jsonObj);  
         }
         };
+
+    requestActions[RequestType::GetMap] = [this](const QString& data) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
+        if (jsonDoc.isObject()) {
+            QJsonObject jsonObj = jsonDoc.object();
+            getMapFromJson(jsonObj);
+        }
+        };
 }
 
 void ClientRequests::CreatePlayer(const QString& name) {
@@ -83,7 +91,8 @@ void ClientRequests::AddPlayerToGame(const QString& playerName)
 void ClientRequests::GetMap() {
     QUrl url("http://localhost:18080/getMap");
     QNetworkRequest request(url);
-    networkManager->get(request);
+    QNetworkReply* reply = networkManager->get(request);
+    activeRequests.insert(reply, "getMap");
 }
 
 void ClientRequests::StartGame() {
@@ -113,6 +122,9 @@ ClientRequests::RequestType ClientRequests::toRequestType(const QString& request
     }
     else if (requestType == "updatePlayerPosition") {
         return RequestType::UpdatePlayerPosition;
+    }
+    else if (requestType == "getMap") {
+        return RequestType::GetMap;
     }
     else {
         return RequestType::Unknown;
@@ -160,6 +172,68 @@ void ClientRequests::updatePlayerPositionFromJson(const QJsonObject& jsonObj)
     }
 }
 
+void ClientRequests::getMapFromJson(const QJsonObject& jsonObj)
+{
+    if (jsonObj.contains("board") && jsonObj["board"].isArray()) {
+        QJsonArray boardArray = jsonObj["board"].toArray();
+
+        qDebug() << "Received board array, number of rows: " << boardArray.size();
+
+        std::vector<std::vector<int>> mapData;
+
+        for (const QJsonValue& rowValue : boardArray) {
+            if (!rowValue.isArray()) {
+                qDebug() << "Invalid row in 'board.board'. Skipping...";
+                continue;
+            }
+
+            QJsonArray rowArray = rowValue.toArray();
+            std::vector<int> mapRow;
+
+            for (const QJsonValue& cellValue : rowArray) {
+                if (!cellValue.isDouble()) {
+                    qDebug() << "Invalid cell value in 'board.board'. Skipping...";
+                    continue;
+                }
+                mapRow.push_back(cellValue.toInt());
+            }
+
+            mapData.push_back(mapRow);
+        }
+
+        qDebug() << "Map received with" << mapData.size() << "rows.";
+
+        if (mapData.empty()) {
+            qDebug() << "Map data is empty after parsing!";
+            return;
+        }
+
+        std::unordered_map<int, std::string> cellTypes;
+        if (jsonObj.contains("cellTypes") && jsonObj["cellTypes"].isObject()) {
+            QJsonObject cellTypesObj = jsonObj["cellTypes"].toObject();
+            for (const QString& typeKey : cellTypesObj.keys()) {
+                bool conversionOk;
+                int cellType = typeKey.toInt(&conversionOk);
+                if (!conversionOk) {
+                    qDebug() << "Invalid cell type key in 'cellTypes'. Skipping...";
+                    continue;
+                }
+
+                cellTypes[cellType] = cellTypesObj[typeKey].toString().toStdString();
+            }
+
+            qDebug() << "Cell types metadata parsed.";
+            for (const auto& [key, value] : cellTypes) {
+                qDebug() << "Type:" << key << ", Description:" << QString::fromStdString(value);
+            }
+        }
+
+        emit mapReceived(mapData, cellTypes);
+    }
+    else {
+        qDebug() << "No valid 'board' field in JSON.";
+    }
+}
 
 void ClientRequests::MovePlayer(const QString& playerName, const QString& direction) {
 
@@ -174,7 +248,8 @@ void ClientRequests::MovePlayer(const QString& playerName, const QString& direct
 
     qDebug() << "Sending move request for player:" << playerName << "with direction:" << direction;
 
-    networkManager->post(request, QJsonDocument(json).toJson());
+    QNetworkReply* reply = networkManager->post(request, QJsonDocument(json).toJson());
+    activeRequests.insert(reply, "updatePlayerPosition");
 }
 
 void ClientRequests::Fire(const QString& playerName) {

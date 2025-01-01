@@ -42,11 +42,12 @@ void MainPage::onRequestCompleted(const QString& response) {
         qDebug() << "Player successfully added. Sending request to start game.";
 
         m_clientRequests->StartGame();
-        /*m_clientRequests->GetGameState();*/
+        //m_clientRequests->GetGameState();
     }
     else if (response.contains("Game started")) {
         qDebug() << "Game started successfully. Opening GamePage.";
         emit startGameRequested();
+        m_clientRequests->GetMap();
     }
 }
 

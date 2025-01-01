@@ -2,7 +2,7 @@
 #include "Snowball.h"
 
 #define RADIUS_OF_COLLISION 15.0f
-#define MOVE_STEP 10
+#define MOVE_STEP 1
 
 Penguin::Penguin(Player* player, Position initialPosition, int fireRate)
 	: m_player{ player }, m_initialPosition{ initialPosition }, m_position{ initialPosition },
