@@ -1,9 +1,10 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
-#include "ui_ClientInterface.h"
 #include <QStackedWidget>
-#include <ClientRequests.h>
+
+#include "ClientRequests.h"
+#include "ui_ClientInterface.h"
 #include "LoginPage.h"
 #include "MainPage.h"
 #include "GamePage.h"
@@ -12,12 +13,6 @@ class ClientInterface : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    ClientInterface(QWidget *parent = nullptr);
-    ~ClientInterface();
-private slots:
-    void onLoginSuccessful(const QString& playerName, int playerScore, int playerPoints);
-    void onGameStartRequested();
 private:
     Ui::ClientInterfaceClass ui;
     QWidget* centralWidget;
@@ -28,4 +23,11 @@ private:
     MainPage* mainPage;
     GamePage* gamePage;
 
+private slots:
+    void onLoginSuccessful(const QString& playerName, int playerScore, int playerPoints);
+    void onGameStartRequested();
+
+public:
+    ClientInterface(QWidget *parent = nullptr);
+    ~ClientInterface();
 };

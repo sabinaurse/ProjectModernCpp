@@ -1,6 +1,5 @@
 ﻿#include "LoginPage.h"
-#include <QMessageBox>
-#include <iostream>
+
 
 LoginPage::LoginPage(ClientRequests* requests, QWidget* parent)
     : QWidget(parent), m_clientRequests(requests),

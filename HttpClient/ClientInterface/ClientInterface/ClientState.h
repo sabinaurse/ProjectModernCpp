@@ -1,12 +1,21 @@
-#ifndef STATE_H
-#define STATE_H
+#pragma once
 
 #include <QString>
 #include <QMap>
 
 class ClientState {
-public:
+private:
+    ClientState() : m_playerScore(0), m_playerPoints(0) {}
 
+    QString m_currentPlayer;
+    int m_playerScore;
+    int m_playerPoints;
+    QMap<QString, std::pair<int, int>> m_playerPositions;
+
+    ClientState(const ClientState&) = delete;
+    ClientState& operator=(const ClientState&) = delete;
+
+public:
     static ClientState& instance();
 
     void SetCurrentPlayer(const QString& name);
@@ -19,18 +28,4 @@ public:
 
     void UpdatePlayerPosition(const QString& name, int x, int y);
     std::pair<int,int> GetPlayerPosition(const QString& name) const;
-
-private:
-
-    ClientState() : m_playerScore(0), m_playerPoints(0) {}
-
-    QString m_currentPlayer;
-    int m_playerScore;
-    int m_playerPoints;
-    QMap<QString, std::pair<int,int>> m_playerPositions;
-
-    ClientState(const ClientState&) = delete;
-    ClientState& operator=(const ClientState&) = delete;
 };
-
-#endif 

@@ -1,15 +1,39 @@
-#ifndef CLIENTREQUESTS_H
-#define CLIENTREQUESTS_H
+#pragma once
 
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <ClientState.h>
+#include <QJsonDocument>
+#include <QUrlQuery>
+#include <iostream>
+
+#include "ClientState.h"
 
 class ClientRequests : public QObject {
     Q_OBJECT
+
+private:
+
+    enum class RequestType {
+        Unknown,
+        CreatePlayer,
+        GetPlayer,
+        UpdatePlayerPosition,
+    };
+
+    QNetworkAccessManager* networkManager;
+    QMap<QNetworkReply*, QString> activeRequests;
+    QMap<RequestType, std::function<void(const QString&)>> requestActions;
+
+private:
+    RequestType toRequestType(const QString& requestType);
+    void updatePlayerPositionFromJson(const QJsonObject& jsonObj);
+    void initializeRequestActions();
+
+private slots:
+    void onReplyFinished(QNetworkReply* reply);
 
 public:
     explicit ClientRequests(QObject* parent = nullptr);
@@ -32,12 +56,4 @@ signals:
     void loginCompleted(const QString& data);
     void requestCompleted(const QString& response);
     void requestFailed(const QString& error);
-private slots:
-    void onReplyFinished(QNetworkReply* reply);
-
-private:
-    QNetworkAccessManager* networkManager;
-    QMap<QNetworkReply*, QString> activeRequests;
 };
-
-#endif 
