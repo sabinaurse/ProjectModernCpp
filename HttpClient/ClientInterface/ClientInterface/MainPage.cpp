@@ -61,9 +61,13 @@ void MainPage::displayPlayerInfo(const QString& playerInfo) {
     QString playerName = ClientState::instance().GetCurrentPlayer(); 
     int playerScore = ClientState::instance().GetPlayerScore(); 
     int playerPoints = ClientState::instance().GetPlayerPoints();
+    int cooldownLevel = ClientState::instance().GetCooldownLevel();
+    int bulletSpeedLevel = ClientState::instance().GetBulletSpeedLevel();
 
-    m_playerInfoLabel->setText(QString("Name: %1\nScore: %2\nPoints: %3")
+    m_playerInfoLabel->setText(QString("Name: %1\nScore: %2\nPoints: %3\nCooldown: %4\nBullet Speed: %5")
         .arg(playerName)
         .arg(playerScore)
-        .arg(playerPoints));  
+        .arg(playerPoints)
+        .arg(cooldownLevel)
+        .arg(bulletSpeedLevel));
 }

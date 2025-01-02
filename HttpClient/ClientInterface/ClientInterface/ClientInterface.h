@@ -24,7 +24,7 @@ private:
     GamePage* gamePage;
 
 private slots:
-    void onLoginSuccessful(const QString& playerName, int playerScore, int playerPoints);
+    void onLoginSuccessful(const QString& playerName, int playerScore, int playerPoints, int cooldownLevel, int bulletSpeedLevel);
     void onGameStartRequested();
 
 public:

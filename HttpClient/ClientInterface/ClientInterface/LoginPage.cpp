@@ -84,13 +84,16 @@ void LoginPage::onRequestCompleted(const QString& data) {
             QString playerName = jsonObj["name"].toString();
             int playerScore = jsonObj["score"].toInt();
             int playerPoints = jsonObj["points"].toInt();
+            int cooldown = jsonObj["cooldown_level"].toInt();
+            int bulletSpeed = jsonObj["bullet_speed_level"].toInt();
 
             ClientState::instance().SetCurrentPlayer(playerName);
             ClientState::instance().SetPlayerScore(playerScore);
             ClientState::instance().SetPlayerPoints(playerPoints);
+            ClientState::instance().SetCooldownLevel(cooldown);
+            ClientState::instance().SetBulletSpeedLevel(bulletSpeed);
 
-            emit loginSuccessful(playerName, playerScore, playerPoints);
-         
+            emit loginSuccessful(playerName, playerScore, playerPoints, cooldown, bulletSpeed);
         }
     }
 }

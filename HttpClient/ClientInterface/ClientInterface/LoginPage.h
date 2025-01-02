@@ -33,7 +33,8 @@ public:
     ~LoginPage();
 
 signals:
-    void loginSuccessful(const QString& playerName, int playerScore, int playerPoints);
+signals:
+    void loginSuccessful(const QString& playerName, int playerScore, int playerPoints, int cooldownLevel, int bulletSpeedLevel);
 };
 
 

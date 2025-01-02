@@ -17,6 +17,14 @@ void ClientState::SetPlayerPoints(int points) {
     m_playerPoints = points; 
 }
 
+void ClientState::SetCooldownLevel(int cooldown) {
+    m_cooldownLevel = cooldown;
+}
+
+void ClientState::SetBulletSpeedLevel(int bulletSpeed) {
+    m_bulletSpeedLevel = bulletSpeed;
+}
+
 QString ClientState::GetCurrentPlayer() const {
     return m_currentPlayer;
 }
@@ -27,6 +35,14 @@ int ClientState::GetPlayerScore() const {
 
 int ClientState::GetPlayerPoints() const {
     return m_playerPoints; 
+}
+
+int ClientState::GetCooldownLevel() const {
+    return m_cooldownLevel;
+}
+
+int ClientState::GetBulletSpeedLevel() const {
+    return m_bulletSpeedLevel;
 }
 
 void ClientState::UpdatePlayerPosition(const QString& name, int x, int y) {

@@ -31,12 +31,14 @@ ClientInterface::~ClientInterface() {
     delete mainPage;
 }
 
-void ClientInterface::onLoginSuccessful(const QString& playerName, int playerScore, int playerPoints) 
+void ClientInterface::onLoginSuccessful(const QString& playerName, int playerScore, int playerPoints, int cooldownLevel, int bulletSpeedLevel) 
 {
-    mainPage->displayPlayerInfo(QString("Name: %1\nScore: %2\nPoints: %3")
+    mainPage->displayPlayerInfo(QString("Name: %1\nScore: %2\nPoints: %3\nCooldown: %4\nBullet Speed: %5")
         .arg(playerName)
         .arg(playerScore)
-        .arg(playerPoints));
+        .arg(playerPoints)
+        .arg(cooldownLevel)
+        .arg(bulletSpeedLevel));
 
     stackedWidget->setCurrentWidget(mainPage);
     qDebug() << "Switched to MainPage.";
