@@ -18,10 +18,10 @@ void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 
 	Position delta{ 0, 0 };
 	switch (direction) {
-	case 'W': delta.second = -MOVE_STEP; break;
-	case 'S': delta.second = MOVE_STEP; break;
-	case 'A': delta.first = -MOVE_STEP; break;
-	case 'D': delta.first = MOVE_STEP; break;
+	case 'W': delta.second = -MOVE_STEP; break; // Sus
+	case 'S': delta.second = MOVE_STEP; break;  // Jos
+	case 'A': delta.first = -MOVE_STEP; break;  // Stânga
+	case 'D': delta.first = MOVE_STEP; break;   // Dreapta
 	default:
 		std::cout << "Invalid direction. Use W, A, S, D for movement." << std::endl;
 		return;
@@ -29,12 +29,24 @@ void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 
 	Position newPosition = { m_position.first + delta.first, m_position.second + delta.second };
 
-	// Verificăm doar limitele hărții
+	// Verificăm limitele hărții
 	if (newPosition.second >= 0 && newPosition.second < gameBoard.GetRows() &&
-		newPosition.first >= 0 && newPosition.first < gameBoard.GetCols() ) {
-		m_position = newPosition;
-		m_currentDirection = direction;
-		std::cout << "Penguin moved to (" << newPosition.first << ", " << newPosition.second << ")." << std::endl;
+		newPosition.first >= 0 && newPosition.first < gameBoard.GetCols()) {
+
+		// Obținem tipul celulei țintă
+		const auto& board = gameBoard.GetBoard();
+		int cellType = board[newPosition.second][newPosition.first]; // Observăm că matricea este accesată invers (rând, coloană)
+
+		// Permitem mutarea doar pe celule de tip `Empty` (0)
+		if (cellType == 0) {
+			m_position = newPosition;
+			m_currentDirection = direction;
+			std::cout << "Penguin moved to (" << newPosition.first << ", " << newPosition.second << ")." << std::endl;
+		}
+		else {
+			std::cout << "Move blocked by cell type: " << cellType << " at ("
+				<< newPosition.first << ", " << newPosition.second << ")." << std::endl;
+		}
 	}
 	else {
 		std::cout << "Move blocked! Out of bounds at (" << newPosition.first << ", " << newPosition.second << ")." << std::endl;
