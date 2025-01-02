@@ -4,10 +4,10 @@
 Penguin::Penguin(ClientRequests* requests, QGraphicsPixmapItem* parent)
     : QObject(nullptr), QGraphicsPixmapItem(parent), m_clientRequests(requests) {
 
-    m_sprites["front"] = resizePixmap(QPixmap("sprites/Penguin_front.png"), 80, 80);
-    m_sprites["back"] = resizePixmap(QPixmap("sprites/Penguin_back.png"), 80, 80);
-    m_sprites["left"] = resizePixmap(QPixmap("sprites/Penguin_left.png"), 80, 80);
-    m_sprites["right"] = resizePixmap(QPixmap("sprites/Penguin_right.png"), 80, 80);;
+    m_sprites["front"] = resizePixmap(QPixmap("sprites/Penguin_front.png"), 30, 30);
+    m_sprites["back"] = resizePixmap(QPixmap("sprites/Penguin_back.png"), 30, 30);
+    m_sprites["left"] = resizePixmap(QPixmap("sprites/Penguin_left.png"), 30, 30);
+    m_sprites["right"] = resizePixmap(QPixmap("sprites/Penguin_right.png"), 30, 30);
 
     setPixmap(m_sprites["front"]);
     setFlag(QGraphicsItem::ItemIsFocusable);
