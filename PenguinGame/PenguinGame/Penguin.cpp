@@ -13,35 +13,32 @@ Penguin::Penguin(Player* player, Position initialPosition, int fireRate)
 }
 
 
-void Penguin::Move(char direction,const MapGen::GameBoard& gameBoard) {
-	if (!m_isAlive) return; // Nu poate să se miște dacă e mort.
+void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
+	if (!m_isAlive) return;
 
 	Position delta{ 0, 0 };
-
 	switch (direction) {
-	case 'W': delta.second = -MOVE_STEP; break; // Sus
-	case 'S': delta.second = MOVE_STEP; break;  // Jos
-	case 'A': delta.first = -MOVE_STEP; break; // Stânga
-	case 'D': delta.first = MOVE_STEP; break;  // Dreapta
+	case 'W': delta.second = -MOVE_STEP; break;
+	case 'S': delta.second = MOVE_STEP; break;
+	case 'A': delta.first = -MOVE_STEP; break;
+	case 'D': delta.first = MOVE_STEP; break;
 	default:
 		std::cout << "Invalid direction. Use W, A, S, D for movement." << std::endl;
 		return;
 	}
 
 	Position newPosition = { m_position.first + delta.first, m_position.second + delta.second };
-	m_position = newPosition; 
 
-	// Verificăm dacă poziția este validă și liberă.
-	/*if (board.IsWithinBounds(newPosition.first, newPosition.second) &&
-		board.GetCell(newPosition.first, newPosition.second) == Cell::Empty) {
-		m_position = newPosition; // Actualizăm poziția.
-		m_currentDirection = direction; // Actualizăm direcția curentă.
-		std::cout << "Penguin moved to (" << newPosition.first << ", " << newPosition.second
-			<< ") facing " << m_currentDirection << "." << std::endl;
+	// Verificăm doar limitele hărții
+	if (newPosition.second >= 0 && newPosition.second < gameBoard.GetRows() &&
+		newPosition.first >= 0 && newPosition.first < gameBoard.GetCols() ) {
+		m_position = newPosition;
+		m_currentDirection = direction;
+		std::cout << "Penguin moved to (" << newPosition.first << ", " << newPosition.second << ")." << std::endl;
 	}
 	else {
-		std::cout << "Move blocked!" << std::endl;
-	}*/
+		std::cout << "Move blocked! Out of bounds at (" << newPosition.first << ", " << newPosition.second << ")." << std::endl;
+	}
 }
 
 void Penguin::Fire() {
@@ -74,7 +71,7 @@ void Penguin::Fire() {
 
 void Penguin::UpgradeBulletSpeed() {
 	int currentLevel = m_player->GetBulletSpeedLevel();
-	if (currentLevel < 3) { 
+	if (currentLevel < 3) {
 		m_player->SetBulletSpeedLevel(currentLevel + 1);
 		m_weapon.SetBulletSpeedLevel(currentLevel + 1);
 		m_bulletSpeed = m_weapon.GetBulletSpeed();
@@ -117,7 +114,7 @@ void Penguin::UpgradeFireRate() {
 void Penguin::TakeDamage()
 {
 	if (!m_isAlive) return;
-	if (--m_lives <= 0) 
+	if (--m_lives <= 0)
 	{
 		m_isAlive = false;
 

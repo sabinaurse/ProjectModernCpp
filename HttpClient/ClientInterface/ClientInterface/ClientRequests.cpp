@@ -236,7 +236,6 @@ void ClientRequests::getMapFromJson(const QJsonObject& jsonObj)
 }
 
 void ClientRequests::MovePlayer(const QString& playerName, const QString& direction) {
-
     QUrl url("http://localhost:18080/movePlayer");
 
     QJsonObject json;
@@ -245,8 +244,6 @@ void ClientRequests::MovePlayer(const QString& playerName, const QString& direct
 
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
-    qDebug() << "Sending move request for player:" << playerName << "with direction:" << direction;
 
     QNetworkReply* reply = networkManager->post(request, QJsonDocument(json).toJson());
     activeRequests.insert(reply, "updatePlayerPosition");

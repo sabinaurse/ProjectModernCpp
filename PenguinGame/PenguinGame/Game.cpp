@@ -106,7 +106,7 @@ void Game::InitializePlayers() {
         //auto position = startingPositions[i];
         Position position{ startingPositions[i] };
 
-        m_penguins.push_back(std::make_unique<Penguin>(player.get(), position, 500));
+        m_penguins.push_back(std::make_shared<Penguin>(player.get(), position, 500));
         std::cout << "Player " << player->GetName() << " placed at (" << position.first << ", " << position.second << ")." << std::endl;
     }
 }

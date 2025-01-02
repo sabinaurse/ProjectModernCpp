@@ -237,51 +237,38 @@ void Routing::Run(int port)
 		([this](const crow::request& req) {
 		try {
 			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object");
-			}
-
-			if (!body.has("direction")) {
-				return crow::response(400, "Direction not provided");
+			if (!body || !body.has("direction") || !body.has("playerName")) {
+				return crow::response(400, "Invalid request body");
 			}
 
 			std::string direction = body["direction"].s();
-			if (direction.empty()) {
-				return crow::response(400, "Direction cannot be empty");
-			}
-
-			char directionChar = direction[0];
-
-			if (directionChar != 'W' && directionChar != 'A' && directionChar != 'S' && directionChar != 'D') {
-				return crow::response(400, "Invalid direction. Use W, A, S, or D.");
-			}
-
 			std::string playerName = body["playerName"].s();
-			Player* player = m_game.GetPlayerByName(playerName);
 
+			Player* player = m_game.GetPlayerByName(playerName);
 			if (!player) {
-				return crow::response(404, "Player not found");
+				return crow::response(404, "Player not found.");
 			}
 
 			Penguin* penguin = m_game.GetPenguinForPlayer(*player);
-
 			if (!penguin) {
-				return crow::response(404, "Penguin not found");
+				return crow::response(404, "Penguin not found.");
 			}
 
-			penguin->Move(directionChar, m_game.GetBoard());
+			penguin->Move(direction[0], m_game.GetBoard());
 
 			crow::json::wvalue response;
 			response["x"] = penguin->GetPosition().first;
 			response["y"] = penguin->GetPosition().second;
 
-			return crow::response(response);
-
+			return crow::response(200, response);
 		}
 		catch (const std::exception& e) {
 			return crow::response(500, "Error moving player: " + std::string(e.what()));
 		}
 			});
+
+
+
 
 	CROW_ROUTE(m_app, "/fire").methods("POST"_method)
 		([this](const crow::request& req) {
