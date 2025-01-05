@@ -11,6 +11,7 @@
 #include "ClientState.h"
 #include "Penguin.h"
 #include "Map.h"
+#include "Snowball.h"
 
 class GamePage : public QWidget {
 	Q_OBJECT
@@ -25,6 +26,7 @@ private:
 private slots:
 	void onGameStateUpdated();
 	void onMapReceived(const std::vector<std::vector<int>>& mapData, std::unordered_map<int, std::string>& cellTypes);
+	void onSnowballFired(int startX, int startY, const QString& direction, float speed);
 
 public:
 	explicit GamePage(ClientRequests* requests, QWidget* parent);

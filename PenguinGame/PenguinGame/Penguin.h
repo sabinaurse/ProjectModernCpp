@@ -12,9 +12,9 @@ using Position = std::pair<std::int32_t, std::int32_t>;
 class Penguin
 {
 public:
-	Penguin(Player* player,Position initialPosition, int fireRate);
+	Penguin(Player* player, Position initialPosition, int fireRate);
 
-	void Move(char direction,const MapGen::GameBoard& gameBoard);
+	void Move(char direction, const MapGen::GameBoard& gameBoard);
 
 	void Fire();
 	void UpgradeBulletSpeed(); // Metodă pentru dublarea vitezei gloanțelor

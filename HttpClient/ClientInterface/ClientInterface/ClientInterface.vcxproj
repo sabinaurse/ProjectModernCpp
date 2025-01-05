@@ -96,6 +96,7 @@
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Penguin.cpp" />
+    <ClCompile Include="Snowball.cpp" />
     <QtRcc Include="ClientInterface.qrc" />
     <QtMoc Include="ClientInterface.h" />
     <ClCompile Include="ClientInterface.cpp" />
@@ -109,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h" />
+    <QtMoc Include="Snowball.h" />
     <QtMoc Include="GamePage.h" />
     <QtMoc Include="Penguin.h" />
     <QtMoc Include="MainPage.h" />

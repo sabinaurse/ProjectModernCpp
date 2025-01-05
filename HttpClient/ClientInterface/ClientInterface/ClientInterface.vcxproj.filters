@@ -58,6 +58,9 @@
     <ClCompile Include="Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Snowball.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientState.h">
@@ -81,6 +84,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="GamePage.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Snowball.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

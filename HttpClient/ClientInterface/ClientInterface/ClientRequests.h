@@ -22,6 +22,7 @@ private:
         GetPlayer,
         UpdatePlayerPosition,
         GetMap,
+        Fire
     };
 
     QNetworkAccessManager* networkManager;
@@ -59,4 +60,5 @@ signals:
     void mapReceived(const std::vector<std::vector<int>>& mapData, std::unordered_map<int, std::string>& cellTypes);
     void requestCompleted(const QString& response);
     void requestFailed(const QString& error);
+    void snowballFired(int startX, int startY, const QString& direction, float speed);
 };

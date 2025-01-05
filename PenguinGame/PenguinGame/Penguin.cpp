@@ -52,27 +52,28 @@ void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 		std::cout << "Move blocked! Out of bounds at (" << newPosition.first << ", " << newPosition.second << ")." << std::endl;
 	}
 }
-
 void Penguin::Fire() {
 	if (!m_isAlive) return;
 
 	if (m_weapon.CanShoot()) {
 		std::string direction;
 
-		// Convertim direcția curentă într-un string corespunzător.
 		switch (m_currentDirection) {
-		case 'W': direction = "up"; break;    // Sus
-		case 'S': direction = "down"; break; // Jos
-		case 'A': direction = "left"; break; // Stânga
-		case 'D': direction = "right"; break; // Dreapta
+		case 'W': direction = "up"; break;
+		case 'S': direction = "down"; break;
+		case 'A': direction = "left"; break;
+		case 'D': direction = "right"; break;
 		default:
 			std::cout << "Invalid direction for firing!" << std::endl;
 			return;
 		}
 
-		// Creăm glonțul folosind constructorul Snowball.
-		m_snowballs.emplace_back(m_position, direction, m_bulletSpeed);
-		std::cout << "Penguin fired a snowball with speed " << m_bulletSpeed << " m/s in direction " << direction << "." << std::endl;
+		Snowball newSnowball(m_position, direction, m_bulletSpeed);
+		m_snowballs.push_back(newSnowball);
+
+		std::cout << "Snowball created at (" << newSnowball.GetPosition().first << ", "
+			<< newSnowball.GetPosition().second << ") in direction " << direction
+			<< " with speed " << m_bulletSpeed << std::endl;
 
 		m_weapon.ResetTimeSinceLastShot();
 	}
@@ -80,6 +81,7 @@ void Penguin::Fire() {
 		std::cout << "Penguin can't shoot yet. Waiting for reload." << std::endl;
 	}
 }
+
 
 void Penguin::UpgradeBulletSpeed() {
 	int currentLevel = m_player->GetBulletSpeedLevel();
@@ -155,8 +157,12 @@ std::vector<Snowball>& Penguin::GetSnowballs() {
 }
 
 const std::vector<Snowball>& Penguin::GetSnowballs() const {
+	if (m_snowballs.empty()) {
+		std::cerr << "Warning: Attempted to access an empty snowball vector." << std::endl;
+	}
 	return m_snowballs;
 }
+
 
 void Penguin::RemoveInactiveSnowballs() {
 	m_snowballs.erase(

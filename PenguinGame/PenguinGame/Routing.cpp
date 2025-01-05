@@ -266,36 +266,59 @@ void Routing::Run(int port)
 			return crow::response(500, "Error moving player: " + std::string(e.what()));
 		}
 			});
-
-
-
-
 	CROW_ROUTE(m_app, "/fire").methods("POST"_method)
 		([this](const crow::request& req) {
 		try {
 			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object");
+			CROW_LOG_INFO << "Request body: " << req.body;
+
+			if (!body || !body.has("playerName")) {
+				return crow::response(400, "Invalid request: Missing playerName.");
 			}
 
 			std::string playerName = body["playerName"].s();
+
 			Player* player = m_game.GetPlayerByName(playerName);
 			if (!player) {
+				CROW_LOG_ERROR << "Player not found: " << playerName;
 				return crow::response(404, "Player not found.");
 			}
 
 			Penguin* penguin = m_game.GetPenguinForPlayer(*player);
 			if (!penguin) {
+				CROW_LOG_ERROR << "Penguin not found for player: " << playerName;
 				return crow::response(404, "Penguin not found.");
 			}
 
 			penguin->Fire();
-			return crow::response(200, "Snowball fired.");
+
+			const auto& snowballs = penguin->GetSnowballs();
+			if (snowballs.empty()) {
+				CROW_LOG_ERROR << "No snowballs created for penguin of player: " << playerName;
+				return crow::response(500, "No snowballs were created.");
+			}
+
+			const Snowball& latestSnowball = snowballs.back();
+			CROW_LOG_INFO << "Snowball created at (" << latestSnowball.GetPosition().first << ", "
+				<< latestSnowball.GetPosition().second << ") in direction "
+				<< latestSnowball.GetDirection() << " with speed "
+				<< latestSnowball.GetSpeed();
+
+			crow::json::wvalue response;
+			response["startX"] = latestSnowball.GetPosition().first;
+			response["startY"] = latestSnowball.GetPosition().second;
+			response["direction"] = latestSnowball.GetDirection();
+			response["bulletSpeed"] = latestSnowball.GetSpeed();
+
+			return crow::response(200, response);
 		}
 		catch (const std::exception& e) {
-			return crow::response(500, "Error firing snowball: " + std::string(e.what()));
+			CROW_LOG_ERROR << "Error in /fire: " << e.what();
+			return crow::response(500, "Error in /fire: " + std::string(e.what()));
 		}
 			});
+
+
 
 	CROW_ROUTE(m_app, "/checkCollisions").methods("POST"_method)
 		([this]() {

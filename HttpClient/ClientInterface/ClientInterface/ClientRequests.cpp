@@ -8,18 +8,18 @@ ClientRequests::ClientRequests(QObject* parent) : QObject(parent) {
 
 void ClientRequests::initializeRequestActions() {
     requestActions[RequestType::CreatePlayer] = [this](const QString& data) {
-        emit loginCompleted(data);  
+        emit loginCompleted(data);
         };
 
     requestActions[RequestType::GetPlayer] = [this](const QString& data) {
-        emit loginCompleted(data); 
+        emit loginCompleted(data);
         };
 
     requestActions[RequestType::UpdatePlayerPosition] = [this](const QString& data) {
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
         if (jsonDoc.isObject()) {
             QJsonObject jsonObj = jsonDoc.object();
-            updatePlayerPositionFromJson(jsonObj);  
+            updatePlayerPositionFromJson(jsonObj);
         }
         };
 
@@ -30,6 +30,29 @@ void ClientRequests::initializeRequestActions() {
             getMapFromJson(jsonObj);
         }
         };
+
+    requestActions[RequestType::Fire] = [this](const QString& data) {
+        qDebug() << "Fire response received:" << data;
+
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
+        if (jsonDoc.isObject()) {
+            QJsonObject jsonObj = jsonDoc.object();
+
+            int startX = jsonObj["startX"].toInt();
+            int startY = jsonObj["startY"].toInt();
+            QString direction = jsonObj["direction"].toString();
+            float speed = jsonObj["bulletSpeed"].toDouble();
+
+            qDebug() << "Emitting snowballFired with:" << startX << startY << direction << speed;
+
+            emit snowballFired(startX, startY, direction, speed);
+        }
+        else {
+            qDebug() << "Invalid JSON response for Fire.";
+        }
+        };
+
+
 }
 
 void ClientRequests::CreatePlayer(const QString& name) {
@@ -126,6 +149,9 @@ ClientRequests::RequestType ClientRequests::toRequestType(const QString& request
     else if (requestType == "getMap") {
         return RequestType::GetMap;
     }
+    else if (requestType == "Fire") {
+        return RequestType::Fire;
+    }
     else {
         return RequestType::Unknown;
     }
@@ -139,24 +165,33 @@ void ClientRequests::onReplyFinished(QNetworkReply* reply) {
     if (reply->error() == QNetworkReply::NoError) {
         QString data = reply->readAll();
 
+        qDebug() << "Response from server for request type:" << requestType;
+        qDebug() << "Response data:" << data;
+
         if (requestActions.contains(requestEnum)) {
-            requestActions[requestEnum](data);  
+            requestActions[requestEnum](data);
         }
         else {
             qDebug() << "Unknown request type:" << requestType;
-            emit requestCompleted(data); 
+            emit requestCompleted(data);
         }
     }
     else {
-        qDebug() << "Error in reply:" << reply->errorString();
-        emit requestFailed(reply->errorString());
+        QString errorString = reply->errorString();
+        qDebug() << "Error in reply:" << errorString;
+
+        if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 400) {
+            qDebug() << "Server error:" << reply->readAll();
+        }
+
+        emit requestFailed(errorString);
     }
 
     activeRequests.remove(reply);
     reply->deleteLater();
 }
 
-void ClientRequests::updatePlayerPositionFromJson(const QJsonObject& jsonObj) 
+void ClientRequests::updatePlayerPositionFromJson(const QJsonObject& jsonObj)
 {
     int x = jsonObj["x"].toInt();
     int y = jsonObj["y"].toInt();
@@ -255,8 +290,16 @@ void ClientRequests::Fire(const QString& playerName) {
     QJsonObject json;
     json["playerName"] = playerName;
 
+    QJsonDocument doc(json);
+    QByteArray requestData = doc.toJson();
+
+    qDebug() << "Sending request to server:";
+    qDebug() << "URL:" << url.toString();
+    qDebug() << "Payload:" << requestData;
+
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    networkManager->post(request, QJsonDocument(json).toJson());
+    QNetworkReply* reply = networkManager->post(request, QJsonDocument(json).toJson());
+    activeRequests.insert(reply, "Fire");
 }

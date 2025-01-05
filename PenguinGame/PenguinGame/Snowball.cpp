@@ -5,7 +5,7 @@ Snowball::Snowball(const std::pair<int, int>& startPosition, const std::string& 
     m_active{ true }, m_lastUpdate{ std::chrono::steady_clock::now() } {}
 
 
-void Snowball::UpdatePosition(MapGen::GameBoard& gameBoard)
+void Snowball::UpdatePosition(const MapGen::GameBoard& gameBoard)
 {
     auto currentTime = std::chrono::steady_clock::now();
     std::chrono::duration<float> elapsedTime = currentTime - m_lastUpdate;
@@ -24,7 +24,7 @@ void Snowball::UpdatePosition(MapGen::GameBoard& gameBoard)
             {
                 m_position = nextPosition;
             }
-            else 
+            else
             {
                 Deactivate();
             }
@@ -34,7 +34,7 @@ void Snowball::UpdatePosition(MapGen::GameBoard& gameBoard)
             Deactivate();
         }
 
-        m_lastUpdate = currentTime; 
+        m_lastUpdate = currentTime;
     }
 }
 

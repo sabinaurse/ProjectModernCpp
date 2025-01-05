@@ -10,10 +10,12 @@ public:
     Snowball(const std::pair<int, int>& startPosition, const std::string& launchDirection, float launchSpeed = 0.25f);
     ~Snowball() = default;
 
-    void UpdatePosition(MapGen::GameBoard& gameBoard);
+    void UpdatePosition(const MapGen::GameBoard& gameBoard);
     bool IsActive() const { return m_active; }
     void Deactivate() { m_active = false; }
     std::pair<int, int> GetPosition() const { return m_position; }
+    float GetSpeed() const { return m_speed; };
+    std::string GetDirection() const { return m_direction; };
 
 private:
     std::pair<int, int> GetNextPosition() const;

@@ -41,6 +41,10 @@ void Penguin::keyPressEvent(QKeyEvent* event) {
         direction = "D";
         setPixmap(m_sprites["right"]);
     }
+    else if (event->key() == Qt::Key_F) {
+        m_clientRequests->Fire(playerName);
+        return;
+    }
 
     if (!direction.isEmpty()) {
         m_clientRequests->MovePlayer(playerName, direction);
