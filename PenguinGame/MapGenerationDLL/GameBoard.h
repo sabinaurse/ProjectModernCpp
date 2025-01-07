@@ -29,21 +29,21 @@ namespace MapGen {
         uint32_t GetCols() const;
         std::vector<std::vector<int>>& GetBoard();
         const std::vector<std::vector<int>>& GetBoard() const;
-        std::vector<std::pair<int, int>> GetStartingPositions() const;
+        std::vector<std::pair<int, int>> GetStartingPositions() const noexcept;
 
-        void AddCellType(int id, const CellTypeDefinition& definition);
+        void AddCellType(int id, CellTypeDefinition definition);
         void InitializeBoard();
         void PrintBoard() const;
 
     private:
         bool ShouldSpawn(const CellTypeDefinition& definition) const;
         void GenerateRectangleGroup(int id, int x, int y, int width, int height);
-        bool CanPlaceGroup(int id, int x, int y, int width, int height) const;
+        bool CanPlaceGroup(int id, int x, int y, int width, int height) const noexcept;
         void ReserveCorners();
 
         void CreateRandomPaths();
-        void CreateRandomPath(std::pair<int, int> start, std::pair<int, int> end);
-        bool IsPathPossible(std::pair<int, int> start, std::pair<int, int> end) const;
+        void CreateRandomPath(const std::pair<int, int>& start,const std::pair<int, int>& end);
+        bool IsPathPossible(const std::pair<int, int>& start, const std::pair<int, int>& end) const;
         void ForcePath(std::pair<int, int> start, std::pair<int, int> end);
     private:
         uint32_t m_rows;
