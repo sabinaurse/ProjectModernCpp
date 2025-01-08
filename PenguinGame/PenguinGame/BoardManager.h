@@ -32,7 +32,7 @@ public:
 
     crow::json::wvalue SerializeBoard() const;
     const MapGen::GameBoard& GetGameBoard() const;
-    std::vector<std::pair<int, int>> GetStartingPositions() const;
+    std::vector<std::pair<uint32_t, uint32_t>> GetStartingPositions() const;
     void SetCell(int x, int y, int value);
 
     // Metode pentru manipulare pinguin

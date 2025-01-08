@@ -11,20 +11,20 @@ void BoardManager::InitializeCellTypes()
 
 	MapGen::CellTypeDefinition destructibleWall = {
 		"DestructibleWall",
-		70,
+		60,
 		nullptr
 	};
 
 	MapGen::CellTypeDefinition indestructibleWall = {
 		"IndestructibleWall",
-		30,
+		25,
 		nullptr
 	};
 
 	MapGen::CellTypeDefinition bomb = {
 		"HiddenBomb",
 		5,
-		[](uint32_t x, uint32_t y, const std::vector<std::vector<int>>& board) {
+		[](uint32_t x, uint32_t y, const std::vector<std::vector<uint32_t>>& board) {
 			return board[x][y] == 1;
 		}
 	};
@@ -94,7 +94,7 @@ const MapGen::GameBoard& BoardManager::GetGameBoard() const {
 	return m_gameBoard;
 }
 
-std::vector<std::pair<int, int>> BoardManager::GetStartingPositions() const {
+std::vector<std::pair<uint32_t, uint32_t>> BoardManager::GetStartingPositions() const {
 	return m_gameBoard.GetStartingPositions();
 }
 
