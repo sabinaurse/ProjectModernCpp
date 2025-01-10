@@ -320,17 +320,6 @@ void Routing::Run(int port)
 
 
 
-	CROW_ROUTE(m_app, "/checkCollisions").methods("POST"_method)
-		([this]() {
-		try {
-			m_game.CheckForCollisions();
-			return crow::response(200, "Collisions checked.");
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error checking collisions: " + std::string(e.what()));
-		}
-			});
-
 	CROW_ROUTE(m_app, "/upgradeBulletSpeed").methods("POST"_method)
 		([this](const crow::request& req) {
 		try {

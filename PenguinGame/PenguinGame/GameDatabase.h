@@ -15,7 +15,7 @@ namespace game_database
 		int cooldown_level;
 	};
 
-	struct WeaponUpgrade {
+	struct WeaponUpgrade { //-> de eliminat
 		int id;              
 		int cooldown;       
 		int bullet_speed;    
@@ -38,7 +38,7 @@ namespace game_database
 				make_column("cooldown_level", &GamePlayer::cooldown_level, default_value(0))
 			),
 			make_table(
-				"weapon_upgrades",
+				"weapon_upgrades", //-> de eliminat aceasta tabela
 				make_column("id", &WeaponUpgrade::id, primary_key().autoincrement()),
 				make_column("cooldown", &WeaponUpgrade::cooldown),
 				make_column("bullet_speed", &WeaponUpgrade::bullet_speed),
@@ -68,8 +68,8 @@ namespace game_database
 	class WeaponDatabase {
 	public:
 
-		void UpdateFireRate(const std::string& upgradeId, int newBulletSpeed);
-		void UpdateCooldown(const std::string& upgradeId, int newCooldown);
+		void UpdateFireRate(const std::string& upgradeId, int newBulletSpeed); //-> de refacut pe baza scorului/punctelor + mutate in PlayerDatabase
+		void UpdateCooldown(const std::string& upgradeId, int newCooldown); //-> de refacut pe baza scorului/punctelor + mutate in PlayerDatabase
 
 	private:
 		Storage storage;

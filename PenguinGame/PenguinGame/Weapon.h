@@ -18,14 +18,16 @@ public:
 
 private:
 
-	int m_bulletSpeedLevel{ 0 }; 
-	int m_cooldownLevel{ 0 };     
-	float m_bulletSpeed{ 0.25f }; 
+	int m_bulletSpeedLevel{ 0 };  //-> de sters
+	int m_cooldownLevel{ 0 };     //-> de sters
+	float m_bulletSpeed{ 0.25f }; //-> de sters/mutat in snowball
 	int m_cooldown{ 4000 };       
 	std::chrono::steady_clock::time_point m_timeSinceLastShot;
 
+	//de adaugat vector de bulgari
+
 	void UpdateBulletSpeed();
-	void UpdateCooldown();
+	void UpdateCooldown(); 
 	
 };
 

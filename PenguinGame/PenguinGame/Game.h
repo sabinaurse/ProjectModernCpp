@@ -13,7 +13,7 @@ using Position = std::pair<std::int32_t, std::int32_t>; // maybe uint32_t??
 using PlayerList = std::vector<std::unique_ptr<Player>>;
 using PenguinList = std::vector<std::shared_ptr<Penguin>>;
 
-struct WaitingPlayer {
+struct WaitingPlayer { // -> GM
 	Player* player;
 	std::chrono::steady_clock::time_point joinTime;
 
@@ -52,14 +52,18 @@ public:
 	const std::vector<std::shared_ptr<Penguin>>& GetPenguins() const { return m_penguins; }
 	std::vector<std::unique_ptr<Player>>& GetPlayers() { return m_players; }
 	Player* GetPlayerByName(const std::string& playerName);
-	void UpgradePlayer(const std::string& playerName, const std::string& upgradeType);
 
-	void AddPlayerToQueue(Player* player);
-	void TryStartMatch();
-	void UpdateActiveGames();
+	void UpgradePlayer(const std::string& playerName, const std::string& upgradeType); // de modificat/sters dupa modificari facute in Penguin
+
+	void AddPlayerToQueue(Player* player); // -> GM
+	void TryStartMatch(); // -> GM
+	void UpdateActiveGames(); // -> GM
+
 	bool IsGameOver() const;
 private:
-	void StartMatch(const std::vector<Player*>& playersForMatch);
+	void StartMatch(const std::vector<Player*>& playersForMatch); // de mutat in Game_Manager viitor as GM
+
+	// metodele de jos redenumite pentru claritate
 	void CheckPenguinCollisions();
 	void CheckObstacleCollisions();
 	void CheckSnowballCollisions();
@@ -70,8 +74,8 @@ private:
 	PenguinList m_penguins;
 	bool m_isGameOver{ false };
 
-	std::priority_queue<WaitingPlayer> waitingQueue; // Coada de prioritati
-	std::vector<Game> activeGames; // jocurile active
+	std::priority_queue<WaitingPlayer> waitingQueue; // Coada de prioritati -> de sters
+	std::vector<Game> activeGames; // jocurile active -> de sters
 
 };
 
