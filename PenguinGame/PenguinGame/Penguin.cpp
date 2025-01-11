@@ -4,13 +4,10 @@
 #define RADIUS_OF_COLLISION 15.0f
 #define MOVE_STEP 1
 
-Penguin::Penguin(Player* player, Position initialPosition, int fireRate)
-	: m_player{ player }, m_initialPosition{ initialPosition }, m_position{ initialPosition },
-	m_weapon(player->GetBulletSpeedLevel(), player->GetCooldownLevel()) // Setăm direct nivelurile
-{
-	// Sincronizăm viteza glonțului cu nivelul jucătorului
-	m_bulletSpeed = m_weapon.GetBulletSpeed();
-}
+Penguin::Penguin(Player* player, Position initialPosition, const Weapon& weapon)
+	: m_player{ player }, m_initialPosition{ initialPosition },
+	m_weapon{ weapon }
+{ }
 
 
 void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
@@ -68,12 +65,12 @@ void Penguin::Fire() {
 			return;
 		}
 
-		Snowball newSnowball(m_position, direction, m_bulletSpeed);
-		m_snowballs.push_back(newSnowball);
+		Snowball newSnowball(m_position, direction);
+		m_weapon.GetSnowballs().emplace_back(newSnowball);
 
 		std::cout << "Snowball created at (" << newSnowball.GetPosition().first << ", "
 			<< newSnowball.GetPosition().second << ") in direction " << direction
-			<< " with speed " << m_bulletSpeed << std::endl;
+			<< " with speed " <<newSnowball.GetSpeed() << std::endl;
 
 		m_weapon.ResetTimeSinceLastShot();
 	}
@@ -83,28 +80,6 @@ void Penguin::Fire() {
 }
 
 
-void Penguin::UpgradeBulletSpeed() {
-	int currentLevel = m_player->GetBulletSpeedLevel();
-	if (currentLevel < 3) {
-		m_player->SetBulletSpeedLevel(currentLevel + 1);
-		m_weapon.SetBulletSpeedLevel(currentLevel + 1);
-		m_bulletSpeed = m_weapon.GetBulletSpeed();
-		std::cout << "Bullet speed upgraded to level " << currentLevel + 1
-			<< " with speed " << m_bulletSpeed << " m/s." << std::endl;
-	}
-	else {
-		std::cout << "Bullet speed is already at the maximum level!" << std::endl;
-	}
-}
-
-
-void Penguin::CheckBulletSpeedUpgrade() {
-	if (m_player->GetScore() >= 10 && !m_speedBoostApplied) {
-		UpgradeBulletSpeed();
-		m_speedBoostApplied = true;
-	}
-}
-
 void Penguin::EliminateEnemy()
 {
 	m_enemiesEliminated++;
@@ -112,18 +87,6 @@ void Penguin::EliminateEnemy()
 	std::cout << "Player " << m_player->GetName() << " eliminated an enemy! Total points: " << m_player->GetPoints() << std::endl;
 }
 
-void Penguin::UpgradeFireRate() {
-	int currentLevel = m_player->GetCooldownLevel();
-	if (currentLevel < 3) {
-		m_player->SetCooldownLevel(currentLevel + 1);
-		m_weapon.SetCooldownLevel(currentLevel + 1);
-		std::cout << "Cooldown upgraded to level " << currentLevel + 1
-			<< " with fire rate " << m_weapon.GetCooldown() << " ms." << std::endl;
-	}
-	else {
-		std::cout << "Cooldown is already at the maximum level!" << std::endl;
-	}
-}
 
 void Penguin::TakeDamage()
 {
@@ -144,31 +107,17 @@ void Penguin::ResetState()
 {
 	m_position = m_initialPosition;
 	m_isAlive = true;
-	m_snowballs.clear();
+	m_weapon.GetSnowballs().clear();
 	std::cout << "Penguin reset to initial position (" << m_initialPosition.first << ", " << m_initialPosition.second << ")." << std::endl;
-}
-
-float Penguin::GetBulletSpeed() const {
-	return m_bulletSpeed;
-}
-
-std::vector<Snowball>& Penguin::GetSnowballs() {
-	return m_snowballs;
-}
-
-const std::vector<Snowball>& Penguin::GetSnowballs() const {
-	if (m_snowballs.empty()) {
-		std::cerr << "Warning: Attempted to access an empty snowball vector." << std::endl;
-	}
-	return m_snowballs;
 }
 
 
 void Penguin::RemoveInactiveSnowballs() {
-	m_snowballs.erase(
-		std::remove_if(m_snowballs.begin(), m_snowballs.end(),
+	auto& snowballs = m_weapon.GetSnowballs();
+	snowballs.erase(
+		std::remove_if(snowballs.begin(), snowballs.end(),
 			[](const Snowball& snowball) { return !snowball.IsActive(); }),
-		m_snowballs.end()
+		snowballs.end()
 	);
 }
 

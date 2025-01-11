@@ -1,8 +1,13 @@
 ﻿#include "Snowball.h"
 
-Snowball::Snowball(const std::pair<int, int>& startPosition, const std::string& launchDirection, float launchSpeed)
-    : m_position{ startPosition }, m_direction{ launchDirection }, m_speed{ launchSpeed },
-    m_active{ true }, m_lastUpdate{ std::chrono::steady_clock::now() } {}
+Snowball::Snowball(const std::pair<int, int>& startPosition, const std::string& launchDirection)
+    : m_position{ startPosition },
+    m_direction{ launchDirection },
+    m_bulletSpeed{ 5.0f }, // Viteza implicită
+    m_active{ true },
+    m_lastUpdate{ std::chrono::steady_clock::now() }
+{
+}
 
 
 void Snowball::UpdatePosition(const MapGen::GameBoard& gameBoard)
@@ -10,7 +15,7 @@ void Snowball::UpdatePosition(const MapGen::GameBoard& gameBoard)
     auto currentTime = std::chrono::steady_clock::now();
     std::chrono::duration<float> elapsedTime = currentTime - m_lastUpdate;
 
-    if (elapsedTime.count() >= 1.0f / m_speed)
+    if (elapsedTime.count() >= 1.0f / m_bulletSpeed)
     {
         auto nextPosition = GetNextPosition();
         auto& board = gameBoard.GetBoard();

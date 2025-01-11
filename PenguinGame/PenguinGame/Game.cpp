@@ -157,7 +157,7 @@ void Game::CheckForCollisions()
 
 void Game::CheckPenguinCollisions() {
     for (const auto& shooterPenguin : m_penguins) {
-        for (auto& snowball : shooterPenguin->GetSnowballs()) {
+        for (auto& snowball : shooterPenguin->GetWeapon().GetSnowballs()) {
             if (!snowball.IsActive()) continue;
 
             for (const auto& targetPenguin : m_penguins) {
@@ -178,7 +178,7 @@ void Game::CheckPenguinCollisions() {
 
 void Game::CheckObstacleCollisions() {
     for (const auto& penguin : m_penguins) {
-        for (auto& snowball : penguin->GetSnowballs()) {
+        for (auto& snowball : penguin->GetWeapon().GetSnowballs()) {
             if (!snowball.IsActive()) continue;
 
             auto pos = snowball.GetPosition();
@@ -210,12 +210,12 @@ void Game::CheckObstacleCollisions() {
 void Game::CheckSnowballCollisions() {
     for (size_t i = 0; i < m_penguins.size(); ++i) {
         auto* penguin1 = m_penguins[i].get();
-        for (auto& snowball1 : penguin1->GetSnowballs()) {
+        for (auto& snowball1 : penguin1->GetWeapon().GetSnowballs()) {
             if (!snowball1.IsActive()) continue;
 
             for (size_t j = i + 1; j < m_penguins.size(); ++j) {
                 auto* penguin2 = m_penguins[j].get();
-                for (auto& snowball2 : penguin2->GetSnowballs()) {
+                for (auto& snowball2 : penguin2->GetWeapon().GetSnowballs()) {
                     if (!snowball2.IsActive()) continue;
 
                     if (snowball1.GetPosition() == snowball2.GetPosition()) {
@@ -259,10 +259,10 @@ void Game::UpgradePlayer(const std::string& playerName, const std::string& upgra
     }
 
     if (upgradeType == "bullet_speed") {
-        penguin->UpgradeBulletSpeed();
+       // penguin->UpgradeBulletSpeed(); de verificat unde anume sunt?? de apelat din database??
     }
     else if (upgradeType == "cooldown") {
-        penguin->UpgradeFireRate();
+       // penguin->UpgradeFireRate();
     }
     else {
         throw std::invalid_argument("Invalid upgrade type!");

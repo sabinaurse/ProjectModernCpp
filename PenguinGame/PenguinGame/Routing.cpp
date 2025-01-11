@@ -292,7 +292,8 @@ void Routing::Run(int port)
 
 			penguin->Fire();
 
-			const auto& snowballs = penguin->GetSnowballs();
+			// e in weapon acum getsnowballs
+			const auto& snowballs = penguin->GetWeapon().GetSnowballs();
 			if (snowballs.empty()) {
 				CROW_LOG_ERROR << "No snowballs created for penguin of player: " << playerName;
 				return crow::response(500, "No snowballs were created.");
@@ -339,7 +340,7 @@ void Routing::Run(int port)
 				return crow::response(404, "Penguin not found.");
 			}
 
-			penguin->UpgradeBulletSpeed();
+			//penguin->UpgradeBulletSpeed();
 			return crow::response(200, "Bullet speed upgraded.");
 		}
 		catch (const std::exception& e) {
@@ -595,7 +596,7 @@ void Routing::Run(int port)
 				response["penguins"][i]["x"] = penguin->GetPosition().first;
 				response["penguins"][i]["y"] = penguin->GetPosition().second;
 				response["penguins"][i]["isAlive"] = penguin->IsAlive();
-				response["penguins"][i]["bulletSpeed"] = penguin->GetBulletSpeed();
+				//response["penguins"][i]["bulletSpeed"] = penguin->GetBulletSpeed();
 				response["penguins"][i]["eliminations"] = penguin->GetEliminationOrder();
 			}
 
