@@ -160,16 +160,6 @@ void Routing::Run(int port)
 		}
 		});
 
-	CROW_ROUTE(m_app, "/resetGame").methods("POST"_method)([this]() {
-		try {
-			m_game.RestartGame();
-			return crow::response(200, "Game reset successfully.");
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error resetting game: " + std::string(e.what()));
-		}
-		});
-
 	CROW_ROUTE(m_app, "/leaderboard") ([this]() {
 		try {
 			std::ostringstream leaderboard;
@@ -410,7 +400,7 @@ void Routing::Run(int port)
 			std::string playerName = body["playerName"].s();
 			std::string upgradeType = body["upgradeType"].s();
 
-			m_game.UpgradePlayer(playerName, upgradeType);
+			//m_game.UpgradePlayer(playerName, upgradeType);
 
 			return crow::response(200, "Player weapon upgraded: " + upgradeType);
 		}

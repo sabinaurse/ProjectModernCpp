@@ -9,7 +9,6 @@
 #include "Player.h"
 #include "BoardManager.h"
 
-using Position = std::pair<std::int32_t, std::int32_t>; // maybe uint32_t??
 using PlayerList = std::vector<std::unique_ptr<Player>>;
 using PenguinList = std::vector<std::shared_ptr<Penguin>>;
 
@@ -17,7 +16,6 @@ struct WaitingPlayer { // -> GM
 	Player* player;
 	std::chrono::steady_clock::time_point joinTime;
 
-	// Comparator pentru coada de prioritate
 	bool operator<(const WaitingPlayer& other) const {
 		return player->GetScore() < other.player->GetScore();
 	}
@@ -32,14 +30,13 @@ public:
 
 	Game(const Game&) = delete;
 	Game& operator=(const Game&) = delete;
+
 	Game(Game&&) noexcept = default;
 	Game& operator=(Game&&) noexcept = default;
 
 	void StartGame();
 	void EndGame();
-	void RestartGame();
 	void CheckForCollisions();
-	void ShowLeaderboard();
 	const MapGen::GameBoard& GetBoard() const;
 	BoardManager& GetBoardManager() { return m_boardManager; }
 	const BoardManager& GetBoardManager() const { return m_boardManager; }
@@ -49,11 +46,10 @@ public:
 	void InitializePlayers();
 	Player* GetWinner();
 	Penguin* GetPenguinForPlayer(const Player& player);
+	Player* GetPlayerByName(const std::string& playerName);
 	const std::vector<std::shared_ptr<Penguin>>& GetPenguins() const { return m_penguins; }
 	std::vector<std::unique_ptr<Player>>& GetPlayers() { return m_players; }
-	Player* GetPlayerByName(const std::string& playerName);
 
-	void UpgradePlayer(const std::string& playerName, const std::string& upgradeType); // de modificat/sters dupa modificari facute in Penguin
 
 	void AddPlayerToQueue(Player* player); // -> GM
 	void TryStartMatch(); // -> GM
@@ -61,7 +57,7 @@ public:
 
 	bool IsGameOver() const;
 private:
-	void StartMatch(const std::vector<Player*>& playersForMatch); // de mutat in Game_Manager viitor as GM
+	void StartMatch(const std::vector<Player*>& playersForMatch); // -> GM
 
 	void CheckSnowballToPenguinCollisions();
 	void CheckSnowballToObstacleCollisions();
@@ -72,8 +68,8 @@ private:
 	PenguinList m_penguins;
 	bool m_isGameOver{ false };
 
-	std::priority_queue<WaitingPlayer> waitingQueue; // Coada de prioritati -> de sters
-	std::vector<Game> activeGames; // jocurile active -> de sters
+	std::priority_queue<WaitingPlayer> waitingQueue; // -> GM
+	std::vector<Game> activeGames; // -> GM
 
 };
 

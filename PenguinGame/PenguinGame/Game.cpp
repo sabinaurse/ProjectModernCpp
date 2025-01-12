@@ -30,7 +30,6 @@ void Game::EndGame()
         std::cout << "No winner found!" << std::endl;
     }
 
-    // Determină locul 2 pe baza ultimei eliminări
     Penguin* secondPlacePenguin = nullptr;
     int lastEliminationOrder = -1;
 
@@ -48,32 +47,6 @@ void Game::EndGame()
     }
 }
 
-
-void Game::RestartGame() {
-    m_isGameOver = false;
-
-    for (const auto& penguin : m_penguins) {
-        penguin->ResetState();
-    }
-
-    m_boardManager.GenerateMap();
-
-    std::cout << "Game restarted!" << std::endl;
-}
-
-
-void Game::ShowLeaderboard()
-{
-    std::cout << "Leaderboard:" << std::endl;
-    std::sort(m_players.begin(), m_players.end(),
-        [](const auto& a, const auto& b) { return a->GetPoints() > b->GetPoints(); });
-
-    for (const auto& player : m_players) {
-        std::cout << player->GetName() << " - " << player->GetPoints() << " points" << std::endl;
-    }
-}
-
-
 void Game::AddPlayer(std::unique_ptr<Player> player) {
     if (std::any_of(m_players.begin(), m_players.end(),
         [&player](const auto& existingPlayer) { return existingPlayer->GetName() == player->GetName(); })) {
@@ -81,18 +54,6 @@ void Game::AddPlayer(std::unique_ptr<Player> player) {
     }
     m_players.push_back(std::move(player));
 }
-
-
-//void Game::AddPlayer(Player* player)
-//{
-//    for (const auto& existingPlayer : m_players) {
-//        if (existingPlayer->GetName() == player->GetName()) {
-//            throw std::runtime_error("Player with the same name already exists in the game!");
-//        }
-//    }
-//    m_players.push_back(player);
-//}
-
 
 void Game::InitializePlayers() {
     const auto& startingPositions = m_boardManager.GetStartingPositions();
@@ -102,11 +63,12 @@ void Game::InitializePlayers() {
     }
 
     for (size_t i = 0; i < m_players.size(); ++i) {
-        auto& player = m_players[i];
-        //auto position = startingPositions[i];
-        Position position{ startingPositions[i] };
 
-        m_penguins.push_back(std::make_shared<Penguin>(player.get(), position, 500));
+        auto& player = m_players[i];
+        Position position{ startingPositions[i] };
+        Weapon weapon(player->GetCooldownLevel());
+
+        m_penguins.push_back(std::make_shared<Penguin>(player.get(), position, weapon));
         std::cout << "Player " << player->GetName() << " placed at (" << position.first << ", " << position.second << ")." << std::endl;
     }
 }
@@ -138,6 +100,16 @@ Penguin* Game::GetPenguinForPlayer(const Player& player)
     for (const auto& penguin : m_penguins) {
         if (penguin->GetPlayer() == &player) {
             return penguin.get();
+        }
+    }
+    return nullptr;
+}
+
+Player* Game::GetPlayerByName(const std::string& playerName)
+{
+    for (const auto& player : m_players) {
+        if (player->GetName() == playerName) {
+            return player.get();
         }
     }
     return nullptr;
@@ -229,47 +201,15 @@ void Game::CheckSnowballToSnowballCollisions() {
 }
 
 
-void Game::UpgradePlayer(const std::string& playerName, const std::string& upgradeType)
-{
-    Player* player = GetPlayerByName(playerName);
-    if (!player) {
-        throw std::runtime_error("Player not found!");
-    }
 
-    Penguin* penguin = GetPenguinForPlayer(*player);
-    if (!penguin) {
-        throw std::runtime_error("Penguin not found for player!");
-    }
-
-    if (upgradeType == "bullet_speed") {
-       // penguin->UpgradeBulletSpeed(); de verificat unde anume sunt?? de apelat din database??
-    }
-    else if (upgradeType == "cooldown") {
-       // penguin->UpgradeFireRate();
-    }
-    else {
-        throw std::invalid_argument("Invalid upgrade type!");
-    }
-}
-
-Player* Game::GetPlayerByName(const std::string& playerName)
-{
-    for (const auto& player : m_players) {
-        if (player->GetName() == playerName) {
-            return player.get();
-        }
-    }
-    return nullptr;
-}
-
-void Game::AddPlayerToQueue(Player* player) {
+void Game::AddPlayerToQueue(Player* player) { // -> GM
     WaitingPlayer waitingPlayer{ player, std::chrono::steady_clock::now() };
     waitingQueue.push(waitingPlayer);
 
     TryStartMatch(); // Verificam daca putem porni un joc imediat
 }
 
-void Game::TryStartMatch() {
+void Game::TryStartMatch() { // -> GM
     const size_t maxPlayersPerMatch = 4;
     const size_t minPlayersToStart = 1;
     const int waitTimeLimit = 30; // secunde
@@ -306,7 +246,7 @@ void Game::TryStartMatch() {
     std::cout << "Not enough players to start a match." << std::endl;
 }
 
-void Game::StartMatch(const std::vector<Player*>& playersForMatch) {
+void Game::StartMatch(const std::vector<Player*>& playersForMatch) { // -> GM
     std::cout << "Starting a new match with " << playersForMatch.size() << " players." << std::endl;
 
     Game newGame(m_boardManager.GetGameBoard().GetRows(), m_boardManager.GetGameBoard().GetCols());
@@ -325,7 +265,7 @@ bool Game::IsGameOver() const {
 }
 
 
-void Game::UpdateActiveGames() {
+void Game::UpdateActiveGames() { // -> GM
     std::cout << "Currently active games: " << activeGames.size() << std::endl;
 
     for (auto it = activeGames.begin(); it != activeGames.end();) {
