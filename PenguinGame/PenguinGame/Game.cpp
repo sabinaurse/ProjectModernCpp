@@ -145,17 +145,16 @@ Penguin* Game::GetPenguinForPlayer(const Player& player)
 
 void Game::CheckForCollisions()
 {
-    CheckPenguinCollisions();
-    CheckObstacleCollisions();
-    CheckSnowballCollisions();
-    CheckPenguinToPenguinCollisions();
+    CheckSnowballToPenguinCollisions();
+    CheckSnowballToObstacleCollisions();
+    CheckSnowballToSnowballCollisions();
 
     for (const auto& penguin : m_penguins) {
-        penguin->RemoveInactiveSnowballs();
+        penguin->GetWeapon().RemoveInactiveSnowballs();
     }
 }
 
-void Game::CheckPenguinCollisions() {
+void Game::CheckSnowballToPenguinCollisions() {
     for (const auto& shooterPenguin : m_penguins) {
         for (auto& snowball : shooterPenguin->GetWeapon().GetSnowballs()) {
             if (!snowball.IsActive()) continue;
@@ -176,7 +175,7 @@ void Game::CheckPenguinCollisions() {
     }
 }
 
-void Game::CheckObstacleCollisions() {
+void Game::CheckSnowballToObstacleCollisions() {
     for (const auto& penguin : m_penguins) {
         for (auto& snowball : penguin->GetWeapon().GetSnowballs()) {
             if (!snowball.IsActive()) continue;
@@ -207,7 +206,7 @@ void Game::CheckObstacleCollisions() {
     }
 }
 
-void Game::CheckSnowballCollisions() {
+void Game::CheckSnowballToSnowballCollisions() {
     for (size_t i = 0; i < m_penguins.size(); ++i) {
         auto* penguin1 = m_penguins[i].get();
         for (auto& snowball1 : penguin1->GetWeapon().GetSnowballs()) {
@@ -229,22 +228,6 @@ void Game::CheckSnowballCollisions() {
     }
 }
 
-void Game::CheckPenguinToPenguinCollisions() {
-    for (size_t i = 0; i < m_penguins.size(); ++i) {
-        auto* penguin1 = m_penguins[i].get();
-
-        for (size_t j = i + 1; j < m_penguins.size(); ++j) {
-            auto* penguin2 = m_penguins[j].get();
-
-            if (penguin1->GetPosition() == penguin2->GetPosition()) {
-                std::cout << "Penguin " << penguin1->GetPlayer()->GetName()
-                    << " and Penguin " << penguin2->GetPlayer()->GetName()
-                    << " are on the same position (" << penguin1->GetPosition().first
-                    << ", " << penguin1->GetPosition().second << ")." << std::endl;
-            }
-        }
-    }
-}
 
 void Game::UpgradePlayer(const std::string& playerName, const std::string& upgradeType)
 {

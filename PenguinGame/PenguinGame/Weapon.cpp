@@ -33,3 +33,13 @@ const std::vector<Snowball>& Weapon::GetSnowballs() const
 	}
 	return m_snowballs;
 }
+
+void Weapon::RemoveInactiveSnowballs() {
+	m_snowballs.erase(
+		std::remove_if(
+			m_snowballs.begin(), m_snowballs.end(),
+			[](const Snowball& snowball) { return !snowball.IsActive(); }
+		),
+		m_snowballs.end()
+	);
+}

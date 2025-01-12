@@ -130,6 +130,7 @@
     <ClInclude Include="BoardManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameDatabase.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="Penguin.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Routing.h" />
@@ -140,6 +141,7 @@
     <ClCompile Include="BoardManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameDatabase.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Penguin.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Routing.cpp" />

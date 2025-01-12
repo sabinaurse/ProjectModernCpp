@@ -9,7 +9,6 @@ Penguin::Penguin(Player* player, Position initialPosition, const Weapon& weapon)
 	m_weapon{ weapon }
 { }
 
-
 void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 	if (!m_isAlive) return;
 
@@ -49,6 +48,7 @@ void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 		std::cout << "Move blocked! Out of bounds at (" << newPosition.first << ", " << newPosition.second << ")." << std::endl;
 	}
 }
+
 void Penguin::Fire() {
 	if (!m_isAlive) return;
 
@@ -79,14 +79,12 @@ void Penguin::Fire() {
 	}
 }
 
-
 void Penguin::EliminateEnemy()
 {
 	m_enemiesEliminated++;
-	m_player->AddPoints(100);  // Adugam 100 de puncte pentru fiecare inamic eliminat
+	m_player->AddPoints(100);  
 	std::cout << "Player " << m_player->GetName() << " eliminated an enemy! Total points: " << m_player->GetPoints() << std::endl;
 }
-
 
 void Penguin::TakeDamage()
 {
@@ -95,7 +93,6 @@ void Penguin::TakeDamage()
 	{
 		m_isAlive = false;
 
-		// Marchează pinguinul ca eliminat
 		static int eliminationCount = 0;
 		MarkAsEliminated(++eliminationCount);
 
@@ -109,16 +106,6 @@ void Penguin::ResetState()
 	m_isAlive = true;
 	m_weapon.GetSnowballs().clear();
 	std::cout << "Penguin reset to initial position (" << m_initialPosition.first << ", " << m_initialPosition.second << ")." << std::endl;
-}
-
-
-void Penguin::RemoveInactiveSnowballs() {
-	auto& snowballs = m_weapon.GetSnowballs();
-	snowballs.erase(
-		std::remove_if(snowballs.begin(), snowballs.end(),
-			[](const Snowball& snowball) { return !snowball.IsActive(); }),
-		snowballs.end()
-	);
 }
 
 void Penguin::MarkAsEliminated(int eliminationOrder) {

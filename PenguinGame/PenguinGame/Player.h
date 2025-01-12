@@ -7,16 +7,17 @@ class Player
 public:
 	Player(const std::string& name);
 	Player(const game_database::GamePlayer& dbPlayer);
+	~Player() = default;
 	
 	std::string GetName() const;
 	int GetPoints() const;
 	int GetScore() const;
 
+	void SetScore(int score);
+	void SetName(const std::string& name);
+
 	void AddPoints(int points);
 	void AddScores(int scores);
-	void SetScore(int score);
-	void SetName(const std::string &name);
-	~Player() = default;
 
 	int GetBulletSpeedLevel() const;
 	void SetBulletSpeedLevel(int level);

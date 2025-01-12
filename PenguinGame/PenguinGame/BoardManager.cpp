@@ -11,7 +11,7 @@ void BoardManager::InitializeCellTypes()
 
 	MapGen::CellTypeDefinition destructibleWall = {
 		"DestructibleWall",
-		60,
+		70,
 		nullptr
 	};
 

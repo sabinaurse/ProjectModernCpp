@@ -26,9 +26,7 @@ public:
 	bool IsAlive() const { return m_isAlive; }
 
 	Position GetPosition() const { return m_position; }
-	Player* GetPlayer() const { return m_player; }  // Metoda pentru a obt jucatorul asociat
-
-	void RemoveInactiveSnowballs(); // -> de sters/mutat in Weapon
+	Player* GetPlayer() const { return m_player; } 
 
 	void MarkAsEliminated(int eliminationOrder);
 	int GetEliminationOrder() const;
@@ -40,14 +38,10 @@ private:
 	Position m_position;
 	Position m_initialPosition;
 
-	// Statistici 
 	int m_lives{ 3 };
 	int m_enemiesEliminated{ 0 };
+	int m_eliminationOrder{ -1 };
 
-	// Arme
 	Weapon m_weapon;
-
-	int m_eliminationOrder{ -1 }; // -1 indică faptul că pinguinul nu a fost eliminat încă
-
 };
 

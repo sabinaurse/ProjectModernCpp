@@ -50,6 +50,7 @@ namespace MapGen {
         uint32_t m_rows = 0;
         uint32_t m_cols = 0;
         std::vector<std::vector<uint32_t>> m_board;
+        std::vector<std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>> m_placedGroups;
         std::unordered_map<uint8_t, CellTypeDefinition> m_cellDefinitions;
         mutable std::mt19937 m_rng;
     };

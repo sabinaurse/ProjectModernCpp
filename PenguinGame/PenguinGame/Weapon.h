@@ -11,11 +11,11 @@ public:
 
 	bool CanShoot() const;
 	void ResetTimeSinceLastShot();
-
 	int GetCooldown() const;
-	// DE IMPLEMENTAT
+
 	std::vector<Snowball>& GetSnowballs();
 	const std::vector<Snowball>& GetSnowballs() const;
+	void RemoveInactiveSnowballs();
 
 private:
 	int m_cooldown{ 4000 };       

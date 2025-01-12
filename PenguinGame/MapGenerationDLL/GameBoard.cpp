@@ -54,16 +54,12 @@ namespace MapGen {
         m_cellDefinitions.emplace(static_cast<unsigned int>(id), std::move(definition));
     }
 
-
-
     bool GameBoard::ShouldSpawn(const CellTypeDefinition& definition) const {
         return (m_rng() % 100) < definition.spawnChance;
     }
 
-
-
     constexpr uint32_t SquaredDistance(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2) {
-        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+        return static_cast<uint64_t>(x1 - x2) * (x1 - x2) + static_cast<uint64_t>(y1 - y2) * (y1 - y2);
     }
 
 
@@ -74,9 +70,9 @@ namespace MapGen {
         // 1. Plasarea grupurilor de ziduri (indestructibile/destructibile)
         for (const auto& [id, definition] : m_cellDefinitions) {
             if (id == 1 || id == 2) {
-                uint8_t groupCount = (id == 1)
-                    ? 10 + (m_rng() % 10) 
-                    : 8 + (m_rng() % 8);  
+                uint8_t baseGroupCount = (id == 1) ? 10 : 6; // Mai puține grupuri pentru tipul 2
+                uint8_t additionalGroups = (id == 1) ? 8 : 5; // Mai puține variații pentru tipul 2
+                uint8_t groupCount = baseGroupCount + (m_rng() % additionalGroups);
 
                 for (uint8_t g = 0; g < groupCount; ++g) {
                     bool placed = false;
@@ -85,8 +81,8 @@ namespace MapGen {
                     for (int attempt = 0; attempt < 10 && !placed; ++attempt) {
                         uint32_t x = m_rng() % m_rows;    // Random între 0 și m_rows - 1
                         uint32_t y = m_rng() % m_cols;    // Random între 0 și m_cols - 1
-                        uint32_t width = 2;
-                        uint32_t height = 2 + (m_rng() % 3); // Random între 2 și 4
+                        uint32_t width = 2 + (m_rng() % 2);
+                        uint32_t height = 2 + (m_rng() % 2); // Random între 2 și 4
 
                         if (CanPlaceGroup(id, x, y, width, height)) {
                             GenerateRectangleGroup(id, x, y, width, height);
@@ -129,15 +125,6 @@ namespace MapGen {
             }
         }
 
-        // 3. Resetare celule nefolosite
-        for (auto& row : m_board | std::views::all) {
-            for (auto& cell : row | std::views::all) {
-                if (cell == 0) {
-                    cell = 0; // redundant, dar păstrat pentru claritate
-                }
-            }
-        }
-
         std::cout << "Number of bombs placed: " << bombCount << "\n";
     }
 
@@ -169,24 +156,71 @@ namespace MapGen {
     }
 
     bool GameBoard::CanPlaceGroup(uint8_t id, uint32_t x, uint32_t y, uint32_t width, uint32_t height) const noexcept {
+        // Coordonatele colțurilor rezervate
+        std::vector<std::pair<uint32_t, uint32_t>> reservedCorners = {
+            {0, 0},
+            {0, m_cols - 1},
+            {m_rows - 1, 0},
+            {m_rows - 1, m_cols - 1}
+        };
+
+        auto isNearReservedCorner = [&](uint32_t cx, uint32_t cy) {
+            constexpr uint32_t cornerBuffer = 2; // Distanța minimă față de colțuri
+            for (const auto& corner : reservedCorners) {
+                if (SquaredDistance(cx, cy, corner.first, corner.second) <= cornerBuffer * cornerBuffer) {
+                    return true;
+                }
+            }
+            return false;
+            };
+
+        // Verificare distanță față de alte grupuri
+        auto isFarFromOtherGroups = [&](uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+            constexpr uint32_t minDistance = 2; // Distanța minimă față de alte grupuri
+            for (const auto& group : m_placedGroups) {
+                uint32_t gx, gy, gwidth, gheight;
+                std::tie(gx, gy, gwidth, gheight) = group;
+
+                // Verificăm suprapunerea extinsă cu buffer
+                if (!(x >= gx + gwidth + minDistance || gx >= x + width + minDistance || // Orizontal
+                    y >= gy + gheight + minDistance || gy >= y + height + minDistance)) { // Vertical
+                    return false;
+                }
+            }
+            return true;
+            };
+
+        // Verifică fiecare celulă a grupului
         for (uint32_t i = 0; i < width; ++i) {
             for (uint32_t j = 0; j < height; ++j) {
                 uint32_t newX = x + i;
                 uint32_t newY = y + j;
 
-                if (newX >= 0 && newX < m_rows && newY >= 0 && newY < m_cols) {
-                    if (m_board[newX][newY] != 0 ||
-                        ((newX == 0 && newY == 0) ||
-                            (newX == 0 && newY == m_cols - 1) ||
-                            (newX == m_rows - 1 && newY == 0) ||
-                            (newX == m_rows - 1 && newY == m_cols - 1))) {
-                        return false;
-                    }
+                // Verifică limitele tablei
+                if (newX >= m_rows || newY >= m_cols) {
+                    return false;
+                }
+
+                // Verifică dacă zona este liberă
+                if (m_board[newX][newY] != 0) {
+                    return false;
+                }
+
+                // Verifică dacă celula este prea aproape de colțuri rezervate
+                if (isNearReservedCorner(newX, newY)) {
+                    return false;
                 }
             }
         }
+
+        // Verifică dacă grupul este suficient de departe de alte grupuri
+        if (!isFarFromOtherGroups(x, y, width, height)) {
+            return false;
+        }
+
         return true;
     }
+
 
 
 

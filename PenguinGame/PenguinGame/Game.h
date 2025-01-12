@@ -63,11 +63,9 @@ public:
 private:
 	void StartMatch(const std::vector<Player*>& playersForMatch); // de mutat in Game_Manager viitor as GM
 
-	// metodele de jos redenumite pentru claritate
-	void CheckPenguinCollisions();
-	void CheckObstacleCollisions();
-	void CheckSnowballCollisions();
-	void CheckPenguinToPenguinCollisions();
+	void CheckSnowballToPenguinCollisions();
+	void CheckSnowballToObstacleCollisions();
+	void CheckSnowballToSnowballCollisions();
 private:
 	BoardManager m_boardManager;
 	PlayerList m_players;
