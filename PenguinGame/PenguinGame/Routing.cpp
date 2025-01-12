@@ -49,25 +49,6 @@ void Routing::Run(int port)
 		}
 		});
 
-	// ATENTIE : metodele Post si Delete de mai jos nu pot fi testate in browser -> avem nevoie de un proiect separat de Client pentru testare
-
-	CROW_ROUTE(m_app, "/deletePlayer/<string>").methods("DELETE"_method)
-		([this](const std::string& name) {
-		try {
-
-			game_database::GamePlayer dbplayer = m_db.GetPlayerByName(name);
-			m_db.DeletePlayer(name);
-			return crow::response(200, "Player deleted: " + name);
-		}
-		catch (const std::runtime_error& e) {
-			// Captură pentru erorile de tip runtime
-			return crow::response(400, "Error: " + std::string(e.what()));
-		}
-		catch (...) {
-			// Captură pentru orice altă eroare neașteptată
-			return crow::response(500, "Unknown error occurred.");
-		}
-			});
 
 	CROW_ROUTE(m_app, "/updatePlayer").methods("POST"_method)
 		([this](const crow::request& req) {
@@ -93,28 +74,6 @@ void Routing::Run(int port)
 		}
 			});
 
-	/*CROW_ROUTE(m_app, "/addPlayerToGame").methods("POST"_method)
-		([this](const crow::request& req) {
-		try {
-			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object.");
-			}
-
-			std::string playerName = body["name"].s();
-
-			if (m_game.GetPlayerByName(playerName) != nullptr) {
-				return crow::response(400, "Player already in the game.");
-			}
-			auto player = std::make_unique<Player>(m_db.GetPlayerByName(playerName));
-			m_game.AddPlayer(std::move(player));
-
-			return crow::response(200, "Player added to the game successfully: " + playerName);
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error adding player to game: " + std::string(e.what()));
-		}
-			});*/
 
 	CROW_ROUTE(m_app, "/addPlayerToGame").methods("POST"_method)
 		([this](const crow::request& req) {

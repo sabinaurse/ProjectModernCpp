@@ -2,106 +2,124 @@
 
 namespace game_database
 {
-	PlayerDatabase::PlayerDatabase() : storage(createStorage("PenguinGame.sqlite"))
-	{
-		storage.sync_schema(); // Sincronizeaza schema bazei de date
-	}
+    PlayerDatabase::PlayerDatabase() : storage(createStorage("PenguinGame.sqlite"))
+    {
+        storage.sync_schema(); // Sincronizeaza schema bazei de date
+    }
 
-	void PlayerDatabase::AddPlayer(const GamePlayer& player)
-	{
-		auto result = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == player.name));
+    void PlayerDatabase::AddPlayer(const GamePlayer& player)
+    {
+        auto result = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == player.name));
 
-		if (result.empty())
-		{
-			storage.insert(player); 
-		}
-		else
-		{
-			throw std::runtime_error("Player already exists in data base"); // Gestionare eroare daca exista deja numele player-ului in baza de date
-		}
-	}
+        if (result.empty())
+        {
+            storage.insert(player);
+        }
+        else
+        {
+            throw std::runtime_error("Player already exists in data base");
+        }
+    }
 
-	std::vector<GamePlayer> PlayerDatabase::GetAllPlayers()
-	{
-		return storage.get_all<GamePlayer>();
-	}
+    std::vector<GamePlayer> PlayerDatabase::GetAllPlayers()
+    {
+        return storage.get_all<GamePlayer>();
+    }
 
-	GamePlayer PlayerDatabase::GetPlayerByName(const std::string& name)
-	{
-		auto result = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
+    GamePlayer PlayerDatabase::GetPlayerByName(const std::string& name)
+    {
+        auto result = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
 
-		if (!result.empty())
-		{
-			return result.front(); // Returneaza primul rezultat daca exista
-		}
-		else
-		{
-			throw std::runtime_error("Player not found"); // Gestionare eroare daca exista
-		}
-	}
+        if (!result.empty())
+        {
+            return result.front();
+        }
+        else
+        {
+            throw std::runtime_error("Player not found");
+        }
+    }
 
-	void PlayerDatabase::UpdatePlayerScore(const std::string& name, int newScore)
-	{
-		auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
+    void PlayerDatabase::UpdatePlayerScore(const std::string& name, int newScore)
+    {
+        auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
 
-		if (!players.empty())
-		{
-			GamePlayer player = players.front();
-			player.score = newScore;
-			storage.update(player);
-		}
-		else
-		{
-			throw std::runtime_error("Player not found");
-		}
-	}
+        if (!players.empty())
+        {
+            GamePlayer player = players.front();
+            player.score = newScore;
+            storage.update(player);
+        }
+        else
+        {
+            throw std::runtime_error("Player not found");
+        }
+    }
 
-	void PlayerDatabase::UpdatePlayerPoints(const std::string& name, int newPoints)
-	{
-		auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
+    void PlayerDatabase::UpdatePlayerPoints(const std::string& name, int newPoints)
+    {
+        auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
 
-		if (!players.empty())
-		{
-			GamePlayer player = players.front();
-			player.points = newPoints;
-			storage.update(player);
-		}
-		else
-		{
-			throw std::runtime_error("Player not found");
-		}
-	}
+        if (!players.empty())
+        {
+            GamePlayer player = players.front();
+            player.points = newPoints;
+            storage.update(player);
+        }
+        else
+        {
+            throw std::runtime_error("Player not found");
+        }
+    }
 
-	void PlayerDatabase::DeletePlayer(const std::string& name) {
-		try {
-			
-			auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == name));
+    void PlayerDatabase::UpdateCooldownLevel(const std::string& playerName)
+    {
+        auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == playerName));
 
-			if (players.empty()) {
-				throw std::runtime_error("Player not found");
-			}
+        if (!players.empty()) {
+            GamePlayer& player = players.front();
 
-			auto player = players.front();
-			storage.remove<GamePlayer>(player.id);
+            if (player.points >= 2000) {
+                player.cooldown_level = 4;
+            }
+            else if (player.points >= 1500) {
+                player.cooldown_level = 3;
+            }
+            else if (player.points >= 1000) {
+                player.cooldown_level = 2;
+            }
+            else if (player.points >= 500) {
+                player.cooldown_level = 1;
+            }
+            else {
+                player.cooldown_level = 0;
+            }
 
-		}
-		catch (const std::runtime_error& e) {
-			throw std::runtime_error("Failed to delete player: " + std::string(e.what()));
-		}
-	}
+            storage.update(player);
+        }
+        else {
+            throw std::runtime_error("Player not found");
+        }
+    }
 
-	void WeaponDatabase::UpdateFireRate(const std::string& upgradeId, int newBulletSpeed)
-	{
-		auto upgrade = storage.get<WeaponUpgrade>(sqlite_orm::where(sqlite_orm::c(&WeaponUpgrade::id) == std::stoi(upgradeId)));
-		upgrade.bullet_speed = newBulletSpeed;
-		storage.update(upgrade);
-	}
+    void PlayerDatabase::UpdateBulletSpeedLevel(const std::string& playerName)
+    {
+        auto players = storage.get_all<GamePlayer>(sqlite_orm::where(sqlite_orm::c(&GamePlayer::name) == playerName));
 
-	void WeaponDatabase::UpdateCooldown(const std::string& upgradeId, int newCooldown)
-	{
-		auto upgrade = storage.get<WeaponUpgrade>(sqlite_orm::where(sqlite_orm::c(&WeaponUpgrade::id) == std::stoi(upgradeId)));
-		upgrade.cooldown = newCooldown;
-		storage.update(upgrade);
-	}
+        if (!players.empty()) {
+            GamePlayer& player = players.front();
 
+            if (player.score >= 10) {
+                player.bullet_speed_level = 1;
+            }
+            else {
+                player.bullet_speed_level = 0;
+            }
+
+            storage.update(player);
+        }
+        else {
+            throw std::runtime_error("Player not found");
+        }
+    }
 }
