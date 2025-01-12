@@ -131,11 +131,3 @@ void BoardManager::SetCell(int x, int y, int value) {
 		throw std::out_of_range("Position is out of bounds");
 	}
 }
-
-void BoardManager::AddPenguin(std::shared_ptr<Penguin> penguin) {
-	m_penguins.push_back(std::move(penguin));
-}
-
-void BoardManager::ClearPenguins() {
-	m_penguins.clear();
-}

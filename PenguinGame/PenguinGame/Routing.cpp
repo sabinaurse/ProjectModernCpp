@@ -308,86 +308,6 @@ void Routing::Run(int port)
 		}
 			});
 
-	CROW_ROUTE(m_app, "/addMapElement").methods("POST"_method)
-		([this](const crow::request& req) {
-		try {
-			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object.");
-			}
-
-			int32_t x = body["x"].i();
-			int32_t y = body["y"].i();
-			std::string elementType = body["elementType"].s();
-
-			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
-				return crow::response(400, "Position out of bounds.");
-			}
-
-			int cellType;
-			if (elementType == "bomb") {
-				cellType = 3;
-			}
-			else if (elementType == "destructible_wall") {
-				cellType = 1;
-			}
-			else if (elementType == "indestructible_wall") {
-				cellType = 2;
-			}
-			else if (elementType == "empty") {
-				cellType = 0;
-			}
-			else {
-				return crow::response(400, "Invalid element type.");
-			}
-
-			m_game.GetBoardManager().DestroyCell(x, y);
-			return crow::response(200, "Element added successfully.");
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error adding map element: " + std::string(e.what()));
-		}
-			});
-
-	CROW_ROUTE(m_app, "/removeMapElement").methods("POST"_method)
-		([this](const crow::request& req) {
-		try {
-			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object.");
-			}
-
-			int32_t x = body["x"].i();
-			int32_t y = body["y"].i();
-
-			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
-				return crow::response(400, "Position out of bounds.");
-			}
-
-			m_game.GetBoardManager().SetCell(x, y, 0);
-			return crow::response(200, "Element removed successfully.");
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error removing map element: " + std::string(e.what()));
-		}
-			});
-
-	CROW_ROUTE(m_app, "/resetPlayerLives").methods("POST"_method)
-		([this]() {
-		try {
-			const auto& penguins = m_game.GetPenguins();
-			for (const auto& penguin : penguins) {
-				if (penguin) {
-					penguin->ResetState();
-				}
-			}
-
-			return crow::response(200, "All player lives have been reset.");
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error resetting player lives: " + std::string(e.what()));
-		}
-			});
 
 	CROW_ROUTE(m_app, "/upgradePlayerWeapon").methods("POST"_method)
 		([this](const crow::request& req) {
@@ -409,91 +329,6 @@ void Routing::Run(int port)
 		}
 			});
 
-	CROW_ROUTE(m_app, "/addBonusToMap").methods("POST"_method)
-		([this](const crow::request& req) {
-		try {
-			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object.");
-			}
-
-			uint32_t x = body["x"].i();
-			uint32_t y = body["y"].i();
-			std::string bonusType = body["bonusType"].s();
-
-			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
-				return crow::response(400, "Cell out of bounds.");
-			}
-
-			// Adăugăm bonusul specificat.
-			// Logica pentru stocarea bonusurilor ar putea necesita o extensie a clasei `GameBoard`.
-
-			return crow::response(200, "Bonus added to map: " + bonusType);
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error adding bonus: " + std::string(e.what()));
-		}
-			});
-
-	CROW_ROUTE(m_app, "/resetPenguinPositions").methods("POST"_method)([this]() {
-		try {
-			const auto& penguins = m_game.GetPenguins();
-			for (const auto& penguin : penguins) {
-				penguin->ResetState();
-			}
-
-			return crow::response(200, "All penguin positions reset to initial state.");
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error resetting penguin positions: " + std::string(e.what()));
-		}
-		});
-
-	CROW_ROUTE(m_app, "/getCellDetails/<int>/<int>").methods("GET"_method)
-		([this](int x, int y) {
-		try {
-			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
-				return crow::response(400, "Position out of bounds.");
-			}
-
-			int cellType = m_game.GetBoardManager().GetCell(x, y);
-
-			crow::json::wvalue response;
-			response["x"] = x;
-			response["y"] = y;
-			response["cellType"] = cellType;
-
-			return crow::response(200, response);
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error retrieving cell details: " + std::string(e.what()));
-		}
-			});
-
-	CROW_ROUTE(m_app, "/changeMapElement").methods("POST"_method)
-		([this](const crow::request& req) {
-		try {
-			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object.");
-			}
-
-			int x = body["x"].i();
-			int y = body["y"].i();
-			int newCellType = body["newCellType"].i();
-
-			if (!m_game.GetBoardManager().IsWithinBounds(x, y)) {
-				return crow::response(400, "Position out of bounds.");
-			}
-
-			m_game.GetBoardManager().SetCell(x, y, newCellType);
-
-			return crow::response(200, "Cell updated successfully.");
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error updating map element: " + std::string(e.what()));
-		}
-			});
 
 	CROW_ROUTE(m_app, "/getStartingPositions").methods("GET"_method)([this]() {
 		try {
@@ -509,28 +344,6 @@ void Routing::Run(int port)
 		}
 		catch (const std::exception& e) {
 			return crow::response(500, "Error retrieving starting positions: " + std::string(e.what()));
-		}
-		});
-
-	CROW_ROUTE(m_app, "/initializePenguins").methods("POST"_method)([this]() {
-		try {
-			const auto& startingPositions = m_game.GetBoardManager().GetStartingPositions();
-			const auto& players = m_game.GetPlayers();
-
-			if (players.size() != startingPositions.size()) {
-				return crow::response(400, "Mismatch between players and starting positions.");
-			}
-
-			for (size_t i = 0; i < players.size(); ++i) {
-				auto* player = players[i].get();
-				Position position = { startingPositions[i].first, startingPositions[i].second };
-				m_game.GetBoardManager().AddPenguin(std::make_shared<Penguin>(player, position, 500));
-			}
-
-			return crow::response(200, "Penguins initialized on starting positions.");
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error initializing penguins: " + std::string(e.what()));
 		}
 		});
 

@@ -35,15 +35,10 @@ public:
     std::vector<std::pair<uint32_t, uint32_t>> GetStartingPositions() const;
     void SetCell(int x, int y, int value);
 
-    // Metode pentru manipulare pinguin
-    void AddPenguin(std::shared_ptr<Penguin> penguin);
-    void ClearPenguins();
-
 private:
     void InitializeCellTypes();
 
 private:
     MapGen::GameBoard m_gameBoard;
-    std::vector<std::shared_ptr<Penguin>> m_penguins;
 };
 

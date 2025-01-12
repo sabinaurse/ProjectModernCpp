@@ -1,7 +1,6 @@
 ﻿#include "Penguin.h"
 #include "Snowball.h"
 
-#define RADIUS_OF_COLLISION 15.0f
 #define MOVE_STEP 1
 
 Penguin::Penguin(Player* player, Position initialPosition, const Weapon& weapon)
@@ -13,11 +12,12 @@ void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 	if (!m_isAlive) return;
 
 	Position delta{ 0, 0 };
+
 	switch (direction) {
-	case 'W': delta.second = -MOVE_STEP; break; // Sus
-	case 'S': delta.second = MOVE_STEP; break;  // Jos
-	case 'A': delta.first = -MOVE_STEP; break;  // Stânga
-	case 'D': delta.first = MOVE_STEP; break;   // Dreapta
+	case 'W': delta.first = -MOVE_STEP; break;
+	case 'S': delta.first = MOVE_STEP; break;
+	case 'A': delta.second = -MOVE_STEP; break;
+	case 'D': delta.second = MOVE_STEP; break;
 	default:
 		std::cout << "Invalid direction. Use W, A, S, D for movement." << std::endl;
 		return;
@@ -25,15 +25,12 @@ void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 
 	Position newPosition = { m_position.first + delta.first, m_position.second + delta.second };
 
-	// Verificăm limitele hărții
-	if (newPosition.second >= 0 && newPosition.second < gameBoard.GetRows() &&
-		newPosition.first >= 0 && newPosition.first < gameBoard.GetCols()) {
+	if (newPosition.first >= 0 && newPosition.first < gameBoard.GetRows() &&
+		newPosition.second >= 0 && newPosition.second < gameBoard.GetCols()) {
 
-		// Obținem tipul celulei țintă
 		const auto& board = gameBoard.GetBoard();
-		int cellType = board[newPosition.second][newPosition.first]; // Observăm că matricea este accesată invers (rând, coloană)
+		int cellType = board[newPosition.first][newPosition.second];
 
-		// Permitem mutarea doar pe celule de tip `Empty` (0)
 		if (cellType == 0) {
 			m_position = newPosition;
 			m_currentDirection = direction;
@@ -67,6 +64,11 @@ void Penguin::Fire() {
 
 		Snowball newSnowball(m_position, direction);
 		m_weapon.GetSnowballs().emplace_back(newSnowball);
+
+		std::cout << "Snowball created at (" << newSnowball.GetPosition().first << ", "
+			<< newSnowball.GetPosition().second << ") in direction " << direction
+			<< " with speed " << newSnowball.GetSpeed() << std::endl;
+
 		m_weapon.ResetTimeSinceLastShot();
 	}
 	else {
@@ -76,6 +78,7 @@ void Penguin::Fire() {
 
 void Penguin::EliminateEnemy()
 {
+	if (!m_player) return;
 	m_enemiesEliminated++;
 	m_player->AddPoints(100);  
 	std::cout << "Player " << m_player->GetName() << " eliminated an enemy! Total points: " << m_player->GetPoints() << std::endl;
