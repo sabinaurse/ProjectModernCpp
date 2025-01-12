@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "Snowball.h"
 #include <chrono>
-#include <vector>
+#include <deque>
+#include "Snowball.h"
 
 class Weapon
 {
@@ -13,14 +13,12 @@ public:
 	void ResetTimeSinceLastShot();
 	int GetCooldown() const;
 
-	std::vector<Snowball>& GetSnowballs();
-	const std::vector<Snowball>& GetSnowballs() const;
+	std::deque<Snowball>& GetSnowballs();
 	void RemoveInactiveSnowballs();
 
 private:
 	int m_cooldown{ 4000 };       
 	std::chrono::steady_clock::time_point m_timeSinceLastShot;
-
-	std::vector<Snowball> m_snowballs;
+	std::deque<Snowball> m_snowballs;
 };
 

@@ -1,5 +1,4 @@
 ﻿#include "Weapon.h"
-#include <unordered_map>
 
 Weapon::Weapon(int cooldown): m_cooldown(cooldown) {
 	m_timeSinceLastShot = std::chrono::steady_clock::now();
@@ -21,16 +20,8 @@ int Weapon::GetCooldown() const {
 	return m_cooldown;
 }
 
-std::vector<Snowball>& Weapon::GetSnowballs()
+std::deque<Snowball>& Weapon::GetSnowballs()
 {
-	return m_snowballs;
-}
-
-const std::vector<Snowball>& Weapon::GetSnowballs() const
-{
-	if (m_snowballs.empty()) {
-		std::cerr << "Warning: Attempted to access an empty snowball vector." << std::endl;
-	}
 	return m_snowballs;
 }
 

@@ -1,14 +1,13 @@
 ﻿#include "Snowball.h"
 
-Snowball::Snowball(const std::pair<int, int>& startPosition, const std::string& launchDirection)
+Snowball::Snowball(const std::pair<int, int>& startPosition, Direction launchDirection)
     : m_position{ startPosition },
     m_direction{ launchDirection },
-    m_bulletSpeed{ 5.0f }, // Viteza implicită
+    m_bulletSpeed{ 5.0f },
     m_active{ true },
     m_lastUpdate{ std::chrono::steady_clock::now() }
 {
 }
-
 
 void Snowball::UpdatePosition(const MapGen::GameBoard& gameBoard)
 {
@@ -24,7 +23,6 @@ void Snowball::UpdatePosition(const MapGen::GameBoard& gameBoard)
             nextPosition.second >= 0 && nextPosition.second < static_cast<int>(board[0].size()))
         {
             int cellType = board[nextPosition.first][nextPosition.second];
-            // if cell is empty we update
             if (cellType == 0)
             {
                 m_position = nextPosition;
@@ -43,15 +41,15 @@ void Snowball::UpdatePosition(const MapGen::GameBoard& gameBoard)
     }
 }
 
-std::pair<int, int> Snowball::GetNextPosition() const
-{
-    int x = std::get<0>(m_position);
-    int y = std::get<1>(m_position);
+std::pair<int, int> Snowball::GetNextPosition() const {
+    int x = m_position.first;
+    int y = m_position.second;
 
-    if (m_direction == "up") --y;
-    else if (m_direction == "down") ++y;
-    else if (m_direction == "left") --x;
-    else if (m_direction == "right") ++x;
-
-    return std::make_pair(x, y);
+    switch (m_direction) {
+    case Direction::Up:    --y; break;
+    case Direction::Down:  ++y; break;
+    case Direction::Left:  --x; break;
+    case Direction::Right: ++x; break;
+    }
+    return { x, y };
 }

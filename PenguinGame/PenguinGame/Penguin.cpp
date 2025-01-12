@@ -53,13 +53,13 @@ void Penguin::Fire() {
 	if (!m_isAlive) return;
 
 	if (m_weapon.CanShoot()) {
-		std::string direction;
+		Direction direction;
 
 		switch (m_currentDirection) {
-		case 'W': direction = "up"; break;
-		case 'S': direction = "down"; break;
-		case 'A': direction = "left"; break;
-		case 'D': direction = "right"; break;
+		case 'W': direction = Direction::Up; break;
+		case 'S': direction = Direction::Down; break;
+		case 'A': direction = Direction::Left; break;
+		case 'D': direction = Direction::Right; break;
 		default:
 			std::cout << "Invalid direction for firing!" << std::endl;
 			return;
@@ -67,11 +67,6 @@ void Penguin::Fire() {
 
 		Snowball newSnowball(m_position, direction);
 		m_weapon.GetSnowballs().emplace_back(newSnowball);
-
-		std::cout << "Snowball created at (" << newSnowball.GetPosition().first << ", "
-			<< newSnowball.GetPosition().second << ") in direction " << direction
-			<< " with speed " <<newSnowball.GetSpeed() << std::endl;
-
 		m_weapon.ResetTimeSinceLastShot();
 	}
 	else {
