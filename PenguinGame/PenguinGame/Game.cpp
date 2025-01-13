@@ -141,6 +141,7 @@ void Game::CheckSnowballToPenguinCollisions() {
                     snowball.Deactivate();
 
                     if (!targetPenguin->IsAlive()) {
+                        shooterPenguin->GetPlayer()->AddPoints(100);
                         std::cout << "Penguin controlled by " << targetPenguin->GetPlayer()->GetName() << " was defeated!" << std::endl;
                     }
                 }

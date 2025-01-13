@@ -53,7 +53,6 @@ void Routing::Run(int port)
 	CROW_ROUTE(m_app, "/updatePlayer").methods("POST"_method)
 		([this](const crow::request& req) {
 		try {
-			// Parseaza request-ul JSON
 			auto body = crow::json::load(req.body);
 
 			if (!body) {
@@ -108,7 +107,6 @@ void Routing::Run(int port)
 		try {
 			crow::json::wvalue gameState;
 
-			// Obține lista de pinguini
 			const auto& penguins = m_game.GetPenguins();
 			std::cout << "Number of penguins in game: " << penguins.size() << std::endl;
 
@@ -182,27 +180,6 @@ void Routing::Run(int port)
 		}
 		});
 
-	CROW_ROUTE(m_app, "/leaderboard") ([this]() {
-		try {
-			std::ostringstream leaderboard;
-			leaderboard << "Leaderboard:\n";
-
-			auto& players = m_game.GetPlayers();
-			std::sort(players.begin(), players.end(), [](const std::unique_ptr<Player>& a, const std::unique_ptr<Player>& b) {
-				return a->GetPoints() > b->GetPoints();
-				});
-
-			for (const auto& player : players) {
-				leaderboard << player->GetName() << " - " << player->GetPoints() << " points\n";
-			}
-
-
-			return crow::response(200, leaderboard.str());
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error retrieving leaderboard: " + std::string(e.what()));
-		}
-		});
 
 	CROW_ROUTE(m_app, "/movePlayer").methods("POST"_method)
 		([this](const crow::request& req) {
@@ -260,7 +237,6 @@ void Routing::Run(int port)
 
 			penguin->Fire();
 
-			// e in weapon acum getsnowballs
 			const auto& snowballs = penguin->GetWeapon().GetSnowballs();
 			if (snowballs.empty()) {
 				CROW_LOG_ERROR << "No snowballs created for penguin of player: " << playerName;
@@ -288,34 +264,6 @@ void Routing::Run(int port)
 			});
 
 
-
-	CROW_ROUTE(m_app, "/upgradeBulletSpeed").methods("POST"_method)
-		([this](const crow::request& req) {
-		try {
-			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object");
-			}
-
-			std::string playerName = body["playerName"].s();
-			Player* player = m_game.GetPlayerByName(playerName);
-			if (!player) {
-				return crow::response(404, "Player not found.");
-			}
-
-			Penguin* penguin = m_game.GetPenguinForPlayer(*player);
-			if (!penguin) {
-				return crow::response(404, "Penguin not found.");
-			}
-
-			//penguin->UpgradeBulletSpeed();
-			return crow::response(200, "Bullet speed upgraded.");
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error upgrading bullet speed: " + std::string(e.what()));
-		}
-			});
-
 	CROW_ROUTE(m_app, "/stopGame").methods("POST"_method)
 		([this]() {
 		try {
@@ -324,27 +272,6 @@ void Routing::Run(int port)
 		}
 		catch (const std::exception& e) {
 			return crow::response(500, "Error stopping game: " + std::string(e.what()));
-		}
-			});
-
-
-	CROW_ROUTE(m_app, "/upgradePlayerWeapon").methods("POST"_method)
-		([this](const crow::request& req) {
-		try {
-			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object.");
-			}
-
-			std::string playerName = body["playerName"].s();
-			std::string upgradeType = body["upgradeType"].s();
-
-			//m_game.UpgradePlayer(playerName, upgradeType);
-
-			return crow::response(200, "Player weapon upgraded: " + upgradeType);
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error upgrading player weapon: " + std::string(e.what()));
 		}
 			});
 
@@ -377,7 +304,7 @@ void Routing::Run(int port)
 				response["penguins"][i]["x"] = penguin->GetPosition().first;
 				response["penguins"][i]["y"] = penguin->GetPosition().second;
 				response["penguins"][i]["isAlive"] = penguin->IsAlive();
-				//response["penguins"][i]["bulletSpeed"] = penguin->GetBulletSpeed();
+				response["penguins"][i]["bulletSpeed"] = penguin->GetWeapon().GetBulletSpeed();
 				response["penguins"][i]["eliminations"] = penguin->GetEliminationOrder();
 			}
 
