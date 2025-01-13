@@ -38,8 +38,8 @@ void ClientRequests::initializeRequestActions() {
         if (jsonDoc.isObject()) {
             QJsonObject jsonObj = jsonDoc.object();
 
-            int startX = jsonObj["startX"].toInt();
-            int startY = jsonObj["startY"].toInt();
+            int startY = jsonObj["startX"].toInt();
+            int startX = jsonObj["startY"].toInt();
             QString direction = jsonObj["direction"].toString();
             float speed = jsonObj["bulletSpeed"].toDouble();
 
@@ -193,8 +193,8 @@ void ClientRequests::onReplyFinished(QNetworkReply* reply) {
 
 void ClientRequests::updatePlayerPositionFromJson(const QJsonObject& jsonObj)
 {
-    int x = jsonObj["x"].toInt();
-    int y = jsonObj["y"].toInt();
+    int y = jsonObj["x"].toInt();
+    int x = jsonObj["y"].toInt();
     QString playerName = ClientState::instance().GetCurrentPlayer();
 
     qDebug() << "Player:" << playerName << "Position:" << x << y;
