@@ -69,7 +69,7 @@ void Penguin::Fire() {
 
 		std::cout << "Snowball created at (" << newSnowball.GetPosition().first << ", "
 			<< newSnowball.GetPosition().second << ") in direction " << direction
-			<< " with speed " << newSnowball.GetSpeed() << std::endl;
+			<< " with speed " << newSnowball.GetBulletSpeed() << std::endl;
 
 		m_weapon.ResetTimeSinceLastShot();
 	}

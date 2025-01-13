@@ -259,7 +259,7 @@ void Routing::Run(int port)
 			crow::json::wvalue response;
 			response["startX"] = latestSnowball.GetPosition().first;
 			response["startY"] = latestSnowball.GetPosition().second;
-			//response["direction"] = Snowball::DirectionToString(latestSnowball.GetDirection());
+			response["direction"] = DirectionToString(latestSnowball.GetDirection());
 			response["bulletSpeed"] = latestSnowball.GetBulletSpeed();
 
 			return crow::response(200, response);
