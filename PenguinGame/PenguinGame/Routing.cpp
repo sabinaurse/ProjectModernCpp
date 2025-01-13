@@ -92,10 +92,10 @@ void Routing::Run(int port)
 			auto dbPlayer = m_db.GetPlayerByName(playerName);
 			auto player = std::make_unique<Player>(dbPlayer);
 
-			m_game.AddPlayerToQueue(player.get());
+			//m_game.AddPlayerToQueue(player.get());
 			m_game.AddPlayer(std::move(player));
 
-			m_game.TryStartMatch();
+			//m_game.TryStartMatch();
 
 			return crow::response(200, "Player added to waiting queue: " + playerName);
 		}

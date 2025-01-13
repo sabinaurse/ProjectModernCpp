@@ -1,10 +1,12 @@
-#pragma once
+﻿#pragma once
 #include <queue>
 #include <vector>
 #include <chrono>
 #include <algorithm>
 #include <cstdint>
 #include <memory>
+#include <thread>
+#include <atomic>
 #include "Penguin.h"
 #include "Player.h"
 #include "BoardManager.h"
@@ -50,14 +52,18 @@ public:
 	const std::vector<std::shared_ptr<Penguin>>& GetPenguins() const { return m_penguins; }
 	std::vector<std::unique_ptr<Player>>& GetPlayers() { return m_players; }
 
-
-	void AddPlayerToQueue(Player* player); // -> GM
-	void TryStartMatch(); // -> GM
-	void UpdateActiveGames(); // -> GM
+	//void AddPlayerToQueue(Player* player); // -> GM
+	//void TryStartMatch(); // -> GM
+	//void UpdateActiveGames(); // -> GM
 
 	bool IsGameOver() const;
+
+	void StartUpdateLoop();
+	void StopUpdateLoop();
+	void UpdateAllSnowballs();
+
 private:
-	void StartMatch(const std::vector<Player*>& playersForMatch); // -> GM
+	//void StartMatch(const std::vector<Player*>& playersForMatch); // -> GM
 
 	void CheckSnowballToPenguinCollisions();
 	void CheckSnowballToObstacleCollisions();
@@ -69,7 +75,10 @@ private:
 	bool m_isGameOver{ false };
 
 	std::priority_queue<WaitingPlayer> waitingQueue; // -> GM
-	std::vector<Game> activeGames; // -> GM
+	//std::vector<Game> activeGames; // -> GM
+
+	std::thread m_updateThread;         // Thread pentru bucla de actualizare
+	std::atomic<bool> m_running{ false }; // Variabilă pentru a controla thread-ul
 
 };
 

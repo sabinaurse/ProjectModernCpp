@@ -9,11 +9,13 @@ void Game::StartGame()
     m_isGameOver = false;
     InitializePlayers();
     std::cout << "Starting the game..." << std::endl;
+    StartUpdateLoop();
 }
 
 
 void Game::EndGame()
 {
+    StopUpdateLoop();
     m_isGameOver = true;
     std::cout << "Game Over!" << std::endl;
 
@@ -202,61 +204,61 @@ void Game::CheckSnowballToSnowballCollisions() {
 
 
 
-void Game::AddPlayerToQueue(Player* player) { // -> GM
-    WaitingPlayer waitingPlayer{ player, std::chrono::steady_clock::now() };
-    waitingQueue.push(waitingPlayer);
+//void Game::AddPlayerToQueue(Player* player) { // -> GM
+//    WaitingPlayer waitingPlayer{ player, std::chrono::steady_clock::now() };
+//    waitingQueue.push(waitingPlayer);
+//
+//    TryStartMatch(); // Verificam daca putem porni un joc imediat
+//}
+//
+//void Game::TryStartMatch() { // -> GM
+//    const size_t maxPlayersPerMatch = 4;
+//    const size_t minPlayersToStart = 1;
+//    const int waitTimeLimit = 30; // secunde
+//
+//    std::vector<WaitingPlayer> tempQueue; // Coada temporara pentru jucatorii care raman
+//    std::vector<Player*> playersForMatch; // Lista jucatorilor pentru un meci
+//
+//    auto now = std::chrono::steady_clock::now();
+//
+//    while (!waitingQueue.empty()) {
+//        const auto& waitingPlayer = waitingQueue.top();
+//        waitingQueue.pop();
+//
+//        auto waitTime = std::chrono::duration_cast<std::chrono::seconds>(now - waitingPlayer.joinTime).count();
+//        playersForMatch.push_back(waitingPlayer.player);
+//
+//        if (playersForMatch.size() == maxPlayersPerMatch) {
+//            StartMatch(playersForMatch);
+//            return;
+//        }
+//
+//        if (waitTime >= waitTimeLimit && playersForMatch.size() >= minPlayersToStart) {
+//            StartMatch(playersForMatch);
+//            return;
+//        }
+//
+//        tempQueue.push_back(waitingPlayer);
+//    }
+//
+//    for (const auto& player : tempQueue) {
+//        waitingQueue.push(player);
+//    }
+//
+//    std::cout << "Not enough players to start a match." << std::endl;
+//}
 
-    TryStartMatch(); // Verificam daca putem porni un joc imediat
-}
-
-void Game::TryStartMatch() { // -> GM
-    const size_t maxPlayersPerMatch = 4;
-    const size_t minPlayersToStart = 1;
-    const int waitTimeLimit = 30; // secunde
-
-    std::vector<WaitingPlayer> tempQueue; // Coada temporara pentru jucatorii care raman
-    std::vector<Player*> playersForMatch; // Lista jucatorilor pentru un meci
-
-    auto now = std::chrono::steady_clock::now();
-
-    while (!waitingQueue.empty()) {
-        const auto& waitingPlayer = waitingQueue.top();
-        waitingQueue.pop();
-
-        auto waitTime = std::chrono::duration_cast<std::chrono::seconds>(now - waitingPlayer.joinTime).count();
-        playersForMatch.push_back(waitingPlayer.player);
-
-        if (playersForMatch.size() == maxPlayersPerMatch) {
-            StartMatch(playersForMatch);
-            return;
-        }
-
-        if (waitTime >= waitTimeLimit && playersForMatch.size() >= minPlayersToStart) {
-            StartMatch(playersForMatch);
-            return;
-        }
-
-        tempQueue.push_back(waitingPlayer);
-    }
-
-    for (const auto& player : tempQueue) {
-        waitingQueue.push(player);
-    }
-
-    std::cout << "Not enough players to start a match." << std::endl;
-}
-
-void Game::StartMatch(const std::vector<Player*>& playersForMatch) { // -> GM
-    std::cout << "Starting a new match with " << playersForMatch.size() << " players." << std::endl;
-
-    Game newGame(m_boardManager.GetGameBoard().GetRows(), m_boardManager.GetGameBoard().GetCols());
-    for (auto* player : playersForMatch) {
-        newGame.AddPlayer(std::make_unique<Player>(*player));
-    }
-
-    activeGames.push_back(std::move(newGame));
-    activeGames.back().StartGame();
-}
+//void Game::StartMatch(const std::vector<Player*>& playersForMatch) { // -> GM
+//    std::cout << "Starting a new match with " << playersForMatch.size() << " players." << std::endl;
+//
+//    Game newGame(m_boardManager.GetGameBoard().GetRows(), m_boardManager.GetGameBoard().GetCols());
+//    for (auto* player : playersForMatch) {
+//        newGame.AddPlayer(std::make_unique<Player>(*player));
+//    }
+//
+//    activeGames.push_back(std::move(newGame));
+//    activeGames.back().StartGame();
+//}
 
 
 
@@ -265,13 +267,59 @@ bool Game::IsGameOver() const {
 }
 
 
-void Game::UpdateActiveGames() { // -> GM
-    std::cout << "Currently active games: " << activeGames.size() << std::endl;
+//void Game::UpdateActiveGames() { // -> GM
+//    std::cout << "Currently active games: " << activeGames.size() << std::endl;
+//
+//    for (auto it = activeGames.begin(); it != activeGames.end();) {
+//        if (it->IsGameOver()) {
+//            it->EndGame();
+//            it = activeGames.erase(it);
+//        }
+//    }
+//}
 
-    for (auto it = activeGames.begin(); it != activeGames.end();) {
-        if (it->IsGameOver()) {
-            it->EndGame();
-            it = activeGames.erase(it);
+void Game::StartUpdateLoop() {
+    m_running = true;
+
+    m_updateThread = std::thread([this]() {
+        while (m_running) {
+            auto startTime = std::chrono::steady_clock::now();
+
+            UpdateAllSnowballs(); // Actualizează pozițiile gloanțurilor
+
+            auto endTime = std::chrono::steady_clock::now();
+            std::chrono::duration<float> elapsed = endTime - startTime;
+            if (elapsed < std::chrono::milliseconds(2000)) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(16) - elapsed);
+            }
         }
+        });
+}
+
+
+void Game::StopUpdateLoop() {
+    m_running = false;
+
+    if (m_updateThread.joinable()) {
+        m_updateThread.join();
     }
 }
+
+
+void Game::UpdateAllSnowballs() {
+    for (const auto& penguin : m_penguins) {
+
+        for (auto& snowball : penguin->GetWeapon().GetSnowballs()) {
+            if (snowball.IsActive()) {
+                snowball.UpdatePosition();
+                std::cout << "Snowball updated: (" << snowball.GetPosition().first << ", "
+                    << snowball.GetPosition().second << ")" << std::endl;
+            }
+        }
+    }
+
+    for (const auto& penguin : m_penguins) {
+        penguin->GetWeapon().RemoveInactiveSnowballs();
+    }
+}
+
