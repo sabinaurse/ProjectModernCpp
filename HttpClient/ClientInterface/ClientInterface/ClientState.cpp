@@ -56,3 +56,10 @@ std::pair<int,int> ClientState::GetPlayerPosition(const QString& name) const {
     return { 0, 0 }; 
 }
 
+const QMap<QString, std::pair<int, int>>& ClientState::GetPlayerPositions() const {
+    return m_playerPositions;
+}
+
+void ClientState::ClearPlayerPositions() {
+    m_playerPositions.clear();
+}

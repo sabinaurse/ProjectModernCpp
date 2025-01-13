@@ -108,10 +108,30 @@ void Routing::Run(int port)
 		try {
 			crow::json::wvalue gameState;
 
+			// Obține lista de pinguini
 			const auto& penguins = m_game.GetPenguins();
+			std::cout << "Number of penguins in game: " << penguins.size() << std::endl;
+
 			for (size_t i = 0; i < penguins.size(); ++i) {
 				const auto* penguin = penguins[i].get();
-				gameState["players"][i]["name"] = penguin->GetPlayer()->GetName();
+
+				if (!penguin) {
+					std::cout << "Penguin at index " << i << " is null." << std::endl;
+					continue;
+				}
+
+				const auto* player = penguin->GetPlayer();
+				if (!player) {
+					std::cout << "Player for penguin at index " << i << " is null." << std::endl;
+					continue;
+				}
+
+				std::cout << "Adding player to game state:"
+					<< " Name: " << player->GetName()
+					<< ", Position: (" << penguin->GetPosition().first
+					<< ", " << penguin->GetPosition().second << ")" << std::endl;
+
+				gameState["players"][i]["name"] = player->GetName();
 				gameState["players"][i]["x"] = penguin->GetPosition().first;
 				gameState["players"][i]["y"] = penguin->GetPosition().second;
 			}
@@ -119,9 +139,11 @@ void Routing::Run(int port)
 			return crow::response(200, gameState);
 		}
 		catch (const std::exception& e) {
+			std::cerr << "Error retrieving game state: " << e.what() << std::endl;
 			return crow::response(500, "Error retrieving game state: " + std::string(e.what()));
 		}
 		});
+
 
 	CROW_ROUTE(m_app, "/getMap").methods("GET"_method)([this]() {
 		try {
@@ -204,12 +226,7 @@ void Routing::Run(int port)
 			}
 
 			penguin->Move(direction[0], m_game.GetBoard());
-
-			crow::json::wvalue response;
-			response["x"] = penguin->GetPosition().first;
-			response["y"] = penguin->GetPosition().second;
-
-			return crow::response(200, response);
+			return crow::response(200, "Move processed successfully");
 		}
 		catch (const std::exception& e) {
 			return crow::response(500, "Error moving player: " + std::string(e.what()));

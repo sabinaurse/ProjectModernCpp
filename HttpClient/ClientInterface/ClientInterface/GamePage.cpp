@@ -1,8 +1,7 @@
 ﻿#include "GamePage.h"
 
 GamePage::GamePage(ClientRequests* requests, QWidget* parent)
-    : QWidget(parent), m_scene(new QGraphicsScene(this)), m_view(new QGraphicsView(m_scene, this)),
-    m_penguin(nullptr), m_requests(requests), m_map(new Map())
+    : QWidget(parent), m_scene(new QGraphicsScene(this)), m_view(new QGraphicsView(m_scene, this)), m_requests(requests), m_map(new Map())
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignCenter);
@@ -21,22 +20,28 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
     QString playerName = ClientState::instance().GetCurrentPlayer();
     auto position = ClientState::instance().GetPlayerPosition(playerName);
 
-    m_penguin = new Penguin(m_requests);
-    m_penguin->setPos(position.first * Map::getCellSize(), position.second * Map::getCellSize());
-    m_penguin->setZValue(1);
-    m_scene->addItem(m_penguin);
+    //Penguin* penguin = new Penguin(m_requests);
+    //penguin->setPos(position.first * Map::getCellSize(), position.second * Map::getCellSize());
+    //penguin->setZValue(1);
+    //m_scene->addItem(penguin);
+    //m_penguins[playerName] = penguin;
 
-
+    debugPrintPenguins();
 
     connect(m_requests, &ClientRequests::gameStateUpdated, this, &GamePage::onGameStateUpdated);
     connect(m_requests, &ClientRequests::mapReceived, this, &GamePage::onMapReceived);
 
     connect(m_requests, &ClientRequests::snowballFired, this, &GamePage::onSnowballFired);
 
+    QTimer* timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, [this]() {
+        m_requests->GetGameState();
+        });
+    timer->start(200);
 }
 
 GamePage::~GamePage() {
-    delete m_penguin;
+    qDeleteAll(m_penguins);
 }
 
 void GamePage::onMapReceived(const std::vector<std::vector<int>>& mapData, std::unordered_map<int, std::string>& cellTypes) {
@@ -53,17 +58,52 @@ void GamePage::onMapReceived(const std::vector<std::vector<int>>& mapData, std::
     }
 }
 
-void GamePage::onGameStateUpdated()
-{
-    QString playerName = ClientState::instance().GetCurrentPlayer();
-    auto position = ClientState::instance().GetPlayerPosition(playerName);
+void GamePage::onGameStateUpdated() {
+    const auto& playerPositions = ClientState::instance().GetPlayerPositions();
 
-    qDebug() << "Player:" << playerName << "Position:" << position.first << position.second;
+    qDebug() << "Game state updated. Number of players:" << playerPositions.size();
 
-    if (m_penguin) {
-        m_penguin->setPos(position.first * Map::getCellSize(), position.second * Map::getCellSize());
+    for (auto it = playerPositions.cbegin(); it != playerPositions.cend(); ++it) {
+        const QString& name = it.key();
+        const auto& position = it.value();
+
+        qDebug() << "Processing player:" << name << "at position:" << position.first << position.second;
+
+        if (!m_penguins.contains(name)) {
+            qDebug() << "Adding new penguin for player:" << name;
+            Penguin* newPenguin = new Penguin(m_requests);
+            newPenguin->setZValue(1);
+            m_scene->addItem(newPenguin);
+            m_penguins[name] = newPenguin;
+        }
+
+        Penguin* penguin = m_penguins[name];
+        qDebug() << "Updating penguin position for player:" << name << "to ("
+            << position.first * Map::getCellSize() << ","
+            << position.second * Map::getCellSize() << ")";
+        penguin->setPos(position.first * Map::getCellSize(), position.second * Map::getCellSize());
+
+        debugPrintPenguins();
+
+        qDebug() << "Penguin scene position (after update):" << penguin->scenePos();
     }
+
+    qDebug() << "Finished updating all players. Requesting scene update.";
+    m_scene->update();
 }
+
+void GamePage::debugPrintPenguins() const {
+    qDebug() << "Current Penguins in QMap:";
+    for (auto it = m_penguins.cbegin(); it != m_penguins.cend(); ++it) {
+        const QString& name = it.key();
+        const Penguin* penguin = it.value();
+        QPointF position = penguin->scenePos(); // Obține poziția actuală a pinguinului în scenă
+
+        qDebug() << "Player Name:" << name << "| Scene Position:" << position;
+    }
+    qDebug() << "Total Penguins:" << m_penguins.size();
+}
+
 
 void GamePage::onSnowballFired(int startX, int startY, const QString& direction, float speed) {
     int cellSize = Map::getCellSize();

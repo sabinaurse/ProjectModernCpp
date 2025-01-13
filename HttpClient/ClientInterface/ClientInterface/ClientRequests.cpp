@@ -52,6 +52,17 @@ void ClientRequests::initializeRequestActions() {
         }
         };
 
+    requestActions[RequestType::GetGameState] = [this](const QString& data) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
+        if (jsonDoc.isObject()) {
+            QJsonObject jsonObj = jsonDoc.object();
+            updateGameStateFromJson(jsonObj);
+        }
+        else {
+            qDebug() << "Invalid GameState JSON received.";
+        }
+        };
+
 
 }
 
@@ -95,7 +106,8 @@ void ClientRequests::UpdatePlayer(const QString& name, int newScore, int newPoin
 void ClientRequests::GetGameState() {
     QUrl url("http://localhost:18080/getGameState");
     QNetworkRequest request(url);
-    networkManager->get(request);
+    QNetworkReply* reply = networkManager->get(request);
+    activeRequests.insert(reply, "getGameState");
 }
 
 void ClientRequests::AddPlayerToGame(const QString& playerName)
@@ -151,6 +163,9 @@ ClientRequests::RequestType ClientRequests::toRequestType(const QString& request
     }
     else if (requestType == "Fire") {
         return RequestType::Fire;
+    }
+    else if (requestType == "getGameState") {
+        return RequestType::GetGameState;
     }
     else {
         return RequestType::Unknown;
@@ -269,6 +284,35 @@ void ClientRequests::getMapFromJson(const QJsonObject& jsonObj)
         qDebug() << "No valid 'board' field in JSON.";
     }
 }
+
+void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
+    if (jsonObj.contains("players") && jsonObj["players"].isArray()) {
+        QJsonArray playersArray = jsonObj["players"].toArray();
+
+        // Șterge pozițiile existente
+        ClientState::instance().ClearPlayerPositions();
+
+        // Actualizează pozițiile pentru fiecare jucător
+        for (const QJsonValue& playerValue : playersArray) {
+            if (playerValue.isObject()) {
+                QJsonObject playerObj = playerValue.toObject();
+                QString name = playerObj["name"].toString();
+                int y = playerObj["x"].toInt();
+                int x = playerObj["y"].toInt();
+
+                ClientState::instance().UpdatePlayerPosition(name, x, y);
+                qDebug() << "Updated position for player:" << name << "to (" << x << "," << y << ")";
+            }
+        }
+
+        // Emit semnal pentru a notifica schimbarea GameState
+        emit gameStateUpdated();
+    }
+    else {
+        qDebug() << "GameState response missing 'players' array.";
+    }
+}
+
 
 void ClientRequests::MovePlayer(const QString& playerName, const QString& direction) {
     QUrl url("http://localhost:18080/movePlayer");

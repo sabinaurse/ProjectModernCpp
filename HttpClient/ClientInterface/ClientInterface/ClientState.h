@@ -34,4 +34,6 @@ public:
 
     void UpdatePlayerPosition(const QString& name, int x, int y);
     std::pair<int,int> GetPlayerPosition(const QString& name) const;
+    const QMap<QString, std::pair<int, int>>& GetPlayerPositions() const;
+    void ClearPlayerPositions();
 };

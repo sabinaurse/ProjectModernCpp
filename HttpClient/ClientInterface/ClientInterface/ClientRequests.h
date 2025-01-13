@@ -22,7 +22,8 @@ private:
         GetPlayer,
         UpdatePlayerPosition,
         GetMap,
-        Fire
+        Fire,
+        GetGameState
     };
 
     QNetworkAccessManager* networkManager;
@@ -33,6 +34,7 @@ private:
     RequestType toRequestType(const QString& requestType);
     void updatePlayerPositionFromJson(const QJsonObject& jsonObj);
     void getMapFromJson(const QJsonObject& jsonObj);
+    void updateGameStateFromJson(const QJsonObject& jsonObj);
     void initializeRequestActions();
 
 private slots:
