@@ -13,7 +13,7 @@ void Routing::Run(int port)
 		try {
 			auto player = std::make_unique<Player>(name);
 
-			game_database::GamePlayer playerRecord{ -1, name, 0, 0 };
+			game_database::GamePlayer playerRecord{ -1, name };
 			m_db.AddPlayer(playerRecord);
 
 			return crow::response("Player added: " + name);
@@ -215,6 +215,8 @@ void Routing::Run(int port)
 			return crow::response(500, "Error moving player: " + std::string(e.what()));
 		}
 			});
+
+
 	CROW_ROUTE(m_app, "/fire").methods("POST"_method)
 		([this](const crow::request& req) {
 		try {
@@ -252,13 +254,13 @@ void Routing::Run(int port)
 			CROW_LOG_INFO << "Snowball created at (" << latestSnowball.GetPosition().first << ", "
 				<< latestSnowball.GetPosition().second << ") in direction "
 				<< latestSnowball.GetDirection() << " with speed "
-				<< latestSnowball.GetSpeed();
+				<< latestSnowball.GetBulletSpeed();
 
 			crow::json::wvalue response;
 			response["startX"] = latestSnowball.GetPosition().first;
 			response["startY"] = latestSnowball.GetPosition().second;
 			//response["direction"] = Snowball::DirectionToString(latestSnowball.GetDirection());
-			response["bulletSpeed"] = latestSnowball.GetSpeed();
+			response["bulletSpeed"] = latestSnowball.GetBulletSpeed();
 
 			return crow::response(200, response);
 		}

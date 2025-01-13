@@ -16,7 +16,6 @@ namespace game_database
         //id_game => multigaming
     };
 
-    // Functie pentru crearea structurii bazei de date
     inline auto createStorage(const std::string& filename)
     {
         using namespace sqlite_orm;
@@ -26,8 +25,8 @@ namespace game_database
                 "players",
                 make_column("id", &GamePlayer::id, primary_key().autoincrement()),
                 make_column("name", &GamePlayer::name),
-                make_column("points", &GamePlayer::points),
-                make_column("score", &GamePlayer::score),
+                make_column("points", &GamePlayer::points, default_value(0)),
+                make_column("score", &GamePlayer::score, default_value(0)),
                 make_column("bullet_speed_level", &GamePlayer::bullet_speed_level, default_value(0)),
                 make_column("cooldown_level", &GamePlayer::cooldown_level, default_value(0))
             )
@@ -36,7 +35,6 @@ namespace game_database
 
     using Storage = decltype(createStorage(""));
 
-    // Clasa pentru gestionarea bazei de date a playerului
     class PlayerDatabase {
     public:
         PlayerDatabase();
@@ -46,8 +44,8 @@ namespace game_database
         GamePlayer GetPlayerByName(const std::string& name);
         void UpdatePlayerPoints(const std::string& name, int newPoints);
         void UpdatePlayerScore(const std::string& name, int newScore);
-        void UpdateCooldownLevel(const std::string& playerName);  // Declararea metodei
-        void UpdateBulletSpeedLevel(const std::string& playerName);  // Declararea metodei
+        void UpdateCooldownLevel(const std::string& playerName);
+        void UpdateBulletSpeedLevel(const std::string& playerName);
 
     private:
         Storage storage;

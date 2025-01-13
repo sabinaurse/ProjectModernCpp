@@ -62,7 +62,9 @@ void Penguin::Fire() {
 			return;
 		}
 
-		Snowball newSnowball(m_position, direction);
+		float bulletSpeed = m_weapon.GetBulletSpeed();
+
+		Snowball newSnowball(m_position, direction, bulletSpeed);
 		m_weapon.GetSnowballs().emplace_back(newSnowball);
 
 		std::cout << "Snowball created at (" << newSnowball.GetPosition().first << ", "
@@ -112,4 +114,10 @@ void Penguin::MarkAsEliminated(int eliminationOrder) {
 
 int Penguin::GetEliminationOrder() const {
 	return m_eliminationOrder;
+}
+
+void Penguin::UpdateWeaponAttributes()
+{
+	m_weapon.SetCooldownFromLevel(m_player->GetCooldownLevel());
+	m_weapon.SetBulletSpeedFromLevel(m_player->GetBulletSpeedLevel());
 }

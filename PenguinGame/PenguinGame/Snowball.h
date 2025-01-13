@@ -31,7 +31,7 @@ inline std::ostream& operator<<(std::ostream& os, Direction direction) {
 class Snowball
 {
 public:
-    Snowball(const std::pair<int, int>& startPosition, Direction launchDirection);
+    Snowball(const std::pair<int, int>& startPosition, Direction launchDirection, float bulletSpeed);
     ~Snowball() = default;
 
     void UpdatePosition(const MapGen::GameBoard& gameBoard);
@@ -39,8 +39,8 @@ public:
     void Deactivate() { m_active = false; }
 
     std::pair<int, int> GetPosition() const { return m_position; }
-    float GetSpeed() const { return m_bulletSpeed; };
     Direction GetDirection() const { return m_direction; }
+    float GetBulletSpeed() const { return m_bulletSpeed; }
 
 private:
     std::pair<int, int> GetNextPosition() const;
@@ -48,7 +48,7 @@ private:
 private:
     std::pair<int, int> m_position;
     Direction m_direction;
-    float m_bulletSpeed{ 0.25f };
     bool m_active;
+    float m_bulletSpeed;
     std::chrono::steady_clock::time_point m_lastUpdate; // controleaza miscarea in functie de timp
 };

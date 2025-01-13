@@ -4,7 +4,7 @@ namespace game_database
 {
     PlayerDatabase::PlayerDatabase() : storage(createStorage("PenguinGame.sqlite"))
     {
-        storage.sync_schema(); // Sincronizeaza schema bazei de date
+        storage.sync_schema();
     }
 
     void PlayerDatabase::AddPlayer(const GamePlayer& player)
@@ -48,6 +48,7 @@ namespace game_database
         {
             GamePlayer player = players.front();
             player.score = newScore;
+            UpdateBulletSpeedLevel(player.name);
             storage.update(player);
         }
         else
@@ -64,6 +65,7 @@ namespace game_database
         {
             GamePlayer player = players.front();
             player.points = newPoints;
+            UpdateCooldownLevel(player.name);
             storage.update(player);
         }
         else

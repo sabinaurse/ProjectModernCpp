@@ -20,6 +20,11 @@ int Weapon::GetCooldown() const {
 	return m_cooldown;
 }
 
+float Weapon::GetBulletSpeed() const
+{
+    return m_bulletSpeed;
+}
+
 std::deque<Snowball>& Weapon::GetSnowballs()
 {
 	return m_snowballs;
@@ -33,4 +38,41 @@ void Weapon::RemoveInactiveSnowballs() {
 		),
 		m_snowballs.end()
 	);
+}
+
+void Weapon::SetCooldownFromLevel(int cooldownLevel)
+{
+    switch (cooldownLevel)
+    {
+    case 0:
+        m_cooldown = 4000;
+        break;
+    case 1:
+        m_cooldown = 2000;
+        break;
+    case 2:
+        m_cooldown = 1000;
+        break;
+    case 3:
+        m_cooldown = 500;
+        break;
+    case 4:
+        m_cooldown = 250;
+        break;
+    default:
+        m_cooldown = 4000;
+        break;
+    }
+}
+
+void Weapon::SetBulletSpeedFromLevel(int bulletSpeedLevel)
+{
+    if (bulletSpeedLevel == 1)
+    {
+        m_bulletSpeed = 0.5f;
+    }
+    else
+    {
+        m_bulletSpeed = 0.25f;
+    }
 }
