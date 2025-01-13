@@ -31,8 +31,6 @@ public:
 	void MarkAsEliminated(int eliminationOrder);
 	int GetEliminationOrder() const;
 
-	void UpdateWeaponAttributes();
-
 private:
 	Player* m_player;
 	bool m_isAlive{ true };

@@ -1,7 +1,10 @@
 ﻿#include "Weapon.h"
 
-Weapon::Weapon(int cooldown): m_cooldown(cooldown) {
-	m_timeSinceLastShot = std::chrono::steady_clock::now();
+Weapon::Weapon(int cooldownLevel, int bulletSpeedLevel)
+    : m_timeSinceLastShot(std::chrono::steady_clock::now())
+{
+    SetCooldownFromLevel(cooldownLevel);
+    SetBulletSpeedFromLevel(bulletSpeedLevel);
 }
 
 bool Weapon::CanShoot() const

@@ -67,27 +67,27 @@ void ClientRequests::initializeRequestActions() {
 }
 
 void ClientRequests::CreatePlayer(const QString& name) {
-    QUrl url("http://192.168.0.107:18080/addPlayer/" + name);
+    QUrl url("http://localhost:18080/addPlayer/" + name);
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
     activeRequests.insert(reply, "createPlayer");
 }
 
 void ClientRequests::GetPlayer(const QString& name) {
-    QUrl url("http://192.168.0.107:18080/getPlayer/" + name);
+    QUrl url("http://localhost:18080/getPlayer/" + name);
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
     activeRequests.insert(reply, "getPlayer");
 }
 
 void ClientRequests::DeletePlayer(const QString& name) {
-    QUrl url("http://192.168.0.107:18080/deletePlayer/" + name);
+    QUrl url("http://localhost:18080/deletePlayer/" + name);
     QNetworkRequest request(url);
     networkManager->deleteResource(request);
 }
 
 void ClientRequests::UpdatePlayer(const QString& name, int newScore, int newPoints) {
-    QUrl url("http://192.168.0.107:18080/updatePlayer");
+    QUrl url("http://localhost:18080/updatePlayer");
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
@@ -104,7 +104,7 @@ void ClientRequests::UpdatePlayer(const QString& name, int newScore, int newPoin
 }
 
 void ClientRequests::GetGameState() {
-    QUrl url("http://192.168.0.107:18080/getGameState");
+    QUrl url("http://localhost:18080/getGameState");
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
     activeRequests.insert(reply, "getGameState");
@@ -112,7 +112,7 @@ void ClientRequests::GetGameState() {
 
 void ClientRequests::AddPlayerToGame(const QString& playerName)
 {
-    QUrl url("http://192.168.0.107:18080/addPlayerToGame");
+    QUrl url("http://localhost:18080/addPlayerToGame");
 
     QJsonObject json;
     json["name"] = playerName;
@@ -124,26 +124,26 @@ void ClientRequests::AddPlayerToGame(const QString& playerName)
 }
 
 void ClientRequests::GetMap() {
-    QUrl url("http://192.168.0.107:18080/getMap");
+    QUrl url("http://localhost:18080/getMap");
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
     activeRequests.insert(reply, "getMap");
 }
 
 void ClientRequests::StartGame() {
-    QUrl url("http://192.168.0.107:18080/startGame");
+    QUrl url("http://localhost:18080/startGame");
     QNetworkRequest request(url);
     networkManager->post(request, QByteArray());
 }
 
 void ClientRequests::ResetGame() {
-    QUrl url("http://192.168.0.107:18080/resetGame");
+    QUrl url("http://localhost:18080/resetGame");
     QNetworkRequest request(url);
     networkManager->post(request, QByteArray());
 }
 
 void ClientRequests::GetLeaderboard() {
-    QUrl url("http://192.168.0.107:18080/leaderboard");
+    QUrl url("http://localhost:18080/leaderboard");
     QNetworkRequest request(url);
     networkManager->get(request);
 }
@@ -315,7 +315,7 @@ void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
 
 
 void ClientRequests::MovePlayer(const QString& playerName, const QString& direction) {
-    QUrl url("http://192.168.0.107:18080/movePlayer");
+    QUrl url("http://localhost:18080/movePlayer");
 
     QJsonObject json;
     json["playerName"] = playerName;
@@ -329,7 +329,7 @@ void ClientRequests::MovePlayer(const QString& playerName, const QString& direct
 }
 
 void ClientRequests::Fire(const QString& playerName) {
-    QUrl url("http://192.168.0.107:18080/fire");
+    QUrl url("http://localhost:18080/fire");
 
     QJsonObject json;
     json["playerName"] = playerName;

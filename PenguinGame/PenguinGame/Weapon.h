@@ -7,7 +7,7 @@ class Weapon
 {
 public:
 	Weapon() = default;
-	Weapon(int cooldownLevel);
+	Weapon(int cooldownLevel, int bulletSpeedLevel);
 
 	bool CanShoot() const;
 	void ResetTimeSinceLastShot();

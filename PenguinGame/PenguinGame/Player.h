@@ -12,18 +12,18 @@ public:
 	std::string GetName() const;
 	int GetPoints() const;
 	int GetScore() const;
+	int GetBulletSpeedLevel() const;
+	int GetCooldownLevel() const;
 
-	void SetScore(int score);
 	void SetName(const std::string& name);
+	void SetPoints(int points);
+	void SetScore(int score);
+	void SetBulletSpeedLevel(int level);
+	void SetCooldownLevel(int level);
 
 	void AddPoints(int points);
 	void AddScores(int scores);
 
-	int GetBulletSpeedLevel() const;
-	void SetBulletSpeedLevel(int level);
-
-	int GetCooldownLevel() const;
-	void SetCooldownLevel(int level);
 private:
 	std::string m_name;
 	int m_points{ 0 };

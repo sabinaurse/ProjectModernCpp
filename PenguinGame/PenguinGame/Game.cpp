@@ -66,7 +66,7 @@ void Game::InitializePlayers() {
 
         auto& player = m_players[i];
         Position position{ startingPositions[i] };
-        Weapon weapon(player->GetCooldownLevel());
+        Weapon weapon(player->GetCooldownLevel(), player->GetBulletSpeedLevel());
 
         m_penguins.push_back(std::make_shared<Penguin>(player.get(), position, weapon));
         std::cout << "Player " << player->GetName() << " placed at (" << position.first << ", " << position.second << ")." << std::endl;

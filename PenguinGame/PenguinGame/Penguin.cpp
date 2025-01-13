@@ -115,9 +115,3 @@ void Penguin::MarkAsEliminated(int eliminationOrder) {
 int Penguin::GetEliminationOrder() const {
 	return m_eliminationOrder;
 }
-
-void Penguin::UpdateWeaponAttributes()
-{
-	m_weapon.SetCooldownFromLevel(m_player->GetCooldownLevel());
-	m_weapon.SetBulletSpeedFromLevel(m_player->GetBulletSpeedLevel());
-}
