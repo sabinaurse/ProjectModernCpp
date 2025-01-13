@@ -112,7 +112,7 @@ void GamePage::onSnowballFired(int startX, int startY, const QString& direction,
 
     qDebug() << "Attempting to add Snowball at scene coordinates:" << scaledX << scaledY;
 
-    Snowball* snowball = new Snowball(scaledX, scaledY, direction, speed);
+    Snowball* snowball = new Snowball(scaledX, scaledY);
 
     if (!m_scene->sceneRect().contains(QPointF(scaledX, scaledY))) {
         qDebug() << "Snowball is outside the scene rect!";

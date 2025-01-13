@@ -107,6 +107,7 @@ void Routing::Run(int port)
 		try {
 			crow::json::wvalue gameState;
 
+			// Secțiunea pentru jucători
 			const auto& penguins = m_game.GetPenguins();
 			std::cout << "Number of penguins in game: " << penguins.size() << std::endl;
 
@@ -124,6 +125,7 @@ void Routing::Run(int port)
 					continue;
 				}
 
+				// Adaugă informațiile despre jucători
 				std::cout << "Adding player to game state:"
 					<< " Name: " << player->GetName()
 					<< ", Position: (" << penguin->GetPosition().first
@@ -134,6 +136,21 @@ void Routing::Run(int port)
 				gameState["players"][i]["y"] = penguin->GetPosition().second;
 			}
 
+			// Secțiunea pentru gloanțe
+			size_t snowballIndex = 0; // Index pentru fiecare glonț
+			for (const auto& penguin : penguins) {
+				if (!penguin) continue;
+
+				const auto& snowballs = penguin->GetWeapon().GetSnowballs();
+				for (const auto& snowball : snowballs) {
+					gameState["snowballs"][snowballIndex]["x"] = snowball.GetPosition().first;
+					gameState["snowballs"][snowballIndex]["y"] = snowball.GetPosition().second;
+					gameState["snowballs"][snowballIndex]["owner"] = penguin->GetPlayer()->GetName(); // Numele celui care a tras
+					gameState["snowballs"][snowballIndex]["active"] = snowball.IsActive(); // Adaugă starea activ/inactiv
+					++snowballIndex;
+				}
+			}
+
 			return crow::response(200, gameState);
 		}
 		catch (const std::exception& e) {
@@ -141,6 +158,7 @@ void Routing::Run(int port)
 			return crow::response(500, "Error retrieving game state: " + std::string(e.what()));
 		}
 		});
+
 
 
 	CROW_ROUTE(m_app, "/getMap").methods("GET"_method)([this]() {
