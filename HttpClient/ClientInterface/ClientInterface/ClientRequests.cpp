@@ -305,10 +305,11 @@ void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
             }
         }
 
+        ClientState::instance().ClearSnowballPositions();
+
         // Procesare poziții snowballs
         if (jsonObj.contains("snowballs") && jsonObj["snowballs"].isArray()) {
             QJsonArray snowballsArray = jsonObj["snowballs"].toArray();
-            ClientState::instance().ClearSnowballPositions();
 
             for (const QJsonValue& snowballValue : snowballsArray) {
                 if (snowballValue.isObject()) {

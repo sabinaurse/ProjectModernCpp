@@ -21,8 +21,8 @@ public:
 	void SetBulletSpeedFromLevel(int bulletSpeedLevel);
 
 private:
-	int m_cooldown{ 4000 };
-	float m_bulletSpeed{ 0.25f };
+	int m_cooldown;
+	float m_bulletSpeed;
 	std::chrono::steady_clock::time_point m_timeSinceLastShot;
 	std::deque<Snowball> m_snowballs;
 };

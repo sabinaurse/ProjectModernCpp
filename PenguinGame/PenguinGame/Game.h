@@ -23,6 +23,12 @@ struct WaitingPlayer { // -> GM
 	}
 };
 
+struct GameEvent {
+	std::string type;
+	int x, y;
+};
+
+
 class Game
 {
 public:
@@ -62,6 +68,7 @@ public:
 	void StopUpdateLoop();
 	void UpdateAllSnowballs();
 
+	std::vector<GameEvent> GetRecentEvents();
 private:
 	//void StartMatch(const std::vector<Player*>& playersForMatch); // -> GM
 
@@ -74,11 +81,13 @@ private:
 	PenguinList m_penguins;
 	bool m_isGameOver{ false };
 
+	std::vector<GameEvent> m_recentEvents;
+
 	std::priority_queue<WaitingPlayer> waitingQueue; // -> GM
 	//std::vector<Game> activeGames; // -> GM
 
-	std::thread m_updateThread;         // Thread pentru bucla de actualizare
-	std::atomic<bool> m_running{ false }; // Variabilă pentru a controla thread-ul
+	std::thread m_updateThread; 
+	std::atomic<bool> m_running{ false }; 
 
 };
 

@@ -34,7 +34,7 @@ public:
     Snowball(const std::pair<int, int>& startPosition, Direction launchDirection, float bulletSpeed);
     ~Snowball() = default;
 
-    void UpdatePosition();
+    void UpdatePosition(const MapGen::GameBoard& gameBoard);
     bool IsActive() const { return m_active; }
     void Deactivate() { m_active = false; }
 

@@ -334,7 +334,31 @@ void Routing::Run(int port)
 		}
 		});
 
+	CROW_ROUTE(m_app, "/getGameEvents").methods("GET"_method)([this]() {
+		try {
+			crow::json::wvalue response;
 
+			// Creează un vector JSON pentru evenimente
+			std::vector<crow::json::wvalue> eventsArray;
+
+			const auto& events = m_game.GetRecentEvents();
+			for (const auto& event : events) {
+				crow::json::wvalue jsonEvent;
+				jsonEvent["type"] = event.type;
+				jsonEvent["x"] = event.x;
+				jsonEvent["y"] = event.y;
+				eventsArray.push_back(std::move(jsonEvent)); // Adaugă fiecare eveniment în vector
+			}
+
+			// Adaugă vectorul de evenimente la răspuns
+			response["events"] = std::move(eventsArray);
+
+			return crow::response(200, response);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error retrieving events: " + std::string(e.what()));
+		}
+		});
 
 
 	m_app.port(port).bindaddr("0.0.0.0").multithreaded().run();

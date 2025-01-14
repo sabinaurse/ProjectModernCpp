@@ -157,29 +157,60 @@ void Game::CheckSnowballToObstacleCollisions() {
 
             auto pos = snowball.GetPosition();
             if (!m_boardManager.IsWithinBounds(pos.first, pos.second)) {
+                std::cout << "Snowball out of bounds at (" << pos.first << ", " << pos.second << "). Deactivating." << std::endl;
                 snowball.Deactivate();
                 continue;
             }
 
             int cell = m_boardManager.GetCell(pos.first, pos.second);
             switch (cell) {
-            case 1:
+            case 1: // Zid distrugibil
+                std::cout << "Snowball hit destructible wall at (" << pos.first << ", " << pos.second << "). Destroying wall." << std::endl;
                 m_boardManager.DestroyCell(pos.first, pos.second);
                 snowball.Deactivate();
+
+                // Adaugă eveniment pentru zid distrus
+                m_recentEvents.push_back({
+                    "wall_destroyed",
+                    pos.first,
+                    pos.second
+                    });
                 break;
-            case 2:
+
+            case 2: // Zid indestructibil
+                std::cout << "Snowball hit indestructible wall at (" << pos.first << ", " << pos.second << "). Deactivating snowball." << std::endl;
                 snowball.Deactivate();
+
+                // Adaugă eveniment pentru coliziune cu zid indestructibil
+                m_recentEvents.push_back({
+                    "snowball_hit_wall",
+                    pos.first,
+                    pos.second
+                    });
                 break;
-            case 3:
+
+            case 3: // Bombă declanșată
+                std::cout << "Snowball triggered bomb at (" << pos.first << ", " << pos.second << "). Triggering explosion." << std::endl;
                 m_boardManager.TriggerExplosion(pos.first, pos.second, 10);
                 snowball.Deactivate();
+
+                // Adaugă eveniment pentru explozie
+                m_recentEvents.push_back({
+                    "bomb_exploded",
+                    pos.first,
+                    pos.second
+                    });
                 break;
+
             default:
+                std::cout << "Snowball hit unknown cell type (" << cell << ") at (" << pos.first << ", " << pos.second << ")." << std::endl;
                 break;
             }
         }
     }
 }
+
+
 
 void Game::CheckSnowballToSnowballCollisions() {
     for (size_t i = 0; i < m_penguins.size(); ++i) {
@@ -288,6 +319,9 @@ void Game::StartUpdateLoop() {
 
             UpdateAllSnowballs(); // Actualizează pozițiile gloanțurilor
 
+            // Verifică coliziunile și salvează evenimentele
+            CheckForCollisions();
+
             auto endTime = std::chrono::steady_clock::now();
             std::chrono::duration<float> elapsed = endTime - startTime;
             if (elapsed < std::chrono::milliseconds(2000)) {
@@ -312,7 +346,7 @@ void Game::UpdateAllSnowballs() {
 
         for (auto& snowball : penguin->GetWeapon().GetSnowballs()) {
             if (snowball.IsActive()) {
-                snowball.UpdatePosition();
+                snowball.UpdatePosition(m_boardManager.GetGameBoard());
                 std::cout << "Snowball updated: (" << snowball.GetPosition().first << ", "
                     << snowball.GetPosition().second << ")" << std::endl;
             }
@@ -323,4 +357,11 @@ void Game::UpdateAllSnowballs() {
         penguin->GetWeapon().RemoveInactiveSnowballs();
     }
 }
+
+std::vector<GameEvent> Game::GetRecentEvents() {
+    auto events = m_recentEvents;
+    m_recentEvents.clear(); // Golește vectorul
+    return events;
+}
+
 
