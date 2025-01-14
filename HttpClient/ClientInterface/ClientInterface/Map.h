@@ -16,6 +16,7 @@ protected:
 public:
     explicit Map(QGraphicsItem* parent = nullptr);
     static int getCellSize() { return cellSize; }
+    void updateCell(int x, int y, int newCellType);
     QRectF getBoundingRect() const;
     void setMapData(const std::vector<std::vector<int>>& mapData, std::unordered_map<int, std::string>& cellTypes);
 

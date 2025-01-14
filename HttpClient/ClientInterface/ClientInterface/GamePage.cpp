@@ -30,12 +30,15 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
 
     connect(m_requests, &ClientRequests::gameStateUpdated, this, &GamePage::onGameStateUpdated);
     connect(m_requests, &ClientRequests::mapReceived, this, &GamePage::onMapReceived);
+    connect(m_requests, &ClientRequests::gameEventsReceived, this, &GamePage::onGameEventsReceived);
+
 
     //connect(m_requests, &ClientRequests::snowballFired, this, &GamePage::onSnowballFired);
 
     QTimer* timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this]() {
         m_requests->GetGameState();
+        m_requests->GetGameEvents();
         });
     timer->start(200);
 }
@@ -71,9 +74,8 @@ void GamePage::onGameStateUpdated() {
     qDebug() << "Game state updated. Number of players:" << playerPositions.size();
     qDebug() << "Number of snowballs:" << snowballPositions.size();
 
-    const int cellSize = Map::getCellSize(); // Obține dimensiunea celulelor
+    const int cellSize = Map::getCellSize(); 
 
-    // Actualizează pozițiile jucătorilor
     for (auto it = playerPositions.cbegin(); it != playerPositions.cend(); ++it) {
         const QString& name = it.key();
         const auto& position = it.value();
@@ -86,10 +88,9 @@ void GamePage::onGameStateUpdated() {
         }
 
         Penguin* penguin = m_penguins[name];
-        penguin->setPos(position.first * cellSize, position.second * cellSize); // Scalare poziție
+        penguin->setPos(position.first * cellSize, position.second * cellSize); 
     }
 
-    // Elimină snowball-urile existente
     for (auto it = m_snowballs.begin(); it != m_snowballs.end(); ++it) {
         for (Snowball* snowball : it.value()) {
             m_scene->removeItem(snowball);
@@ -98,12 +99,10 @@ void GamePage::onGameStateUpdated() {
     }
     m_snowballs.clear();
 
-    // Creează snowball-uri noi pe baza pozițiilor
     for (const auto& snowballData : snowballPositions) {
-        const auto& position = snowballData.first; // Poziția snowball-ului
-        const QString& owner = snowballData.second; // Proprietarul snowball-ului
+        const auto& position = snowballData.first;
+        const QString& owner = snowballData.second;
 
-        // Scalare poziție
         Snowball* newSnowball = new Snowball(position.first * cellSize, position.second * cellSize);
         m_scene->addItem(newSnowball);
         m_snowballs[owner].append(newSnowball);
@@ -153,5 +152,27 @@ void GamePage::debugPrintPenguins() const {
 //    m_scene->update();
 //}
 
+void GamePage::onGameEventsReceived(const QVector<QPair<QString, QPair<int, int>>>& events) {
+    for (const auto& event : events) {
+        const QString& type = event.first;  
+        const QPair<int, int>& position = event.second; 
+
+        if (type == "destructible_wall") {
+            qDebug() << "Wall destroyed at:" << position;
+            m_map->updateCell(position.second, position.first, 0 );
+        }
+        else if (type == "indestructible_wall") {
+            qDebug() << "Snowball hit indestructible wall at:" << position;
+        }
+        else if (type == "bomb") {
+            qDebug() << "Bomb exploded at:" << position;
+        }
+        else {
+            qDebug() << "Unknown event type:" << type << "at position:" << position;
+        }
+    }
+
+    m_scene->update();
+}
 
 

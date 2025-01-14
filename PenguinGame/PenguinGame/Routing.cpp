@@ -353,6 +353,10 @@ void Routing::Run(int port)
 			// Adaugă vectorul de evenimente la răspuns
 			response["events"] = std::move(eventsArray);
 
+			std::string serializedResponse = response.dump();
+			std::cout << "Response JSON: " << serializedResponse << std::endl;
+
+
 			return crow::response(200, response);
 		}
 		catch (const std::exception& e) {

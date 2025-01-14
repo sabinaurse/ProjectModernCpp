@@ -63,8 +63,55 @@ void ClientRequests::initializeRequestActions() {
         }
         };
 
+    requestActions[RequestType::GetGameEvents] = [this](const QString& data) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
+        if (jsonDoc.isObject()) {
+            QJsonObject jsonObj = jsonDoc.object();
 
+            // Extrage evenimentele
+            if (jsonObj.contains("events") && jsonObj["events"].isArray()) {
+                QJsonArray eventsArray = jsonObj["events"].toArray();
+                QVector<QPair<QString, QPair<int, int>>> events;
+
+                // Dacă nu sunt evenimente, returnăm un vector gol
+                if (eventsArray.isEmpty()) {
+                    qDebug() << "No game events received.";
+                    emit gameEventsReceived(events); // Trimite un vector gol
+                    return; // Ieși din funcție
+                }
+
+                // Dacă există evenimente, le procesăm
+                for (const auto& event : eventsArray) {
+                    if (event.isObject()) {
+                        QJsonObject eventObj = event.toObject();
+                        QString type = eventObj["type"].toString();
+                        int y = eventObj["x"].toInt();
+                        int x = eventObj["y"].toInt();
+                        events.append({ type, { x, y } });
+                    }
+                }
+
+                emit gameEventsReceived(events);
+            }
+            else {
+                qDebug() << "No 'events' array found in response.";
+                emit gameEventsReceived({}); // Trimite un vector gol în caz că nu există câmpul 'events'
+            }
+        }
+        else {
+            qDebug() << "Invalid response format for GetGameEvents.";
+            emit gameEventsReceived({}); // Trimite un vector gol în caz de eroare în formatul JSON
+        }
+        };
 }
+
+void ClientRequests::GetGameEvents() {
+    QUrl url("http://localhost:18080/getGameEvents");
+    QNetworkRequest request(url);
+    QNetworkReply* reply = networkManager->get(request);
+    activeRequests.insert(reply, "getGameEvents");
+}
+
 
 void ClientRequests::CreatePlayer(const QString& name) {
     QUrl url("http://localhost:18080/addPlayer/" + name);
@@ -166,6 +213,9 @@ ClientRequests::RequestType ClientRequests::toRequestType(const QString& request
     }
     else if (requestType == "getGameState") {
         return RequestType::GetGameState;
+    }
+    else if (requestType == "getGameEvents") {
+        return RequestType::GetGameEvents;
     }
     else {
         return RequestType::Unknown;

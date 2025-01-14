@@ -164,39 +164,36 @@ void Game::CheckSnowballToObstacleCollisions() {
 
             int cell = m_boardManager.GetCell(pos.first, pos.second);
             switch (cell) {
-            case 1: // Zid distrugibil
+            case 1: 
                 std::cout << "Snowball hit destructible wall at (" << pos.first << ", " << pos.second << "). Destroying wall." << std::endl;
                 m_boardManager.DestroyCell(pos.first, pos.second);
                 snowball.Deactivate();
 
-                // Adaugă eveniment pentru zid distrus
                 m_recentEvents.push_back({
-                    "wall_destroyed",
+                    "destructible_wall",
                     pos.first,
                     pos.second
                     });
                 break;
 
-            case 2: // Zid indestructibil
+            case 2:
                 std::cout << "Snowball hit indestructible wall at (" << pos.first << ", " << pos.second << "). Deactivating snowball." << std::endl;
                 snowball.Deactivate();
 
-                // Adaugă eveniment pentru coliziune cu zid indestructibil
                 m_recentEvents.push_back({
-                    "snowball_hit_wall",
+                    "indestructible_wall",
                     pos.first,
                     pos.second
                     });
                 break;
 
-            case 3: // Bombă declanșată
+            case 3: 
                 std::cout << "Snowball triggered bomb at (" << pos.first << ", " << pos.second << "). Triggering explosion." << std::endl;
                 m_boardManager.TriggerExplosion(pos.first, pos.second, 10);
                 snowball.Deactivate();
 
-                // Adaugă eveniment pentru explozie
                 m_recentEvents.push_back({
-                    "bomb_exploded",
+                    "bomb",
                     pos.first,
                     pos.second
                     });
@@ -346,7 +343,7 @@ void Game::UpdateAllSnowballs() {
 
         for (auto& snowball : penguin->GetWeapon().GetSnowballs()) {
             if (snowball.IsActive()) {
-                snowball.UpdatePosition(m_boardManager.GetGameBoard());
+                snowball.UpdatePosition();
                 std::cout << "Snowball updated: (" << snowball.GetPosition().first << ", "
                     << snowball.GetPosition().second << ")" << std::endl;
             }
@@ -360,7 +357,7 @@ void Game::UpdateAllSnowballs() {
 
 std::vector<GameEvent> Game::GetRecentEvents() {
     auto events = m_recentEvents;
-    m_recentEvents.clear(); // Golește vectorul
+    m_recentEvents.clear(); 
     return events;
 }
 

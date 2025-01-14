@@ -32,6 +32,7 @@ private slots:
     void onGameStateUpdated();
     void onMapReceived(const std::vector<std::vector<int>>& mapData, std::unordered_map<int, std::string>& cellTypes);
     void debugPrintPenguins() const;
+    void onGameEventsReceived(const QVector<QPair<QString, QPair<int, int>>>& events);
     //void onSnowballFired(int startX, int startY, const QString& direction, float speed);
 
 public:
