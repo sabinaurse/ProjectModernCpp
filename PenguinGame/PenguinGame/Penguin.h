@@ -1,13 +1,15 @@
 ﻿#pragma once
-#include <string>
 #include <iostream>
 #include <vector>
+#include <string>
 #include "Weapon.h"
 #include "Player.h"
 #include "Snowball.h"
 #include "BoardManager.h"
 
 using Position = std::pair<std::int32_t, std::int32_t>;
+constexpr int MAXLIVES = 3;
+constexpr int POINTSPERENEMY = 100;
 
 class Penguin
 {
@@ -28,7 +30,7 @@ public:
 	Position GetPosition() const { return m_position; }
 	Player* GetPlayer() const { return m_player; } 
 
-	void MarkAsEliminated(int eliminationOrder);
+	void MarkAsEliminated(std::int8_t eliminationOrder);
 	int GetEliminationOrder() const;
 
 private:
@@ -38,9 +40,9 @@ private:
 	Position m_position;
 	Position m_initialPosition;
 
-	int m_lives{ 3 };
-	int m_enemiesEliminated{ 0 };
-	int m_eliminationOrder{ -1 };
+	std::uint8_t m_lives{ MAXLIVES };
+	std::uint8_t m_enemiesEliminated{ 0 };
+	std::int8_t m_eliminationOrder{ -1 };
 
 	Weapon m_weapon;
 };

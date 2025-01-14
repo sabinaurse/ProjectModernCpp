@@ -5,30 +5,31 @@
 class Player
 {
 public:
+	Player() = delete;
 	Player(const std::string& name);
 	Player(const game_database::GamePlayer& dbPlayer);
 	~Player() = default;
 	
 	std::string GetName() const;
-	int GetPoints() const;
-	int GetScore() const;
-	int GetBulletSpeedLevel() const;
+	[[nodiscard]] int GetPoints() const;
+	[[nodiscard]] int GetScore() const;
+	[[nodiscard]] int GetBulletSpeedLevel() const;
 	int GetCooldownLevel() const;
 
-	void SetName(const std::string& name);
-	void SetPoints(int points);
-	void SetScore(int score);
-	void SetBulletSpeedLevel(int level);
-	void SetCooldownLevel(int level);
+	void SetName(std::string&& name);
+	void SetPoints(uint32_t points);
+	void SetScore(uint32_t score);
+	void SetBulletSpeedLevel(uint8_t level);
+	void SetCooldownLevel(uint8_t level);
 
-	void AddPoints(int points);
-	void AddScores(int scores);
+	void AddPoints(uint32_t points);
+	void AddScores(uint32_t scores);
 
 private:
 	std::string m_name;
-	int m_points{ 0 };
-	int m_score{ 0 };
-	int m_bulletSpeedLevel{ 0 };
-	int m_cooldownLevel{ 0 };
+	uint32_t m_points{ 0 };
+	uint32_t m_score{ 0 };
+	uint8_t m_bulletSpeedLevel{ 0 };
+	uint8_t m_cooldownLevel{ 0 };
 };
 

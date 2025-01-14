@@ -50,5 +50,5 @@ private:
     Direction m_direction;
     bool m_active;
     float m_bulletSpeed;
-    std::chrono::steady_clock::time_point m_lastUpdate; // controleaza miscarea in functie de timp
+    std::chrono::steady_clock::time_point m_lastUpdate; 
 };

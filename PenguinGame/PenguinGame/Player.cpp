@@ -36,36 +36,35 @@ int Player::GetCooldownLevel() const {
     return m_cooldownLevel;
 }
 
-void Player::SetName(const std::string &name)
-{
-	m_name = name;
+void Player::SetName(std::string&& name) {
+    m_name = std::move(name);
 }
 
-void Player::SetPoints(int points)
+void Player::SetPoints(uint32_t points)
 {
     m_points = points;
 }
 
-void Player::SetScore(int score)
+void Player::SetScore(uint32_t score)
 {
     m_score = score;
 }
 
-void Player::SetBulletSpeedLevel(int level) {
+void Player::SetBulletSpeedLevel(uint8_t level) {
     m_bulletSpeedLevel = level;
 }
 
 
-void Player::SetCooldownLevel(int level) {
+void Player::SetCooldownLevel(uint8_t level) {
     m_cooldownLevel = level;
 }
 
-void Player::AddPoints(int points)
+void Player::AddPoints(uint32_t points)
 {
     m_points += points;
 }
 
-void Player::AddScores(int scores)
+void Player::AddScores(uint32_t scores)
 {
     m_score += scores;
 }

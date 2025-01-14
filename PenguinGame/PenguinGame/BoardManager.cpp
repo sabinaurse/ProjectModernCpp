@@ -35,14 +35,14 @@ void BoardManager::InitializeCellTypes()
 	m_gameBoard.AddCellType(3, bomb);
 }
 
-void BoardManager::BulletHit(int x, int y)
+void BoardManager::BulletHit(uint32_t x, uint32_t y)
 {
 	if (x < 0 || x >= m_gameBoard.GetRows() || y < 0 || y >= m_gameBoard.GetCols()) {
 		std::cout << "Bullet hit outside the map boundaries.\n";
 		return;
 	}
 
-	int cellType = m_gameBoard.GetBoard()[x][y];
+	uint8_t cellType = m_gameBoard.GetBoard()[x][y];
 	if (cellType == 1) {
 		std::cout << "Destructible wall hit at (" << x << ", " << y << ").\n";
 		DestroyCell(x, y);
@@ -55,18 +55,18 @@ void BoardManager::BulletHit(int x, int y)
 	}
 }
 
-void BoardManager::TriggerExplosion(int x, int y, int radius)
+void BoardManager::TriggerExplosion(uint32_t x, uint32_t y, std::uint8_t EXPLOSIONRADIUS)
 {
-	for (int i = -radius; i <= radius; ++i) {
-		for (int j = -radius; j <= radius; ++j) {
-			int newX = x + i;
-			int newY = y + j;
+	for (uint32_t i = -EXPLOSIONRADIUS; i <= EXPLOSIONRADIUS; ++i) {
+		for (uint32_t j = -EXPLOSIONRADIUS; j <= EXPLOSIONRADIUS; ++j) {
+			uint32_t newX = x + i;
+			uint32_t newY = y + j;
 
 			if (newX >= 0 && newX < m_gameBoard.GetRows() &&
 				newY >= 0 && newY < m_gameBoard.GetCols() &&
-				(i * i + j * j <= radius * radius)) {
+				(i * i + j * j <= EXPLOSIONRADIUS * EXPLOSIONRADIUS)) {
 
-				int cellType = m_gameBoard.GetBoard()[newX][newY];
+				uint8_t cellType = m_gameBoard.GetBoard()[newX][newY];
 
 				if (cellType == 1 || cellType == 2) {
 					DestroyCell(newX, newY);
@@ -75,11 +75,11 @@ void BoardManager::TriggerExplosion(int x, int y, int radius)
 			}
 		}
 	}
-	std::cout << "Explosion triggered at (" << x << ", " << y << ") with radius " << radius << ".\n";
+	std::cout << "Explosion triggered at (" << x << ", " << y << ") with radius " << EXPLOSIONRADIUS << ".\n";
 }
 
 
-void BoardManager::DestroyCell(int x, int y)
+void BoardManager::DestroyCell(uint32_t x, uint32_t y)
 {
 	if (x < 0 || x >= m_gameBoard.GetRows() || y < 0 || y >= m_gameBoard.GetCols()) {
 		std::cout << "Cannot destroy cell outside map boundaries.\n";
@@ -98,12 +98,12 @@ std::vector<std::pair<uint32_t, uint32_t>> BoardManager::GetStartingPositions() 
 	return m_gameBoard.GetStartingPositions();
 }
 
-bool BoardManager::IsWithinBounds(int x, int y) const {
-	return x >= 0 && x < static_cast<int>(m_gameBoard.GetRows()) &&
-		y >= 0 && y < static_cast<int>(m_gameBoard.GetCols());
+bool BoardManager::IsWithinBounds(uint32_t x, uint32_t y) const {
+	return x >= 0 && x < static_cast<uint32_t>(m_gameBoard.GetRows()) &&
+		y >= 0 && y < static_cast<uint32_t>(m_gameBoard.GetCols());
 }
 
-int BoardManager::GetCell(int x, int y) const {
+int BoardManager::GetCell(uint32_t x, uint32_t y) const {
 	if (IsWithinBounds(x, y)) {
 		return m_gameBoard.GetBoard()[x][y];
 	}
@@ -123,7 +123,7 @@ crow::json::wvalue BoardManager::SerializeBoard() const {
 	return json;
 }
 
-void BoardManager::SetCell(int x, int y, int value) {
+void BoardManager::SetCell(uint32_t x, uint32_t y, uint8_t value) {
 	if (IsWithinBounds(x, y)) {
 		m_gameBoard.GetBoard()[x][y] = value;
 	}
