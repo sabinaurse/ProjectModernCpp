@@ -145,8 +145,9 @@ void Routing::Run(int port)
 				for (const auto& snowball : snowballs) {
 					gameState["snowballs"][snowballIndex]["x"] = snowball.GetPosition().first;
 					gameState["snowballs"][snowballIndex]["y"] = snowball.GetPosition().second;
-					gameState["snowballs"][snowballIndex]["owner"] = penguin->GetPlayer()->GetName(); // Numele celui care a tras
-					gameState["snowballs"][snowballIndex]["active"] = snowball.IsActive(); // Adaugă starea activ/inactiv
+					gameState["snowballs"][snowballIndex]["owner"] = penguin->GetPlayer()->GetName();
+					gameState["snowballs"][snowballIndex]["active"] = snowball.IsActive();
+					//gameState["snowballs"][snowballIndex]["direction"] = DirectionToString(snowball.GetDirection());
 					++snowballIndex;
 				}
 			}

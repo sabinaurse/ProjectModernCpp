@@ -13,6 +13,7 @@ private:
     int m_cooldownLevel;
     int m_bulletSpeedLevel;
     QMap<QString, std::pair<int, int>> m_playerPositions;
+    QVector<QPair<QPair<int, int>, QString>> m_snowballPositions; //
 
     ClientState(const ClientState&) = delete;
     ClientState& operator=(const ClientState&) = delete;
@@ -36,4 +37,8 @@ public:
     std::pair<int,int> GetPlayerPosition(const QString& name) const;
     const QMap<QString, std::pair<int, int>>& GetPlayerPositions() const;
     void ClearPlayerPositions();
+
+    void ClearSnowballPositions();
+    void UpdateSnowballPosition(int x, int y, const QString& owner);
+    const QVector<QPair<QPair<int, int>, QString>>& GetSnowballPositions() const;
 };

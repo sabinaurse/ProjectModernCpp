@@ -34,6 +34,7 @@ void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 		if (cellType == 0) {
 			m_position = newPosition;
 			m_currentDirection = direction;
+			std::cout << "Penguin direction set to: " << m_currentDirection << std::endl;
 			std::cout << "Penguin moved to (" << newPosition.first << ", " << newPosition.second << ")." << std::endl;
 		}
 		else {

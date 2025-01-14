@@ -208,8 +208,8 @@ void ClientRequests::onReplyFinished(QNetworkReply* reply) {
 
 void ClientRequests::updatePlayerPositionFromJson(const QJsonObject& jsonObj)
 {
-    int y = jsonObj["x"].toInt();
-    int x = jsonObj["y"].toInt();
+    int x = jsonObj["x"].toInt();
+    int y = jsonObj["y"].toInt();
     QString playerName = ClientState::instance().GetCurrentPlayer();
 
     qDebug() << "Player:" << playerName << "Position:" << x << y;
@@ -302,6 +302,24 @@ void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
 
                 ClientState::instance().UpdatePlayerPosition(name, x, y);
                 qDebug() << "Updated position for player:" << name << "to (" << x << "," << y << ")";
+            }
+        }
+
+        // Procesare poziții snowballs
+        if (jsonObj.contains("snowballs") && jsonObj["snowballs"].isArray()) {
+            QJsonArray snowballsArray = jsonObj["snowballs"].toArray();
+            ClientState::instance().ClearSnowballPositions();
+
+            for (const QJsonValue& snowballValue : snowballsArray) {
+                if (snowballValue.isObject()) {
+                    QJsonObject snowballObj = snowballValue.toObject();
+                    int y = snowballObj["x"].toInt();
+                    int x = snowballObj["y"].toInt();
+                    QString owner = snowballObj["owner"].toString();
+
+                    ClientState::instance().UpdateSnowballPosition(x, y, owner);
+                    qDebug() << "Updated snowball position:" << owner << "(" << x << "," << y << ")";
+                }
             }
         }
 

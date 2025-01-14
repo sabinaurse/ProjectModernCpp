@@ -63,3 +63,15 @@ const QMap<QString, std::pair<int, int>>& ClientState::GetPlayerPositions() cons
 void ClientState::ClearPlayerPositions() {
     m_playerPositions.clear();
 }
+
+void ClientState::ClearSnowballPositions() {
+    m_snowballPositions.clear();
+}
+
+void ClientState::UpdateSnowballPosition(int x, int y, const QString& owner) {
+    m_snowballPositions.append({ {x, y}, owner });
+}
+
+const QVector<QPair<QPair<int, int>, QString>>& ClientState::GetSnowballPositions() const {
+    return m_snowballPositions;
+}
