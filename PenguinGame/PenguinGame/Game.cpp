@@ -125,6 +125,8 @@ void Game::CheckForCollisions()
 
     for (const auto& penguin : m_penguins) {
         penguin->GetWeapon().RemoveInactiveSnowballs();
+        //if(!penguin)
+            //;
     }
 }
 

@@ -114,7 +114,7 @@ void Routing::Run(int port)
 			for (size_t i = 0; i < penguins.size(); ++i) {
 				const auto* penguin = penguins[i].get();
 
-				if (!penguin) {
+				if (!penguin->IsAlive()) {
 					std::cout << "Penguin at index " << i << " is null." << std::endl;
 					continue;
 				}

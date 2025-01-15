@@ -131,18 +131,15 @@ void Penguin::EliminateEnemy()
 void Penguin::TakeDamage()
 {
 	if (!m_isAlive) {
-		std::cout << "Penguin controlled by " << m_player->GetName()
-			<< " is already defeated and cannot take more damage!" << std::endl;
 		return;
 	}
-
 	--m_lives;
+
 	std::cout << "Penguin controlled by " << m_player->GetName()
 		<< " took damage! Remaining lives: " << static_cast<int>(m_lives) << std::endl;
 
 	if (m_lives <= 0) {
 		m_isAlive = false;
-		m_position = { -1, -1 };
 
 		static int eliminationCount = 0;
 		MarkAsEliminated(++eliminationCount);
