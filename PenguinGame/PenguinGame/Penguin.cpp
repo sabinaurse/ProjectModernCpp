@@ -130,15 +130,31 @@ void Penguin::EliminateEnemy()
 
 void Penguin::TakeDamage()
 {
-	if (!m_isAlive) return;
-	if (--m_lives <= 0)
-	{
+	if (!m_isAlive) {
+		std::cout << "Penguin controlled by " << m_player->GetName()
+			<< " is already defeated and cannot take more damage!" << std::endl;
+		return;
+	}
+
+	--m_lives;
+	std::cout << "Penguin controlled by " << m_player->GetName()
+		<< " took damage! Remaining lives: " << static_cast<int>(m_lives) << std::endl;
+
+	if (m_lives <= 0) {
 		m_isAlive = false;
+		m_position = { -1, -1 };
 
 		static int eliminationCount = 0;
 		MarkAsEliminated(++eliminationCount);
 
-		std::cout << "Penguin has been defeated!" << std::endl;
+		std::cout << "Penguin controlled by " << m_player->GetName()
+			<< " was eliminated in position #" << m_eliminationOrder << "!" << std::endl;
+	}
+	else
+	{
+		ResetState();
+		std::cout << "Penguin controlled by " << m_player->GetName()
+			<< " has been defeated and will be reset to the initial position." << std::endl;
 	}
 }
 
@@ -147,8 +163,12 @@ void Penguin::ResetState()
 	m_position = m_initialPosition;
 	m_isAlive = true;
 	m_weapon.GetSnowballs().clear();
-	std::cout << "Penguin reset to initial position (" << m_initialPosition.first << ", " << m_initialPosition.second << ")." << std::endl;
+
+	std::cout << "Penguin controlled by " << m_player->GetName()
+		<< " has been reset to the initial position (" << m_initialPosition.first
+		<< ", " << m_initialPosition.second << ") and is now alive." << std::endl;
 }
+
 
 void Penguin::MarkAsEliminated(std::int8_t eliminationOrder) {
 	m_eliminationOrder = eliminationOrder;

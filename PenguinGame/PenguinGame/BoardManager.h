@@ -27,7 +27,7 @@ public:
     int GetCell(int x, int y) const;
 
     void BulletHit(int x, int y);
-    void TriggerExplosion(int x, int y, int radius);
+    void TriggerExplosion(int x, int y, int radius, std::vector<std::shared_ptr<Penguin>>& pinguins);
     void DestroyCell(int x, int y);
 
     crow::json::wvalue SerializeBoard() const;

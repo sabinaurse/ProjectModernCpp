@@ -55,7 +55,7 @@ void BoardManager::BulletHit(int x, int y)
 	}
 }
 
-void BoardManager::TriggerExplosion(int x, int y, int radius)
+void BoardManager::TriggerExplosion(int x, int y, int radius, std::vector<std::shared_ptr<Penguin>>&penguins)
 {
 	for (int i = -radius; i <= radius; ++i) {
 		for (int j = -radius; j <= radius; ++j) {
@@ -72,11 +72,20 @@ void BoardManager::TriggerExplosion(int x, int y, int radius)
 					DestroyCell(newX, newY);
 				}
 
+				for (const auto& penguin : penguins) {
+					auto penguinPos = penguin->GetPosition();
+					if (penguinPos.first == newX && penguinPos.second == newY) {
+						penguin->TakeDamage();
+						std::cout << "Penguin at (" << penguinPos.first << ", " << penguinPos.second
+							<< ") was hit by the explosion and took damage!\n";
+					}
+				}
 			}
 		}
 	}
 	std::cout << "Explosion triggered at (" << x << ", " << y << ") with radius " << radius << ".\n";
 }
+
 
 
 void BoardManager::DestroyCell(int x, int y)

@@ -191,7 +191,7 @@ void Game::CheckSnowballToObstacleCollisions() {
 
             case 3: 
                 std::cout << "Snowball triggered bomb at (" << pos.first << ", " << pos.second << "). Triggering explosion." << std::endl;
-                m_boardManager.TriggerExplosion(pos.first, pos.second, m_radius);
+                m_boardManager.TriggerExplosion(pos.first, pos.second, m_radius,m_penguins);
                 snowball.Deactivate();
 
                 m_recentEvents.push_back({

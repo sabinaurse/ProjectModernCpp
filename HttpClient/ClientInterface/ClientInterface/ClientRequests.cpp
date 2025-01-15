@@ -338,6 +338,7 @@ void ClientRequests::getMapFromJson(const QJsonObject& jsonObj)
 }
 
 void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
+    ClientState::instance().ClearPlayerPositions();
     if (jsonObj.contains("players") && jsonObj["players"].isArray()) {
         QJsonArray playersArray = jsonObj["players"].toArray();
 

@@ -119,6 +119,7 @@ void Routing::Run(int port)
 					continue;
 				}
 
+
 				const auto* player = penguin->GetPlayer();
 				if (!player) {
 					std::cout << "Player for penguin at index " << i << " is null." << std::endl;
