@@ -65,5 +65,5 @@ signals:
     void requestCompleted(const QString& response);
     void requestFailed(const QString& error);
     void snowballFired(int startX, int startY, const QString& direction, float speed);
-    void gameEventsReceived(const QVector<QPair<QString, QPair<int, int>>>& events);
+    void gameEventsReceived(const QVector<QPair<QPair<QString, QPair<int, int>>, int>> &events);
 };

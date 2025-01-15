@@ -152,10 +152,12 @@ void GamePage::debugPrintPenguins() const {
 //    m_scene->update();
 //}
 
-void GamePage::onGameEventsReceived(const QVector<QPair<QString, QPair<int, int>>>& events) {
+void GamePage::onGameEventsReceived(const QVector<QPair<QPair<QString, QPair<int, int>>, int>> &events)
+{
     for (const auto& event : events) {
-        const QString& type = event.first;  
-        const QPair<int, int>& position = event.second; 
+        const QString& type = event.first.first;  
+        const QPair<int, int>& position = event.first.second;
+        const int radius= event.second;
 
         if (type == "destructible_wall") {
             qDebug() << "Wall destroyed at:" << position;

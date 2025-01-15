@@ -71,7 +71,7 @@ void ClientRequests::initializeRequestActions() {
             // Extrage evenimentele
             if (jsonObj.contains("events") && jsonObj["events"].isArray()) {
                 QJsonArray eventsArray = jsonObj["events"].toArray();
-                QVector<QPair<QString, QPair<int, int>>> events;
+                QVector<QPair<QPair<QString, QPair<int, int>>, int>> events;
 
                 // Dacă nu sunt evenimente, returnăm un vector gol
                 if (eventsArray.isEmpty()) {
@@ -87,8 +87,10 @@ void ClientRequests::initializeRequestActions() {
                         QString type = eventObj["type"].toString();
                         int y = eventObj["x"].toInt();
                         int x = eventObj["y"].toInt();
-                        events.append({ type, { x, y } });
+                        int details = eventObj["details"].toInt();
+                        events.append({ {type,{ x, y}},details });
                     }
+
                 }
 
                 emit gameEventsReceived(events);
@@ -102,7 +104,7 @@ void ClientRequests::initializeRequestActions() {
             qDebug() << "Invalid response format for GetGameEvents.";
             emit gameEventsReceived({}); // Trimite un vector gol în caz de eroare în formatul JSON
         }
-        };
+    };
 }
 
 void ClientRequests::GetGameEvents() {

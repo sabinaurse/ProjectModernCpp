@@ -171,6 +171,7 @@ void Game::CheckSnowballToObstacleCollisions() {
 
                 m_recentEvents.push_back({
                     "destructible_wall",
+                    0,
                     pos.first,
                     pos.second
                     });
@@ -182,6 +183,7 @@ void Game::CheckSnowballToObstacleCollisions() {
 
                 m_recentEvents.push_back({
                     "indestructible_wall",
+                    0,
                     pos.first,
                     pos.second
                     });
@@ -189,11 +191,12 @@ void Game::CheckSnowballToObstacleCollisions() {
 
             case 3: 
                 std::cout << "Snowball triggered bomb at (" << pos.first << ", " << pos.second << "). Triggering explosion." << std::endl;
-                m_boardManager.TriggerExplosion(pos.first, pos.second, 10);
+                m_boardManager.TriggerExplosion(pos.first, pos.second, m_radius);
                 snowball.Deactivate();
 
                 m_recentEvents.push_back({
                     "bomb",
+                    m_radius,
                     pos.first,
                     pos.second
                     });

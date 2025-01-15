@@ -25,6 +25,7 @@ struct WaitingPlayer { // -> GM
 
 struct GameEvent {
 	std::string type;
+	int details;
 	int x, y;
 };
 
@@ -79,6 +80,7 @@ private:
 	BoardManager m_boardManager;
 	PlayerList m_players;
 	PenguinList m_penguins;
+	int m_radius=10;
 	bool m_isGameOver{ false };
 
 	std::vector<GameEvent> m_recentEvents;

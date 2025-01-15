@@ -347,6 +347,7 @@ void Routing::Run(int port)
 				jsonEvent["type"] = event.type;
 				jsonEvent["x"] = event.x;
 				jsonEvent["y"] = event.y;
+				jsonEvent["details"] = event.details;
 				eventsArray.push_back(std::move(jsonEvent)); // Adaugă fiecare eveniment în vector
 			}
 
