@@ -10,6 +10,11 @@ void Map::setMapData(const std::vector<std::vector<int>>& mapData, std::unordere
     update();
 }
 
+void Map::setMapData(const std::vector<std::vector<int>>& mapData) {
+    m_mapData = mapData;
+    update();
+}
+
 QRectF Map::getBoundingRect() const {
     return boundingRect();
 }

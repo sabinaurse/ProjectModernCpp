@@ -23,13 +23,6 @@ struct WaitingPlayer { // -> GM
 	}
 };
 
-struct GameEvent {
-	std::string type;
-	int details;
-	int x, y;
-};
-
-
 class Game
 {
 public:
@@ -64,12 +57,12 @@ public:
 	//void UpdateActiveGames(); // -> GM
 
 	bool IsGameOver() const;
+	bool MapUpdated() const;
+	void ResetMapUpdateFlag();
 
 	void StartUpdateLoop();
 	void StopUpdateLoop();
 	void UpdateAllSnowballs();
-
-	std::vector<GameEvent> GetRecentEvents();
 private:
 	//void StartMatch(const std::vector<Player*>& playersForMatch); // -> GM
 
@@ -83,7 +76,7 @@ private:
 	int m_radius=10;
 	bool m_isGameOver{ false };
 
-	std::vector<GameEvent> m_recentEvents;
+	bool m_mapUpdated = false;
 
 	std::priority_queue<WaitingPlayer> waitingQueue; // -> GM
 	//std::vector<Game> activeGames; // -> GM

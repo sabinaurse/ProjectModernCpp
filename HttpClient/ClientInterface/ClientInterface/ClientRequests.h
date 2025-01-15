@@ -24,7 +24,6 @@ private:
         GetMap,
         Fire,
         GetGameState,
-        GetGameEvents
     };
 
     QNetworkAccessManager* networkManager;
@@ -56,7 +55,6 @@ public:
     void GetLeaderboard();
     void MovePlayer(const QString& playerName, const QString& direction);
     void Fire(const QString& playerName);
-    void GetGameEvents();
 
 signals:
     void gameStateUpdated();
@@ -65,5 +63,5 @@ signals:
     void requestCompleted(const QString& response);
     void requestFailed(const QString& error);
     void snowballFired(int startX, int startY, const QString& direction, float speed);
-    void gameEventsReceived(const QVector<QPair<QPair<QString, QPair<int, int>>, int>> &events);
+    void mapUpdated(const std::vector<std::vector<int>>& mapData);
 };

@@ -170,38 +170,20 @@ void Game::CheckSnowballToObstacleCollisions() {
                 std::cout << "Snowball hit destructible wall at (" << pos.first << ", " << pos.second << "). Destroying wall." << std::endl;
                 m_boardManager.DestroyCell(pos.first, pos.second);
                 snowball.Deactivate();
-
-                m_recentEvents.push_back({
-                    "destructible_wall",
-                    0,
-                    pos.first,
-                    pos.second
-                    });
+                m_mapUpdated = true;
                 break;
 
             case 2:
                 std::cout << "Snowball hit indestructible wall at (" << pos.first << ", " << pos.second << "). Deactivating snowball." << std::endl;
                 snowball.Deactivate();
-
-                m_recentEvents.push_back({
-                    "indestructible_wall",
-                    0,
-                    pos.first,
-                    pos.second
-                    });
+                m_mapUpdated = true;
                 break;
 
             case 3: 
                 std::cout << "Snowball triggered bomb at (" << pos.first << ", " << pos.second << "). Triggering explosion." << std::endl;
                 m_boardManager.TriggerExplosion(pos.first, pos.second, m_radius,m_penguins);
                 snowball.Deactivate();
-
-                m_recentEvents.push_back({
-                    "bomb",
-                    m_radius,
-                    pos.first,
-                    pos.second
-                    });
+                m_mapUpdated = true;
                 break;
 
             default:
@@ -300,6 +282,14 @@ bool Game::IsGameOver() const {
     return m_isGameOver;
 }
 
+bool Game::MapUpdated() const {
+    return m_mapUpdated;
+}
+
+void Game::ResetMapUpdateFlag() {
+    m_mapUpdated = false;
+}
+
 
 //void Game::UpdateActiveGames() { // -> GM
 //    std::cout << "Currently active games: " << activeGames.size() << std::endl;
@@ -358,12 +348,6 @@ void Game::UpdateAllSnowballs() {
     for (const auto& penguin : m_penguins) {
         penguin->GetWeapon().RemoveInactiveSnowballs();
     }
-}
-
-std::vector<GameEvent> Game::GetRecentEvents() {
-    auto events = m_recentEvents;
-    m_recentEvents.clear(); 
-    return events;
 }
 
 

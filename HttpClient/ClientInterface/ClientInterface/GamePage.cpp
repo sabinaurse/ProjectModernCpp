@@ -30,7 +30,19 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
 
     connect(m_requests, &ClientRequests::gameStateUpdated, this, &GamePage::onGameStateUpdated);
     connect(m_requests, &ClientRequests::mapReceived, this, &GamePage::onMapReceived);
-    connect(m_requests, &ClientRequests::gameEventsReceived, this, &GamePage::onGameEventsReceived);
+    connect(m_requests, &ClientRequests::mapUpdated, this, [this](const std::vector<std::vector<int>>& mapData) {
+        if (!m_map) {
+            qDebug() << "Map object is null!";
+            return;
+        }
+        if (mapData.empty()) {
+            qDebug() << "Map data is empty!";
+            return;
+        }
+        m_map->setMapData(mapData);
+        m_scene->update();
+        });
+
 
 
     //connect(m_requests, &ClientRequests::snowballFired, this, &GamePage::onSnowballFired);
@@ -38,7 +50,6 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
     QTimer* timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this]() {
         m_requests->GetGameState();
-        m_requests->GetGameEvents();
         });
     timer->start(200);
 }
@@ -152,29 +163,6 @@ void GamePage::debugPrintPenguins() const {
 //    m_scene->update();
 //}
 
-void GamePage::onGameEventsReceived(const QVector<QPair<QPair<QString, QPair<int, int>>, int>> &events)
-{
-    for (const auto& event : events) {
-        const QString& type = event.first.first;  
-        const QPair<int, int>& position = event.first.second;
-        const int radius= event.second;
 
-        if (type == "destructible_wall") {
-            qDebug() << "Wall destroyed at:" << position;
-            m_map->updateCell(position.second, position.first, 0 );
-        }
-        else if (type == "indestructible_wall") {
-            qDebug() << "Snowball hit indestructible wall at:" << position;
-        }
-        else if (type == "bomb") {
-            qDebug() << "Bomb exploded at:" << position;
-        }
-        else {
-            qDebug() << "Unknown event type:" << type << "at position:" << position;
-        }
-    }
-
-    m_scene->update();
-}
 
 

@@ -62,57 +62,7 @@ void ClientRequests::initializeRequestActions() {
             qDebug() << "Invalid GameState JSON received.";
         }
         };
-
-    requestActions[RequestType::GetGameEvents] = [this](const QString& data) {
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
-        if (jsonDoc.isObject()) {
-            QJsonObject jsonObj = jsonDoc.object();
-
-            // Extrage evenimentele
-            if (jsonObj.contains("events") && jsonObj["events"].isArray()) {
-                QJsonArray eventsArray = jsonObj["events"].toArray();
-                QVector<QPair<QPair<QString, QPair<int, int>>, int>> events;
-
-                // Dacă nu sunt evenimente, returnăm un vector gol
-                if (eventsArray.isEmpty()) {
-                    qDebug() << "No game events received.";
-                    emit gameEventsReceived(events); // Trimite un vector gol
-                    return; // Ieși din funcție
-                }
-
-                // Dacă există evenimente, le procesăm
-                for (const auto& event : eventsArray) {
-                    if (event.isObject()) {
-                        QJsonObject eventObj = event.toObject();
-                        QString type = eventObj["type"].toString();
-                        int y = eventObj["x"].toInt();
-                        int x = eventObj["y"].toInt();
-                        int details = eventObj["details"].toInt();
-                        events.append({ {type,{ x, y}},details });
-                    }
-
-                }
-
-                emit gameEventsReceived(events);
-            }
-            else {
-                qDebug() << "No 'events' array found in response.";
-                emit gameEventsReceived({}); // Trimite un vector gol în caz că nu există câmpul 'events'
-            }
-        }
-        else {
-            qDebug() << "Invalid response format for GetGameEvents.";
-            emit gameEventsReceived({}); // Trimite un vector gol în caz de eroare în formatul JSON
-        }
-    };
-}
-
-void ClientRequests::GetGameEvents() {
-    QUrl url("http://localhost:18080/getGameEvents");
-    QNetworkRequest request(url);
-    QNetworkReply* reply = networkManager->get(request);
-    activeRequests.insert(reply, "getGameEvents");
-}
+    }
 
 
 void ClientRequests::CreatePlayer(const QString& name) {
@@ -215,9 +165,6 @@ ClientRequests::RequestType ClientRequests::toRequestType(const QString& request
     }
     else if (requestType == "getGameState") {
         return RequestType::GetGameState;
-    }
-    else if (requestType == "getGameEvents") {
-        return RequestType::GetGameEvents;
     }
     else {
         return RequestType::Unknown;
@@ -376,6 +323,27 @@ void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
                 }
             }
         }
+         
+        if (jsonObj.contains("board") && jsonObj["board"].isArray()) {
+            QJsonArray boardArray = jsonObj["board"].toArray();
+            std::vector<std::vector<int>> mapData;
+
+            for (const QJsonValue& rowValue : boardArray) {
+                if (rowValue.isArray()) {
+                    QJsonArray rowArray = rowValue.toArray();
+                    std::vector<int> mapRow;
+
+                    for (const QJsonValue& cellValue : rowArray) {
+                        mapRow.push_back(cellValue.toInt());
+                    }
+
+                    mapData.push_back(mapRow);
+                }
+            }
+
+            emit mapUpdated(mapData);  // Emiterea semnalului pentru harta
+        }
+
 
         // Emit semnal pentru a notifica schimbarea GameState
         emit gameStateUpdated();
