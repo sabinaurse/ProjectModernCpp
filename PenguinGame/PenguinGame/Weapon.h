@@ -18,7 +18,9 @@ public:
 	void RemoveInactiveSnowballs();
 
 	void SetCooldownFromLevel(int cooldownLevel);
-	void SetBulletSpeedFromLevel(int bulletSpeedLevel);
+
+	template <typename T>
+	void SetBulletSpeedFromLevel(T bulletSpeedLevel);
 
 private:
 	int m_cooldown;
@@ -26,4 +28,18 @@ private:
 	std::chrono::steady_clock::time_point m_timeSinceLastShot;
 	std::deque<Snowball> m_snowballs;
 };
+
+
+template <typename T>
+void Weapon::SetBulletSpeedFromLevel(T bulletSpeedLevel)
+{
+	if (bulletSpeedLevel == 1)
+	{
+		m_bulletSpeed = 3.5f;
+	}
+	else
+	{
+		m_bulletSpeed = 3.25f;
+	}
+}
 
