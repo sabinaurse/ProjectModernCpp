@@ -23,7 +23,7 @@ private:
         UpdatePlayerPosition,
         GetMap,
         Fire,
-        GetGameState,
+        GetGameState, 
     };
 
     QNetworkAccessManager* networkManager;
@@ -47,9 +47,9 @@ public:
     void GetPlayer(const QString& name);
     void DeletePlayer(const QString& name);
     void UpdatePlayer(const QString& name, int newScore, int newPoints);
-    void GetGameState();
+    void GetGameState(const QString& playerName);
     void AddPlayerToGame(const QString& playerName);
-    void GetMap();
+    void GetMap(const QString& playerName);
     void StartGame();
     void ResetGame();
     void GetLeaderboard();
@@ -57,6 +57,7 @@ public:
     void Fire(const QString& playerName);
 
 signals:
+    void gameStarted();
     void gameStateUpdated();
     void loginCompleted(const QString& data);
     void mapReceived(const std::vector<std::vector<int>>& mapData, std::unordered_map<int, std::string>& cellTypes);

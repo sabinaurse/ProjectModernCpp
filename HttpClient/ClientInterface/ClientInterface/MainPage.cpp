@@ -47,7 +47,7 @@ void MainPage::onRequestCompleted(const QString& response) {
     else if (response.contains("Game started")) {
         qDebug() << "Game started successfully. Opening GamePage.";
         emit startGameRequested();
-        m_clientRequests->GetMap();
+        m_clientRequests->GetMap(ClientState::instance().GetCurrentPlayer());
     }
 }
 

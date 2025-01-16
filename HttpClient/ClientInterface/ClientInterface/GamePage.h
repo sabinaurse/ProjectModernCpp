@@ -26,6 +26,7 @@ private:
     QMap<QString, Penguin*> m_penguins;
     QMap<QString, QList<Snowball*>> m_snowballs;
     ClientRequests* m_requests;
+    QTimer* m_gameStateTimer;
     Map* m_map;
 
 private slots:
@@ -37,5 +38,7 @@ private slots:
 
 public:
     explicit GamePage(ClientRequests* requests, QWidget* parent = nullptr);
+    void startGameStateTimer();
+    void stopGameStateTimer();
     ~GamePage();
 };

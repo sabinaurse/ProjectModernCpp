@@ -102,8 +102,12 @@ void ClientRequests::UpdatePlayer(const QString& name, int newScore, int newPoin
     activeRequests.insert(reply, "updatePlayer");
 }
 
-void ClientRequests::GetGameState() {
+void ClientRequests::GetGameState(const QString& playerName) {
     QUrl url("http://localhost:18080/getGameState");
+    QUrlQuery query;
+    query.addQueryItem("name", playerName);
+    url.setQuery(query);
+
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
     activeRequests.insert(reply, "getGameState");
@@ -122,12 +126,17 @@ void ClientRequests::AddPlayerToGame(const QString& playerName)
     networkManager->post(request, QJsonDocument(json).toJson());
 }
 
-void ClientRequests::GetMap() {
+void ClientRequests::GetMap(const QString& playerName) {
     QUrl url("http://localhost:18080/getMap");
+    QUrlQuery query;
+    query.addQueryItem("name", playerName);
+    url.setQuery(query);
+
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
     activeRequests.insert(reply, "getMap");
 }
+
 
 void ClientRequests::StartGame() {
     QUrl url("http://localhost:18080/startGame");

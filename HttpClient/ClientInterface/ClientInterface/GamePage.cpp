@@ -1,7 +1,7 @@
 ﻿#include "GamePage.h"
 
 GamePage::GamePage(ClientRequests* requests, QWidget* parent)
-    : QWidget(parent), m_scene(new QGraphicsScene(this)), m_view(new QGraphicsView(m_scene, this)), m_requests(requests), m_map(new Map())
+    : QWidget(parent), m_scene(new QGraphicsScene(this)), m_view(new QGraphicsView(m_scene, this)), m_requests(requests), m_map(new Map()), m_gameStateTimer(new QTimer(this))
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignCenter);
@@ -47,11 +47,9 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
 
     //connect(m_requests, &ClientRequests::snowballFired, this, &GamePage::onSnowballFired);
 
-    QTimer* timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, [this]() {
-        m_requests->GetGameState();
+    connect(m_gameStateTimer, &QTimer::timeout, [this]() {
+        m_requests->GetGameState(ClientState::instance().GetCurrentPlayer());
         });
-    timer->start(200);
 }
 
 GamePage::~GamePage() {
@@ -135,6 +133,20 @@ void GamePage::debugPrintPenguins() const {
         qDebug() << "Player Name:" << name << "| Scene Position:" << position;
     }
     qDebug() << "Total Penguins:" << m_penguins.size();
+}
+
+void GamePage::startGameStateTimer() {
+    if (!m_gameStateTimer->isActive()) {
+        qDebug() << "Starting game state timer.";
+        m_gameStateTimer->start(200); // Rulează la fiecare 200ms
+    }
+}
+
+void GamePage::stopGameStateTimer() {
+    if (m_gameStateTimer->isActive()) {
+        qDebug() << "Stopping game state timer.";
+        m_gameStateTimer->stop();
+    }
 }
 
 

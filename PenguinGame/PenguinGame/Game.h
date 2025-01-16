@@ -51,7 +51,6 @@ public:
 	//void TryStartMatch(); // -> GM
 	//void UpdateActiveGames(); // -> GM
 
-	bool IsGameRunning() const;
 	bool IsGameOver() const;
 	bool MapUpdated() const;
 	void ResetMapUpdateFlag();
@@ -71,7 +70,6 @@ private:
 	PenguinList m_penguins;
 	int m_radius=10;
 
-	bool m_gameRunning{ false };
 	bool m_isGameOver{ false };
 	bool m_mapUpdated{ false };
 	int m_gameId{ -1 };
