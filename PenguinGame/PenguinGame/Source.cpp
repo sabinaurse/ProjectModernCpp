@@ -4,8 +4,8 @@
 
 int main()
 {
-    uint32_t rows = 20;
-    uint32_t cols = 20;
+    uint32_t rows = 30;
+    uint32_t cols = 30;
 
     Game game(rows, cols);
     game_database::PlayerDatabase db;

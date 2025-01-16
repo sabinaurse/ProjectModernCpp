@@ -61,6 +61,7 @@ void BoardManager::TriggerExplosion(int x, int y, int radius, std::vector<std::s
 		for (int j = -radius; j <= radius; ++j) {
 			int newX = x + i;
 			int newY = y + j;
+			DestroyCell(x, y);
 
 			if (newX >= 0 && newX < m_gameBoard.GetRows() &&
 				newY >= 0 && newY < m_gameBoard.GetCols() &&
