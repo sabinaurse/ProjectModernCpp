@@ -28,6 +28,9 @@ public:
 	Game(Game&&) noexcept = default;
 	Game& operator=(Game&&) noexcept = default;
 
+	int GetGameId();   
+	void SetGameId(int gameId);
+
 	void StartGame();
 	void EndGame();
 	void CheckForCollisions();
@@ -68,7 +71,9 @@ private:
 	int m_radius=10;
 	bool m_isGameOver{ false };
 
-	bool m_mapUpdated = false;
+	bool m_mapUpdated{ false };
+
+	int m_gameId{ -1 };
 
 	std::thread m_updateThread; 
 	std::atomic<bool> m_running{ false }; 

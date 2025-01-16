@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <queue>
-#include <vector>
+#include <unordered_map>
 #include <memory>
 #include <mutex>
 #include <chrono>
@@ -28,14 +28,17 @@ public:
     GameManager();
     void AddPlayerToQueue(Player* player);
     void RunMultigamingLoop();
+    Game* GetGameById(int playerId);
+    int GetPlayerIdByName(const std::string& playerName);
 private:
     void TryStartMatch();
     void UpdateActiveGames();
     void StartMatch(const std::vector<Player*>& playersForMatch);
 private:
+    int m_gameCounter=1;
     std::priority_queue<WaitingPlayer> m_waitingQueue;
-    std::vector<std::unique_ptr<Game>> m_activeGames;
-
+    std::unordered_map<int, std::unique_ptr<Game>> m_activeGames;
+    std::unordered_map<std::string, int> m_playerNameToIdMap;
     std::mutex m_queueMutex;
     std::mutex m_gamesMutex;
 };

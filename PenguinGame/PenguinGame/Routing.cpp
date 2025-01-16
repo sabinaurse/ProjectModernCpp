@@ -1,7 +1,9 @@
 ﻿#include "Routing.h"
 
-Routing::Routing(Game& game, game_database::PlayerDatabase& db) :m_game{ game }, m_db{ db }
+Routing::Routing(GameManager& gameManager, game_database::PlayerDatabase& db)
+	: m_gameManager{ gameManager }, m_db{ db }
 {}
+
 
 void Routing::Run(int port)
 {
@@ -84,17 +86,27 @@ void Routing::Run(int port)
 
 			std::string playerName = body["name"].s();
 
-			if (m_game.GetPlayerByName(playerName) != nullptr) {
-				return crow::response(400, "Player already in a game.");
+			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
+			int playerId = m_gameManager.GetPlayerIdByName(playerName);
+			if (playerId == -1) {
+				return crow::response(400, "Player not found.");
+			}
+
+			// Obținem jocul corespunzător folosind metoda GetGameById
+			Game* game = m_gameManager.GetGameById(playerId);
+			if (!game) {
+				return crow::response(400, "Player not in an active game.");
+			}
+
+			// Verificăm dacă jucătorul este deja în joc
+			if (game->GetPlayerByName(playerName) != nullptr) {
+				return crow::response(400, "Player already in the game.");
 			}
 
 			auto dbPlayer = m_db.GetPlayerByName(playerName);
 			auto player = std::make_unique<Player>(dbPlayer);
+			game->AddPlayer(std::move(player));
 
-			//m_game.AddPlayerToQueue(player.get());
-			m_game.AddPlayer(std::move(player));
-
-			//m_game.TryStartMatch();
 
 			return crow::response(200, "Player added to waiting queue: " + playerName);
 		}
@@ -103,12 +115,32 @@ void Routing::Run(int port)
 		}
 			});
 
-	CROW_ROUTE(m_app, "/getGameState").methods("GET"_method)([this]() {
+	CROW_ROUTE(m_app, "/getGameState").methods("GET"_method)
+		([this](const crow::request& req) {
 		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object.");
+			}
+
+			std::string playerName = body["name"].s();
+
+			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
+			int playerId = m_gameManager.GetPlayerIdByName(playerName);
+			if (playerId == -1) {
+				return crow::response(400, "Player not found.");
+			}
+
+			// Obținem jocul corespunzător folosind metoda GetGameById
+			Game* game = m_gameManager.GetGameById(playerId);
+			if (!game) {
+				return crow::response(400, "Player not in an active game.");
+			}
+
 			crow::json::wvalue gameState;
 
 			// Secțiunea pentru jucători
-			const auto& penguins = m_game.GetPenguins();
+			const auto& penguins = game->GetPenguins();
 			std::cout << "Number of penguins in game: " << penguins.size() << std::endl;
 
 			for (size_t i = 0; i < penguins.size(); ++i) {
@@ -153,10 +185,10 @@ void Routing::Run(int port)
 				}
 			}
 
-			if (m_game.MapUpdated()) {
+			if (game->MapUpdated()) {
 				std::cout << "Map updated. Including updated map in response." << std::endl;
-				gameState["board"] = m_game.GetBoardManager().SerializeBoard();
-				m_game.ResetMapUpdateFlag();
+				gameState["board"] = game->GetBoardManager().SerializeBoard();
+				game->ResetMapUpdateFlag();
 			}
 			else {
 				std::cout << "No updates to map." << std::endl;
@@ -168,14 +200,34 @@ void Routing::Run(int port)
 			std::cerr << "Error retrieving game state: " << e.what() << std::endl;
 			return crow::response(500, "Error retrieving game state: " + std::string(e.what()));
 		}
-		});
+			});
 
 
 
-	CROW_ROUTE(m_app, "/getMap").methods("GET"_method)([this]() {
+	CROW_ROUTE(m_app, "/getMap").methods("GET"_method)
+		([this](const crow::request& req) {
 		try {
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object.");
+			}
+
+			std::string playerName = body["name"].s();
+
+			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
+			int playerId = m_gameManager.GetPlayerIdByName(playerName);
+			if (playerId == -1) {
+				return crow::response(400, "Player not found.");
+			}
+
+			// Obținem jocul corespunzător folosind metoda GetGameById
+			Game* game = m_gameManager.GetGameById(playerId);
+			if (!game) {
+				return crow::response(400, "Player not in an active game.");
+			}
+
 			crow::json::wvalue response;
-			response["board"] = m_game.GetBoardManager().SerializeBoard();
+			response["board"] = game->GetBoardManager().SerializeBoard();
 
 			response["cellTypes"] = {
 				{"0", "Empty"},
@@ -192,16 +244,36 @@ void Routing::Run(int port)
 		catch (const std::exception& e) {
 			return crow::response(500, "Error retrieving map: " + std::string(e.what()));
 		}
-		});
+			});
 
-	CROW_ROUTE(m_app, "/startGame").methods("POST"_method)([this]() {
+	CROW_ROUTE(m_app, "/startGame").methods("POST"_method)([this](const crow::request& req) {
 		try {
-			const auto& players = m_game.GetPlayers();
+			auto body = crow::json::load(req.body);
+			if (!body) {
+				return crow::response(400, "Invalid JSON object.");
+			}
+
+			std::string playerName = body["name"].s();
+
+			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
+			int playerId = m_gameManager.GetPlayerIdByName(playerName);
+			if (playerId == -1) {
+				return crow::response(400, "Player not found.");
+			}
+
+			// Obținem jocul corespunzător folosind metoda GetGameById
+			Game* game = m_gameManager.GetGameById(playerId);
+			if (!game) {
+				return crow::response(400, "Player not in an active game.");
+			}
+		
+		
+			const auto& players = game->GetPlayers();
 			if (players.size() < 1) {
 				return crow::response(400, "Not enough players to start the game. At least 2 players are required.");
 			}
 
-			m_game.StartGame();
+			game->StartGame();
 			return crow::response(200, "Game started successfully.");
 		}
 		catch (const std::exception& e) {
@@ -221,17 +293,29 @@ void Routing::Run(int port)
 			std::string direction = body["direction"].s();
 			std::string playerName = body["playerName"].s();
 
-			Player* player = m_game.GetPlayerByName(playerName);
+			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
+			int playerId = m_gameManager.GetPlayerIdByName(playerName);
+			if (playerId == -1) {
+				return crow::response(400, "Player not found.");
+			}
+
+			// Obținem jocul corespunzător folosind metoda GetGameById
+			Game* game = m_gameManager.GetGameById(playerId);
+			if (!game) {
+				return crow::response(400, "Player not in an active game.");
+			}
+
+			Player* player = game->GetPlayerByName(playerName);
 			if (!player) {
 				return crow::response(404, "Player not found.");
 			}
 
-			Penguin* penguin = m_game.GetPenguinForPlayer(*player);
+			Penguin* penguin = game->GetPenguinForPlayer(*player);
 			if (!penguin) {
 				return crow::response(404, "Penguin not found.");
 			}
 
-			penguin->Move(direction[0], m_game.GetBoard());
+			penguin->Move(direction[0], game->GetBoard());
 			return crow::response(200, "Move processed successfully");
 		}
 		catch (const std::exception& e) {
@@ -252,13 +336,25 @@ void Routing::Run(int port)
 
 			std::string playerName = body["playerName"].s();
 
-			Player* player = m_game.GetPlayerByName(playerName);
+			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
+			int playerId = m_gameManager.GetPlayerIdByName(playerName);
+			if (playerId == -1) {
+				return crow::response(400, "Player not found.");
+			}
+
+			// Obținem jocul corespunzător folosind metoda GetGameById
+			Game* game = m_gameManager.GetGameById(playerId);
+			if (!game) {
+				return crow::response(400, "Player not in an active game.");
+			}
+
+			Player* player = game->GetPlayerByName(playerName);
 			if (!player) {
 				CROW_LOG_ERROR << "Player not found: " << playerName;
 				return crow::response(404, "Player not found.");
 			}
 
-			Penguin* penguin = m_game.GetPenguinForPlayer(*player);
+			Penguin* penguin = game->GetPenguinForPlayer(*player);
 			if (!penguin) {
 				CROW_LOG_ERROR << "Penguin not found for player: " << playerName;
 				return crow::response(404, "Penguin not found.");
@@ -291,58 +387,6 @@ void Routing::Run(int port)
 			return crow::response(500, "Error in /fire: " + std::string(e.what()));
 		}
 			});
-
-
-	CROW_ROUTE(m_app, "/stopGame").methods("POST"_method)
-		([this]() {
-		try {
-			m_game.EndGame();
-			return crow::response(200, "Game stopped successfully.");
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error stopping game: " + std::string(e.what()));
-		}
-			});
-
-
-	CROW_ROUTE(m_app, "/getStartingPositions").methods("GET"_method)([this]() {
-		try {
-			crow::json::wvalue response;
-			const auto& startingPositions = m_game.GetBoardManager().GetStartingPositions();
-
-			for (size_t i = 0; i < startingPositions.size(); ++i) {
-				response["positions"][i]["x"] = startingPositions[i].first;
-				response["positions"][i]["y"] = startingPositions[i].second;
-			}
-
-			return crow::response(200, response);
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error retrieving starting positions: " + std::string(e.what()));
-		}
-		});
-
-	CROW_ROUTE(m_app, "/getPenguins").methods("GET"_method)([this](const crow::request& req) {
-		try {
-			crow::json::wvalue response;
-			const auto& penguins = m_game.GetPenguins();
-
-			for (size_t i = 0; i < penguins.size(); ++i) {
-				const auto* penguin = penguins[i].get();
-				response["penguins"][i]["name"] = penguin->GetPlayer()->GetName();
-				response["penguins"][i]["x"] = penguin->GetPosition().first;
-				response["penguins"][i]["y"] = penguin->GetPosition().second;
-				response["penguins"][i]["isAlive"] = penguin->IsAlive();
-				response["penguins"][i]["bulletSpeed"] = penguin->GetWeapon().GetBulletSpeed();
-				response["penguins"][i]["eliminations"] = penguin->GetEliminationOrder();
-			}
-
-			return crow::response(200, response);
-		}
-		catch (const std::exception& e) {
-			return crow::response(500, "Error retrieving penguins: " + std::string(e.what()));
-		}
-		});
 
 
 

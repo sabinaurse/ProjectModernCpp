@@ -1,9 +1,8 @@
 #include "Player.h"
 
-//Player::Player(const std::string& name)
-//    :m_name{ name }
-//{
-//}
+Player::Player(const std::string& name)
+ : m_name{ name } {
+}
 
 Player::Player(const game_database::GamePlayer& dbPlayer)
     : m_name(dbPlayer.name),
@@ -36,6 +35,11 @@ int Player::GetCooldownLevel() const {
     return m_cooldownLevel;
 }
 
+int Player::GetGameId() const
+{
+    return m_gameId;
+}
+
 void Player::SetName(std::string&& name) {
     m_name = std::move(name);
 }
@@ -59,6 +63,11 @@ void Player::SetCooldownLevel(uint8_t level) {
     m_cooldownLevel = level;
 }
 
+void Player::SetGameId(int8_t gameId)
+{
+    m_gameId = gameId;
+}
+
 void Player::AddPoints(uint32_t points)
 {
     m_points += points;
@@ -69,8 +78,4 @@ void Player::AddScores(uint32_t scores)
     m_score += scores;
 }
 
-
-Player::Player(const std::string& name, uint32_t score)
-    : m_name{ name }, m_score{ score } {
-}
 

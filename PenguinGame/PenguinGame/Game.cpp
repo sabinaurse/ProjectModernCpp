@@ -1,5 +1,13 @@
 ﻿#include "Game.h"
 
+int Game::GetGameId() {
+    return m_gameId;
+}
+
+void Game::SetGameId(int gameId) {
+    m_gameId = gameId;
+}
+
 const MapGen::GameBoard& Game::GetBoard() const {
     return m_boardManager.GetGameBoard();
 }
