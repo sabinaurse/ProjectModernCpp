@@ -80,8 +80,8 @@ void Routing::Run(int port)
 		([this](const crow::request& req) {
 		try {
 			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object.");
+			if (!body || !body.has("name")) {
+				return crow::response(400, "Invalid JSON object. Missing 'name'.");
 			}
 
 			std::string playerName = body["name"].s();
@@ -119,12 +119,8 @@ void Routing::Run(int port)
 		([this](const crow::request& req) {
 		try {
 			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object.");
-			}
-
-			if (!body.has("name")) {
-				return crow::response(400, "Player name is required.");
+			if (!body || !body.has("name")) {
+				return crow::response(400, "Invalid JSON object. Missing 'name'.");
 			}
 
 			std::string playerName = body["name"].s();
@@ -212,12 +208,8 @@ void Routing::Run(int port)
 		([this](const crow::request& req) {
 		try {
 			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object.");
-			}
-
-			if (!body.has("name")) {
-				return crow::response(400, "Player name is required.");
+			if (!body || !body.has("name")) {
+				return crow::response(400, "Invalid JSON object. Missing 'name'.");
 			}
 
 			std::string playerName = body["name"].s();
@@ -257,8 +249,8 @@ void Routing::Run(int port)
 	CROW_ROUTE(m_app, "/startGame").methods("POST"_method)([this](const crow::request& req) {
 		try {
 			auto body = crow::json::load(req.body);
-			if (!body) {
-				return crow::response(400, "Invalid JSON object.");
+			if (!body || !body.has("name")) {
+				return crow::response(400, "Invalid JSON object. Missing 'name'.");
 			}
 
 			std::string playerName = body["name"].s();
@@ -393,6 +385,38 @@ void Routing::Run(int port)
 		catch (const std::exception& e) {
 			CROW_LOG_ERROR << "Error in /fire: " << e.what();
 			return crow::response(500, "Error in /fire: " + std::string(e.what()));
+		}
+			});
+
+	CROW_ROUTE(m_app, "/gameStatus").methods("POST"_method)
+		([this](const crow::request& req) {
+		try {
+			auto body = crow::json::load(req.body);
+			if (!body || !body.has("name")) {
+				return crow::response(400, "Invalid JSON object. Missing 'name'.");
+			}
+
+			std::string playerName = body["name"].s();
+
+			int gameId = m_gameManager.GetPlayerIdByName(playerName);
+			if (gameId == -1) {
+				return crow::response(404, "Player not found or not in a game.");
+			}
+
+			Game* game = m_gameManager.GetGameById(gameId);
+			if (!game) {
+				return crow::response(404, "Game not found.");
+			}
+
+			crow::json::wvalue response;
+			response["gameId"] = game->GetGameId();
+			response["status"] = game->IsGameRunning() ? "running" : "waiting";
+			response["playerCount"] = game->GetPlayers().size();
+
+			return crow::response(200, response);
+		}
+		catch (const std::exception& e) {
+			return crow::response(500, "Error retrieving game status: " + std::string(e.what()));
 		}
 			});
 

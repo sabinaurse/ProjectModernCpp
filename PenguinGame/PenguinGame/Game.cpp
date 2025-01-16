@@ -15,9 +15,14 @@ const MapGen::GameBoard& Game::GetBoard() const {
 void Game::StartGame()
 {
     m_isGameOver = false;
+    m_gameRunning = true;
     InitializePlayers();
     std::cout << "Starting the game..." << std::endl;
     StartUpdateLoop();
+}
+
+bool Game::IsGameRunning() const {
+    return m_gameRunning;
 }
 
 
@@ -25,6 +30,7 @@ void Game::EndGame()
 {
     StopUpdateLoop();
     m_isGameOver = true;
+    m_gameRunning = false;
     std::cout << "Game Over!" << std::endl;
 
     Player* winner = GetWinner();
