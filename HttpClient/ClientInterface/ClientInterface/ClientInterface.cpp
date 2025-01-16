@@ -46,5 +46,6 @@ void ClientInterface::onLoginSuccessful(const QString& playerName, int playerSco
 
 void ClientInterface::onGameStartRequested() {
     stackedWidget->setCurrentWidget(gamePage);
+    gamePage->startGameStateTimer();
     qDebug() << "Switched to GamePage";
 }
