@@ -6,9 +6,12 @@ class Player
 {
 public:
 	Player() = delete;
-	Player(const std::string& name);
+	//Player(const std::string& name);
 	Player(const game_database::GamePlayer& dbPlayer);
 	~Player() = default;
+
+	//pt multigaming
+	Player(const std::string& name, uint32_t score = 0);
 	
 	std::string GetName() const;
 	[[nodiscard]] int GetPoints() const;

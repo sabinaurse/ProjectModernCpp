@@ -1,9 +1,9 @@
 #include "Player.h"
 
-Player::Player(const std::string& name)
-    :m_name{ name }
-{
-}
+//Player::Player(const std::string& name)
+//    :m_name{ name }
+//{
+//}
 
 Player::Player(const game_database::GamePlayer& dbPlayer)
     : m_name(dbPlayer.name),
@@ -68,3 +68,9 @@ void Player::AddScores(uint32_t scores)
 {
     m_score += scores;
 }
+
+
+Player::Player(const std::string& name, uint32_t score)
+    : m_name{ name }, m_score{ score } {
+}
+

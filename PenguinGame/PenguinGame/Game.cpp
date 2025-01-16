@@ -52,7 +52,7 @@ void Game::EndGame()
 void Game::AddPlayer(std::unique_ptr<Player> player) {
     if (std::any_of(m_players.begin(), m_players.end(),
         [&player](const auto& existingPlayer) { return existingPlayer->GetName() == player->GetName(); })) {
-        throw std::runtime_error("Player with the same name already exists in the game!");
+        //throw std::runtime_error("Player with the same name already exists in the game!");
     }
     m_players.push_back(std::move(player));
 }

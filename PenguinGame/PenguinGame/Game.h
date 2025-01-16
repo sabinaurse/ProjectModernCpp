@@ -14,14 +14,6 @@
 using PlayerList = std::vector<std::unique_ptr<Player>>;
 using PenguinList = std::vector<std::shared_ptr<Penguin>>;
 
-struct WaitingPlayer { // -> GM
-	Player* player;
-	std::chrono::steady_clock::time_point joinTime;
-
-	bool operator<(const WaitingPlayer& other) const {
-		return player->GetScore() < other.player->GetScore();
-	}
-};
 
 class Game
 {
@@ -77,9 +69,6 @@ private:
 	bool m_isGameOver{ false };
 
 	bool m_mapUpdated = false;
-
-	std::priority_queue<WaitingPlayer> waitingQueue; // -> GM
-	//std::vector<Game> activeGames; // -> GM
 
 	std::thread m_updateThread; 
 	std::atomic<bool> m_running{ false }; 
