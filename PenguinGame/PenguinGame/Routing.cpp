@@ -115,12 +115,16 @@ void Routing::Run(int port)
 		}
 			});
 
-	CROW_ROUTE(m_app, "/getGameState").methods("GET"_method)
+	CROW_ROUTE(m_app, "/getGameState").methods("POST"_method)
 		([this](const crow::request& req) {
 		try {
 			auto body = crow::json::load(req.body);
 			if (!body) {
 				return crow::response(400, "Invalid JSON object.");
+			}
+
+			if (!body.has("name")) {
+				return crow::response(400, "Player name is required.");
 			}
 
 			std::string playerName = body["name"].s();
@@ -204,12 +208,16 @@ void Routing::Run(int port)
 
 
 
-	CROW_ROUTE(m_app, "/getMap").methods("GET"_method)
+	CROW_ROUTE(m_app, "/getMap").methods("POST"_method)
 		([this](const crow::request& req) {
 		try {
 			auto body = crow::json::load(req.body);
 			if (!body) {
 				return crow::response(400, "Invalid JSON object.");
+			}
+
+			if (!body.has("name")) {
+				return crow::response(400, "Player name is required.");
 			}
 
 			std::string playerName = body["name"].s();
