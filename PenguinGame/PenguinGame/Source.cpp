@@ -32,23 +32,23 @@ int main() {
     Player* player2 = new Player("Player2", 30);
     Player* player3 = new Player("Player3", 70);
 
-    std::cout << "[Main] Adăugând Player1 în coadă cu scorul 50" << std::endl;
+    std::cout << "[Main] Adauga Player1 în coada cu scorul 50" << std::endl;
     gameManager.AddPlayerToQueue(player1);
 
-    std::cout << "[Main] Adăugând Player2 în coadă cu scorul 30" << std::endl;
+    std::cout << "[Main] Adauga Player2 în coada cu scorul 30" << std::endl;
     gameManager.AddPlayerToQueue(player2);
 
-    std::cout << "[Main] Adăugând Player3 în coadă cu scorul 70" << std::endl;
+    std::cout << "[Main] Adauga Player3 în coada cu scorul 70" << std::endl;
     gameManager.AddPlayerToQueue(player3);
 
     // Pornim bucla de multigaming
     for (int i = 0; i < 10; ++i) {
-        std::cout << "[Main] Iterația " << i + 1 << " a buclei principale" << std::endl;
+        std::cout << "[Main] Iteratia " << i + 1 << " a buclei principale" << std::endl;
         gameManager.RunMultigamingLoop();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
-    std::cout << "[Main] Toți jucătorii au fost procesați. Jocul s-a terminat." << std::endl;
+   // std::cout << "[Main] Toți jucătorii au fost procesați. Jocul s-a terminat." << std::endl;
 
     return 0;
 }

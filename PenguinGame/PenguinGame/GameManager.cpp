@@ -12,6 +12,7 @@ void GameManager::AddPlayerToQueue(Player* player) {
     std::vector<Player*> playersInQueue;
     bool exists = false;
 
+    // Scoate toți jucătorii temporar pentru verificare
     while (!m_waitingQueue.empty()) {
         const auto& waitingPlayer = m_waitingQueue.top();
         if (waitingPlayer.player == player) {
@@ -23,17 +24,19 @@ void GameManager::AddPlayerToQueue(Player* player) {
         m_waitingQueue.pop();
     }
 
+    // Dacă jucătorul nu există deja în coadă, îl adăugăm
     if (!exists) {
         WaitingPlayer waitingPlayer{ player, std::chrono::steady_clock::now() };
         m_waitingQueue.push(waitingPlayer);
         std::cout << "[GameManager] Jucătorul " << player->GetName() << " a fost adăugat în coadă." << std::endl;
     }
 
-    // Adaugă înapoi jucătorii temporari
+    // Reintroduce jucătorii temporari în coadă
     for (auto* player : playersInQueue) {
         m_waitingQueue.push({ player, std::chrono::steady_clock::now() });
     }
 }
+
 
 void GameManager::RunMultigamingLoop() {
     const auto delay = std::chrono::milliseconds(100); // Pauză între iterații
@@ -43,7 +46,7 @@ void GameManager::RunMultigamingLoop() {
     while (true) {
         std::cout << "[GameManager] Încercăm să pornim un meci." << std::endl;
         TryStartMatch();
-        UpdateActiveGames();
+       // UpdateActiveGames();
 
         // Oprește bucla dacă nu mai sunt jocuri active și coada e goală
         {
@@ -62,38 +65,50 @@ void GameManager::RunMultigamingLoop() {
 
 void GameManager::TryStartMatch() {
     std::vector<Player*> playersForMatch;
+    std::vector<WaitingPlayer> tempQueue;  // Coada temporară pentru jucătorii care rămân
     auto now = std::chrono::steady_clock::now();
-    std::priority_queue<WaitingPlayer> tempQueue;
 
     std::cout << "[GameManager] Verificăm dacă putem porni un nou meci." << std::endl;
 
     while (!m_waitingQueue.empty()) {
-        const auto& waitingPlayer = m_waitingQueue.top();
-
-        // Mesaj de debug când scoatem jucătorul din coadă
-        std::cout << "[GameManager] Scoatem jucătorul " << waitingPlayer.player->GetName()
-            << " din coadă. Scor: " << waitingPlayer.player->GetScore() << std::endl;
-
+        // Scoatem jucătorul din coadă
+        auto waitingPlayer = m_waitingQueue.top();
         m_waitingQueue.pop();
 
+        // Calculăm timpul de așteptare
         auto waitTime = std::chrono::duration_cast<std::chrono::seconds>(now - waitingPlayer.joinTime).count();
         playersForMatch.push_back(waitingPlayer.player);
 
         std::cout << "[GameManager] Jucătorul " << waitingPlayer.player->GetName()
             << " așteaptă de " << waitTime << " secunde." << std::endl;
 
-        if (playersForMatch.size() == MAX_PLAYERS_PER_MATCH ||
-            (waitTime >= WAIT_TIME_LIMIT && playersForMatch.size() >= MIN_PLAYERS_TO_START)) {
+        // Dacă avem suficienți jucători pentru meci
+        if (playersForMatch.size() == MAX_PLAYERS_PER_MATCH) {
             std::cout << "[GameManager] Meciul poate începe cu " << playersForMatch.size() << " jucători." << std::endl;
             StartMatch(playersForMatch);
             return;
         }
 
-        tempQueue.push(waitingPlayer);
+        // Dacă jucătorul așteaptă prea mult și sunt suficienți jucători pentru a începe
+        if (waitTime >= WAIT_TIME_LIMIT && playersForMatch.size() >= MIN_PLAYERS_TO_START) {
+            std::cout << "[GameManager] Meciul poate începe cu " << playersForMatch.size() << " jucători." << std::endl;
+            StartMatch(playersForMatch);
+            return;
+        }
+
+        // Dacă nu sunt suficienți jucători, adăugăm jucătorul la coada temporară
+        tempQueue.push_back(waitingPlayer);
     }
 
-    m_waitingQueue = std::move(tempQueue);
+    // Reintroducem jucătorii care nu au fost aleși pentru meci în coada principală
+    for (const auto& player : tempQueue) {
+        m_waitingQueue.push(player);
+    }
+
+    std::cout << "[GameManager] Nu sunt suficienți jucători pentru a începe un meci." << std::endl;
 }
+
+
 
 
 void GameManager::StartMatch(const std::vector<Player*>& playersForMatch) {
