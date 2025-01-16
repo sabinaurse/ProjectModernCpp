@@ -18,11 +18,13 @@ private:
     Ui::MainPage ui;
     QLabel* m_playerInfoLabel;
     ClientRequests* m_clientRequests;
+    QTimer* m_gameStartTimer;//
 
 private slots:
     void onStartGameClicked();
     void onRequestCompleted(const QString& response);
     void onRequestFailed(const QString& error);
+    void checkGameStart();//
 
 public:
     explicit MainPage(ClientRequests* clientRequests, QWidget* parent = nullptr);

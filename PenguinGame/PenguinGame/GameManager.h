@@ -11,7 +11,7 @@
 
 constexpr size_t MAX_PLAYERS_PER_MATCH = 4;
 constexpr size_t MIN_PLAYERS_TO_START = 2;
-constexpr int WAIT_TIME_LIMIT = 30;
+constexpr int WAIT_TIME_LIMIT = 10;
 
 struct WaitingPlayer {
     Player* player; // Pointer către jucătorul aflat în așteptare.

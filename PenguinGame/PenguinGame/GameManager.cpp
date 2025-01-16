@@ -28,6 +28,7 @@ void GameManager::AddPlayerToQueue(Player* player) {
 	if (!exists) {
 		WaitingPlayer waitingPlayer{ player, std::chrono::steady_clock::now() };
 		m_waitingQueue.push(waitingPlayer);
+		m_playerNameToIdMap[player->GetName()] = -1;
 		std::cout << "[GameManager] Jucătorul " << player->GetName() << " a fost adăugat în coadă." << std::endl;
 	}
 
@@ -109,22 +110,22 @@ void GameManager::StartMatch(const std::vector<Player*>& playersForMatch) {
 
 	auto newGame = std::make_unique<Game>(30, 30);
 
-	newGame->SetGameId(m_gameCounter);
-	m_gameCounter++;
+	int currentGameId = m_gameCounter++;
+	newGame->SetGameId(currentGameId);
 
 	for (auto* player : playersForMatch) {
 		newGame->AddPlayer(std::make_unique<Player>(*player));
-		player->SetGameId(newGame->GetGameId());
-		m_playerNameToIdMap[player->GetName()] = player->GetGameId();
+		player->SetGameId(currentGameId);
+		m_playerNameToIdMap[player->GetName()] = currentGameId;
 		std::cout << "[GameManager] Adăugăm jucătorul " << player->GetName() << " la meci cu id " << player->GetGameId() << std::endl;
 
 	}
 
-	newGame->StartGame();
+	//newGame->StartGame();
 
 	{
 		std::lock_guard<std::mutex> lock(m_gamesMutex);
-		m_activeGames[newGame->GetGameId()] = std::move(newGame);
+		m_activeGames[currentGameId] = std::move(newGame);
 		std::cout << "[GameManager] Jocul cu ID  a început și a fost adăugat în lista jocurilor active." << std::endl;
 	}
 }

@@ -86,26 +86,13 @@ void Routing::Run(int port)
 
 			std::string playerName = body["name"].s();
 
-			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
-			int playerId = m_gameManager.GetPlayerIdByName(playerName);
-			if (playerId == -1) {
-				return crow::response(400, "Player not found.");
-			}
-
-			// Obținem jocul corespunzător folosind metoda GetGameById
-			Game* game = m_gameManager.GetGameById(playerId);
-			if (!game) {
-				return crow::response(400, "Player not in an active game.");
-			}
-
-			// Verificăm dacă jucătorul este deja în joc
-			if (game->GetPlayerByName(playerName) != nullptr) {
-				return crow::response(400, "Player already in the game.");
-			}
-
+			// Obține datele jucătorului din baza de date
 			auto dbPlayer = m_db.GetPlayerByName(playerName);
 			auto player = std::make_unique<Player>(dbPlayer);
-			game->AddPlayer(std::move(player));
+
+			// Adaugă jucătorul în coada de așteptare
+			m_gameManager.AddPlayerToQueue(player.get());
+			m_gameManager.RunMultigamingLoop();
 
 
 			return crow::response(200, "Player added to waiting queue: " + playerName);
@@ -255,26 +242,24 @@ void Routing::Run(int port)
 
 			std::string playerName = body["name"].s();
 
-			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
-			int playerId = m_gameManager.GetPlayerIdByName(playerName);
-			if (playerId == -1) {
-				return crow::response(400, "Player not found.");
+			//Verificăm dacă jucătorul este într - un joc activ
+			int gameId = m_gameManager.GetPlayerIdByName(playerName);
+
+			if (gameId == -1) {
+				// Jucătorul nu este într-un joc activ
+				return crow::response(200, "Player not in a game yet.");
 			}
 
-			// Obținem jocul corespunzător folosind metoda GetGameById
-			Game* game = m_gameManager.GetGameById(playerId);
+			// Obținem jocul corespunzător ID-ului
+			Game* game = m_gameManager.GetGameById(gameId);
 			if (!game) {
-				return crow::response(400, "Player not in an active game.");
-			}
-		
-		
-			const auto& players = game->GetPlayers();
-			if (players.size() < 1) {
-				return crow::response(400, "Not enough players to start the game. At least 2 players are required.");
+				return crow::response(500, "Error: Game not found for player.");
 			}
 
+
+			// Pornim jocul pentru jucător
 			game->StartGame();
-			return crow::response(200, "Game started successfully.");
+			return crow::response(200, "Game");
 		}
 		catch (const std::exception& e) {
 			return crow::response(500, "Error starting game: " + std::string(e.what()));

@@ -1,7 +1,7 @@
 #include "MainPage.h"
 
 MainPage::MainPage(ClientRequests* clientRequests,QWidget* parent)
-    : QWidget(parent), m_clientRequests(clientRequests), m_playerInfoLabel(new QLabel(this)) {
+    : QWidget(parent), m_clientRequests(clientRequests), m_playerInfoLabel(new QLabel(this)), m_gameStartTimer(new QTimer(this)) {
 
     ui.setupUi(this);
 
@@ -20,7 +20,7 @@ MainPage::MainPage(ClientRequests* clientRequests,QWidget* parent)
     setLayout(layout);
 
     connect(ui.startGameButton, &QPushButton::clicked, this, &MainPage::onStartGameClicked);
-
+    connect(m_gameStartTimer, &QTimer::timeout, this, &MainPage::checkGameStart);//
     connect(m_clientRequests, &ClientRequests::requestCompleted, this, &MainPage::onRequestCompleted, Qt::UniqueConnection);
     connect(m_clientRequests, &ClientRequests::requestFailed, this, &MainPage::onRequestFailed, Qt::UniqueConnection);
 }
@@ -40,12 +40,11 @@ void MainPage::onRequestCompleted(const QString& response) {
    
     if (response.contains("Player added")) {
         qDebug() << "Player successfully added. Sending request to start game.";
-
-        m_clientRequests->StartGame();
-        //m_clientRequests->GetGameState();
+        m_gameStartTimer->start(5000);
     }
-    else if (response.contains("Game started")) {
-        qDebug() << "Game started successfully. Opening GamePage.";
+    if (response.trimmed() == "Game") {
+        qDebug() << "Game started successfully.";
+        m_gameStartTimer->stop();
         emit startGameRequested();
         m_clientRequests->GetMap(ClientState::instance().GetCurrentPlayer());
     }
@@ -70,4 +69,12 @@ void MainPage::displayPlayerInfo(const QString& playerInfo) {
         .arg(playerPoints)
         .arg(cooldownLevel)
         .arg(bulletSpeedLevel));
+}
+
+void MainPage::checkGameStart() {
+    QString playerName = ClientState::instance().GetCurrentPlayer();
+    if (!playerName.isEmpty()) {
+        qDebug() << "Checking if game has started for player:" << playerName;
+        m_clientRequests->StartGame();
+    }
 }

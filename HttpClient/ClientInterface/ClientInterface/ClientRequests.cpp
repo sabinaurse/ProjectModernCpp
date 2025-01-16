@@ -140,12 +140,21 @@ void ClientRequests::GetMap(const QString& playerName) {
 
 void ClientRequests::StartGame() {
     QUrl url("http://localhost:18080/startGame");
+
+    QJsonObject json;
+    json["name"] = ClientState::instance().GetCurrentPlayer();
+
     QNetworkRequest request(url);
-    networkManager->post(request, QByteArray());
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QNetworkReply* reply = networkManager->post(request, QJsonDocument(json).toJson());
+    activeRequests.insert(reply, "checkGameStart");
 }
 
 void ClientRequests::ResetGame() {
     QUrl url("http://localhost:18080/resetGame");
+    QJsonObject json;
+    json["name"] = ClientState::instance().GetCurrentPlayer();
     QNetworkRequest request(url);
     networkManager->post(request, QByteArray());
 }
