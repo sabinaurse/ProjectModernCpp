@@ -132,9 +132,9 @@ void GameManager::StartMatch(const std::vector<Player*>& playersForMatch) {
 
 	for (auto* player : playersForMatch) {
 		player->SetGameId(m_gameCounter);
-		std::cout << "[GameManager] Adăugăm jucătorul " << player->GetName() << " la meci cu id " << player->GetGameId() << std::endl;
 		newGame->AddPlayer(std::make_unique<Player>(*player));
 		m_playerNameToIdMap[player->GetName()] = m_gameCounter;
+		std::cout << "[GameManager] Adăugăm jucătorul " << player->GetName() << " la meci cu id " << player->GetGameId() << "si id-ul"<< m_playerNameToIdMap[player->GetName()] << std::endl;
 
 	}
 

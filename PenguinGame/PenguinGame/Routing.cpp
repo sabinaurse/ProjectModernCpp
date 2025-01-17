@@ -111,7 +111,7 @@ void Routing::Run(int port)
 
 
 
-			std::string responseBody = "Game";
+			std::string responseBody = "Player added";
 			std::cout << "[Route] Trimit răspuns către client: " << responseBody << std::endl;
 			return crow::response(200, responseBody);
 		}
@@ -244,8 +244,8 @@ void Routing::Run(int port)
 				{"3", "Bomb"}
 			};
 
-			//std::string serializedResponse = response.dump();
-			//std::cout << "Response JSON: " << serializedResponse << std::endl;
+			std::string serializedResponse = response.dump();
+			std::cout << "Response JSON: " << serializedResponse << std::endl;
 
 			return crow::response(200, response);
 		}
@@ -267,8 +267,7 @@ void Routing::Run(int port)
 			int gameId = m_gameManager.GetPlayerIdByName(playerName);
 
 			if (gameId == -1) {
-				// Jucătorul nu este într-un joc activ
-				//return crow::response(200, "Player not in a game yet.");
+				return crow::response(200, "Player not in a game yet.");
 			}
 
 			// Obținem jocul corespunzător ID-ului

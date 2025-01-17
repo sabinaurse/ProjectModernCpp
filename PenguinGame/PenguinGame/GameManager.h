@@ -10,7 +10,7 @@
 #include "Game.h"
 
 constexpr size_t MAX_PLAYERS_PER_MATCH = 4;
-constexpr size_t MIN_PLAYERS_TO_START = 2;
+constexpr size_t MIN_PLAYERS_TO_START = 1;
 constexpr int WAIT_TIME_LIMIT = 10;
 
 struct WaitingPlayer {

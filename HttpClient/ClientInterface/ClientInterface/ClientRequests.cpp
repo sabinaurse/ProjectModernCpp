@@ -104,14 +104,20 @@ void ClientRequests::UpdatePlayer(const QString& name, int newScore, int newPoin
 
 void ClientRequests::GetGameState(const QString& playerName) {
     QUrl url("http://localhost:18080/getGameState");
-    QUrlQuery query;
-    query.addQueryItem("name", playerName);
-    url.setQuery(query);
-
     QNetworkRequest request(url);
-    QNetworkReply* reply = networkManager->get(request);
+
+    QJsonObject jsonBody;
+    jsonBody["name"] = playerName;
+
+    QJsonDocument doc(jsonBody);
+    QByteArray data = doc.toJson();
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QNetworkReply* reply = networkManager->post(request, data);
     activeRequests.insert(reply, "getGameState");
 }
+
 
 void ClientRequests::AddPlayerToGame(const QString& playerName)
 {
@@ -128,14 +134,20 @@ void ClientRequests::AddPlayerToGame(const QString& playerName)
 
 void ClientRequests::GetMap(const QString& playerName) {
     QUrl url("http://localhost:18080/getMap");
-    QUrlQuery query;
-    query.addQueryItem("name", playerName);
-    url.setQuery(query);
-
     QNetworkRequest request(url);
-    QNetworkReply* reply = networkManager->get(request);
+
+    QJsonObject jsonBody;
+    jsonBody["name"] = playerName;
+
+    QJsonDocument doc(jsonBody);
+    QByteArray data = doc.toJson();
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QNetworkReply* reply = networkManager->post(request, data);
     activeRequests.insert(reply, "getMap");
 }
+
 
 
 void ClientRequests::StartGame() {
@@ -307,10 +319,8 @@ void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
     if (jsonObj.contains("players") && jsonObj["players"].isArray()) {
         QJsonArray playersArray = jsonObj["players"].toArray();
 
-        // Șterge pozițiile existente
         ClientState::instance().ClearPlayerPositions();
 
-        // Actualizează pozițiile pentru fiecare jucător
         for (const QJsonValue& playerValue : playersArray) {
             if (playerValue.isObject()) {
                 QJsonObject playerObj = playerValue.toObject();
@@ -325,7 +335,6 @@ void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
 
         ClientState::instance().ClearSnowballPositions();
 
-        // Procesare poziții snowballs
         if (jsonObj.contains("snowballs") && jsonObj["snowballs"].isArray()) {
             QJsonArray snowballsArray = jsonObj["snowballs"].toArray();
 
@@ -359,11 +368,9 @@ void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
                 }
             }
 
-            emit mapUpdated(mapData);  // Emiterea semnalului pentru harta
+            emit mapUpdated(mapData);
         }
 
-
-        // Emit semnal pentru a notifica schimbarea GameState
         emit gameStateUpdated();
     }
     else {

@@ -20,12 +20,6 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
     QString playerName = ClientState::instance().GetCurrentPlayer();
     auto position = ClientState::instance().GetPlayerPosition(playerName);
 
-    //Penguin* penguin = new Penguin(m_requests);
-    //penguin->setPos(position.first * Map::getCellSize(), position.second * Map::getCellSize());
-    //penguin->setZValue(1);
-    //m_scene->addItem(penguin);
-    //m_penguins[playerName] = penguin;
-
     debugPrintPenguins();
 
     connect(m_requests, &ClientRequests::gameStateUpdated, this, &GamePage::onGameStateUpdated);
@@ -42,10 +36,6 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
         m_map->setMapData(mapData);
         m_scene->update();
         });
-
-
-
-    //connect(m_requests, &ClientRequests::snowballFired, this, &GamePage::onSnowballFired);
 
     connect(m_gameStateTimer, &QTimer::timeout, [this]() {
         m_requests->GetGameState(ClientState::instance().GetCurrentPlayer());
@@ -121,14 +111,12 @@ void GamePage::onGameStateUpdated() {
     m_scene->update();
 }
 
-
-
 void GamePage::debugPrintPenguins() const {
     qDebug() << "Current Penguins in QMap:";
     for (auto it = m_penguins.cbegin(); it != m_penguins.cend(); ++it) {
         const QString& name = it.key();
         const Penguin* penguin = it.value();
-        QPointF position = penguin->scenePos(); // Obține poziția actuală a pinguinului în scenă
+        QPointF position = penguin->scenePos(); 
 
         qDebug() << "Player Name:" << name << "| Scene Position:" << position;
     }
@@ -138,7 +126,7 @@ void GamePage::debugPrintPenguins() const {
 void GamePage::startGameStateTimer() {
     if (!m_gameStateTimer->isActive()) {
         qDebug() << "Starting game state timer.";
-        m_gameStateTimer->start(200); // Rulează la fiecare 200ms
+        m_gameStateTimer->start(200);
     }
 }
 
@@ -148,32 +136,6 @@ void GamePage::stopGameStateTimer() {
         m_gameStateTimer->stop();
     }
 }
-
-
-//void GamePage::onSnowballFired(int startX, int startY, const QString& direction, float speed) {
-//    int cellSize = Map::getCellSize();
-//    int scaledX = startX * cellSize;
-//    int scaledY = startY * cellSize;
-//
-//    qDebug() << "Attempting to add Snowball at scene coordinates:" << scaledX << scaledY;
-//
-//    Snowball* snowball = new Snowball(scaledX, scaledY);
-//
-//    if (!m_scene->sceneRect().contains(QPointF(scaledX, scaledY))) {
-//        qDebug() << "Snowball is outside the scene rect!";
-//    }
-//
-//    m_scene->addItem(snowball);
-//
-//    if (m_scene->items().contains(snowball)) {
-//        qDebug() << "Snowball successfully added to the scene!";
-//    }
-//    else {
-//        qDebug() << "Failed to add Snowball to the scene.";
-//    }
-//
-//    m_scene->update();
-//}
 
 
 
