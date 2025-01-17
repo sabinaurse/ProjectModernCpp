@@ -1,13 +1,15 @@
-#include "Penguin.h"
+﻿#include "Penguin.h"
 
 
 Penguin::Penguin(ClientRequests* requests, QGraphicsPixmapItem* parent)
     : QObject(nullptr), QGraphicsPixmapItem(parent), m_clientRequests(requests) {
 
-    m_sprites["front"] = resizePixmap(QPixmap("sprites/Penguin_front.png"), 30, 30);
-    m_sprites["back"] = resizePixmap(QPixmap("sprites/Penguin_back.png"), 30, 30);
-    m_sprites["left"] = resizePixmap(QPixmap("sprites/Penguin_left.png"), 30, 30);
-    m_sprites["right"] = resizePixmap(QPixmap("sprites/Penguin_right.png"), 30, 30);
+    int cellSize = Map::getCellSize();
+
+    m_sprites["front"] = resizePixmap(QPixmap("sprites/Penguin_front.png"), cellSize, cellSize);
+    m_sprites["back"] = resizePixmap(QPixmap("sprites/Penguin_back.png"), cellSize, cellSize);
+    m_sprites["left"] = resizePixmap(QPixmap("sprites/Penguin_left.png"), cellSize, cellSize);
+    m_sprites["right"] = resizePixmap(QPixmap("sprites/Penguin_right.png"), cellSize, cellSize);
 
     setPixmap(m_sprites["front"]);
     setFlag(QGraphicsItem::ItemIsFocusable);
@@ -17,8 +19,6 @@ Penguin::Penguin(ClientRequests* requests, QGraphicsPixmapItem* parent)
 QPixmap Penguin::resizePixmap(const QPixmap& pixmap, int width, int height) {
     return pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::FastTransformation);
 }
-
-
 
 void Penguin::keyPressEvent(QKeyEvent* event) {
     QString playerName = ClientState::instance().GetCurrentPlayer();

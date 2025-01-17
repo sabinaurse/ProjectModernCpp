@@ -7,7 +7,7 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
     layout->setAlignment(Qt::AlignCenter);
     layout->addWidget(m_view);
 
-    m_view->setRenderHint(QPainter::Antialiasing);
+    m_view->setRenderHint(QPainter::Antialiasing, false);
     m_view->setScene(m_scene);
     m_view->show();
 
@@ -19,8 +19,6 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
 
     QString playerName = ClientState::instance().GetCurrentPlayer();
     auto position = ClientState::instance().GetPlayerPosition(playerName);
-
-    debugPrintPenguins();
 
     connect(m_requests, &ClientRequests::gameStateUpdated, this, &GamePage::onGameStateUpdated);
     connect(m_requests, &ClientRequests::mapReceived, this, &GamePage::onMapReceived);
@@ -66,15 +64,17 @@ void GamePage::onMapReceived(const std::vector<std::vector<int>>& mapData, std::
     }
 }
 
-void GamePage::onGameStateUpdated() {
-    const auto& playerPositions = ClientState::instance().GetPlayerPositions();
-    const auto& snowballPositions = ClientState::instance().GetSnowballPositions();
+void GamePage::clearSnowballs() {
+    for (auto it = m_snowballs.begin(); it != m_snowballs.end(); ++it) {
+        for (Snowball* snowball : it.value()) {
+            m_scene->removeItem(snowball);
+            delete snowball;
+        }
+    }
+    m_snowballs.clear();
+}
 
-    qDebug() << "Game state updated. Number of players:" << playerPositions.size();
-    qDebug() << "Number of snowballs:" << snowballPositions.size();
-
-    const int cellSize = Map::getCellSize(); 
-
+void GamePage::updatePenguins(const QMap<QString, std::pair<int, int>>& playerPositions, int cellSize) {
     for (auto it = playerPositions.cbegin(); it != playerPositions.cend(); ++it) {
         const QString& name = it.key();
         const auto& position = it.value();
@@ -87,16 +87,35 @@ void GamePage::onGameStateUpdated() {
         }
 
         Penguin* penguin = m_penguins[name];
-        penguin->setPos(position.first * cellSize, position.second * cellSize); 
+        penguin->setPos(position.first * cellSize, position.second * cellSize);
     }
+}
 
-    for (auto it = m_snowballs.begin(); it != m_snowballs.end(); ++it) {
-        for (Snowball* snowball : it.value()) {
-            m_scene->removeItem(snowball);
-            delete snowball;
-        }
+void GamePage::updateSnowballs(const QVector<QPair<QPair<int, int>, QString>>& snowballPositions, int cellSize) {
+    for (const auto& snowballData : snowballPositions) {
+        const auto& position = snowballData.first;
+        const QString& owner = snowballData.second;
+
+        Snowball* newSnowball = new Snowball(position.first * cellSize, position.second * cellSize);
+        m_scene->addItem(newSnowball);
+
+        m_snowballs[owner].append(newSnowball);
     }
-    m_snowballs.clear();
+}
+
+void GamePage::onGameStateUpdated() {
+    const auto& playerPositions = ClientState::instance().GetPlayerPositions();
+    const auto& snowballPositions = ClientState::instance().GetSnowballPositions();
+
+    qDebug() << "Game state updated. Number of players:" << playerPositions.size();
+    qDebug() << "Number of snowballs:" << snowballPositions.size();
+
+    const int cellSize = Map::getCellSize(); 
+
+    updatePenguins(playerPositions, cellSize); 
+    clearSnowballs();                         
+    updateSnowballs(snowballPositions, cellSize);
+
 
     for (const auto& snowballData : snowballPositions) {
         const auto& position = snowballData.first;
@@ -109,18 +128,6 @@ void GamePage::onGameStateUpdated() {
 
     qDebug() << "Finished updating players and snowballs. Requesting scene update.";
     m_scene->update();
-}
-
-void GamePage::debugPrintPenguins() const {
-    qDebug() << "Current Penguins in QMap:";
-    for (auto it = m_penguins.cbegin(); it != m_penguins.cend(); ++it) {
-        const QString& name = it.key();
-        const Penguin* penguin = it.value();
-        QPointF position = penguin->scenePos(); 
-
-        qDebug() << "Player Name:" << name << "| Scene Position:" << position;
-    }
-    qDebug() << "Total Penguins:" << m_penguins.size();
 }
 
 void GamePage::startGameStateTimer() {

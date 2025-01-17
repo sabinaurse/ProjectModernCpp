@@ -14,7 +14,6 @@
 using PlayerList = std::vector<std::unique_ptr<Player>>;
 using PenguinList = std::vector<std::shared_ptr<Penguin>>;
 
-
 class Game
 {
 public:
@@ -47,10 +46,6 @@ public:
 	const std::vector<std::shared_ptr<Penguin>>& GetPenguins() const { return m_penguins; }
 	std::vector<std::unique_ptr<Player>>& GetPlayers() { return m_players; }
 
-	//void AddPlayerToQueue(Player* player); // -> GM
-	//void TryStartMatch(); // -> GM
-	//void UpdateActiveGames(); // -> GM
-
 	bool IsGameOver() const;
 	bool MapUpdated() const;
 	void ResetMapUpdateFlag();
@@ -59,8 +54,6 @@ public:
 	void StopUpdateLoop();
 	void UpdateAllSnowballs();
 private:
-	//void StartMatch(const std::vector<Player*>& playersForMatch); // -> GM
-
 	void CheckSnowballToPenguinCollisions();
 	void CheckSnowballToObstacleCollisions();
 	void CheckSnowballToSnowballCollisions();

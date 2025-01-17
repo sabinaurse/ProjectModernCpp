@@ -20,6 +20,15 @@
 class GamePage : public QWidget {
     Q_OBJECT
 
+public:
+    explicit GamePage(ClientRequests* requests, QWidget* parent = nullptr);
+    void startGameStateTimer();
+    void clearSnowballs();
+    void updatePenguins(const QMap<QString, std::pair<int, int>>& playerPositions, int cellSize);
+    void updateSnowballs(const QVector<QPair<QPair<int, int>, QString>>& snowballPositions, int cellSize);
+    void stopGameStateTimer();
+    ~GamePage();
+
 private:
     QGraphicsScene* m_scene;
     QGraphicsView* m_view;
@@ -32,13 +41,4 @@ private:
 private slots:
     void onGameStateUpdated();
     void onMapReceived(const std::vector<std::vector<int>>& mapData, std::unordered_map<int, std::string>& cellTypes);
-    void debugPrintPenguins() const;
-
-    //void onSnowballFired(int startX, int startY, const QString& direction, float speed);
-
-public:
-    explicit GamePage(ClientRequests* requests, QWidget* parent = nullptr);
-    void startGameStateTimer();
-    void stopGameStateTimer();
-    ~GamePage();
 };

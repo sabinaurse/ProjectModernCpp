@@ -86,16 +86,13 @@ void Routing::Run(int port)
 
 			std::string playerName = body["name"].s();
 
-			// Obține datele jucătorului
 			std::cout << "[Route] Obținere date pentru jucător: " << playerName << std::endl;
 			auto dbPlayer = m_db.GetPlayerByName(playerName);
 			auto player = std::make_unique<Player>(dbPlayer);
 
-			// Adaugă jucătorul în coada de așteptare
 			std::cout << "[Route] Adăugare jucător în coadă." << std::endl;
 			m_gameManager.AddPlayerToQueue(player.get());
 
-			// Așteptăm până când jucătorul este repartizat într-un joc
 			{
 				std::unique_lock<std::mutex> lock(m_gameManager.GetConditionMutex());
 				m_gameManager.GetPlayerAssignedCondition().wait(lock, [&]() {
@@ -104,7 +101,6 @@ void Routing::Run(int port)
 
 			}
 
-			// Obține ID-ul jocului și trimite răspunsul
 			int gameId = m_gameManager.GetPlayerIdByName(playerName);
 			std::cout << "[Route] Jucătorul " << playerName << " a fost repartizat în jocul " << gameId << std::endl;
 
@@ -133,13 +129,11 @@ void Routing::Run(int port)
 
 			std::string playerName = body["name"].s();
 
-			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
 			int playerId = m_gameManager.GetPlayerIdByName(playerName);
 			if (playerId == -1) {
 				return crow::response(400, "Player not found.");
 			}
 
-			// Obținem jocul corespunzător folosind metoda GetGameById
 			Game* game = m_gameManager.GetGameById(playerId);
 			if (!game) {
 				return crow::response(400, "Player not in an active game.");
@@ -147,7 +141,6 @@ void Routing::Run(int port)
 
 			crow::json::wvalue gameState;
 
-			// Secțiunea pentru jucători
 			const auto& penguins = game->GetPenguins();
 			std::cout << "Number of penguins in game: " << penguins.size() << std::endl;
 
@@ -222,13 +215,11 @@ void Routing::Run(int port)
 
 			std::string playerName = body["name"].s();
 
-			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
 			int playerId = m_gameManager.GetPlayerIdByName(playerName);
 			if (playerId == -1) {
 				return crow::response(400, "Player not found.");
 			}
 
-			// Obținem jocul corespunzător folosind metoda GetGameById
 			Game* game = m_gameManager.GetGameById(playerId);
 			if (!game) {
 				return crow::response(400, "Player not in an active game.");
@@ -263,21 +254,17 @@ void Routing::Run(int port)
 
 			std::string playerName = body["name"].s();
 
-			//Verificăm dacă jucătorul este într - un joc activ
 			int gameId = m_gameManager.GetPlayerIdByName(playerName);
 
 			if (gameId == -1) {
 				return crow::response(200, "Player not in a game yet.");
 			}
 
-			// Obținem jocul corespunzător ID-ului
 			Game* game = m_gameManager.GetGameById(gameId);
 			if (!game) {
 				return crow::response(500, "Error: Game not found for player.");
 			}
 
-
-			// Pornim jocul pentru jucător
 			game->StartGame();
 			return crow::response(200, "Game");
 		}
@@ -298,13 +285,11 @@ void Routing::Run(int port)
 			std::string direction = body["direction"].s();
 			std::string playerName = body["playerName"].s();
 
-			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
 			int playerId = m_gameManager.GetPlayerIdByName(playerName);
 			if (playerId == -1) {
 				return crow::response(400, "Player not found.");
 			}
 
-			// Obținem jocul corespunzător folosind metoda GetGameById
 			Game* game = m_gameManager.GetGameById(playerId);
 			if (!game) {
 				return crow::response(400, "Player not in an active game.");
@@ -341,13 +326,11 @@ void Routing::Run(int port)
 
 			std::string playerName = body["playerName"].s();
 
-			// Obținem ID-ul jucătorului folosind metoda GetPlayerIdByName
 			int playerId = m_gameManager.GetPlayerIdByName(playerName);
 			if (playerId == -1) {
 				return crow::response(400, "Player not found.");
 			}
 
-			// Obținem jocul corespunzător folosind metoda GetGameById
 			Game* game = m_gameManager.GetGameById(playerId);
 			if (!game) {
 				return crow::response(400, "Player not in an active game.");

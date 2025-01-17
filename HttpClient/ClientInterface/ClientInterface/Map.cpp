@@ -1,5 +1,4 @@
 #include "Map.h"
-#include <QPainter>
 
 Map::Map(QGraphicsItem* parent)
     : QGraphicsItem(parent) {}
@@ -24,14 +23,6 @@ QRectF Map::boundingRect() const
     if (m_mapData.empty()) return QRectF(0, 0, 0, 0);
 
     return QRectF(0, 0, m_mapData[0].size() * cellSize, m_mapData.size() * cellSize);
-}
-
-void Map::updateCell(int x, int y, int newCellType) 
-{
-    if (x >= 0 && x < m_mapData[0].size() && y >= 0 && y < m_mapData.size()) {
-        m_mapData[x][y] = newCellType;
-        update();  
-    }
 }
 
 void Map::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -59,10 +50,10 @@ void Map::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidg
                     color = Qt::white;
                 }
                 else if (typeName == "Destructible Wall") {
-                    color = Qt::blue;
+                    color = Qt::cyan;
                 }
                 else if (typeName == "Indestructible Wall") {
-                    color = Qt::cyan;
+                    color = Qt::blue;
                 }
                 else if (typeName == "Bomb") {
                     color = Qt::red;

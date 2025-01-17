@@ -8,17 +8,19 @@
 
 #include "ClientRequests.h"
 #include "ClientState.h"
+#include "Map.h"
 
 class Penguin : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
+
+public:
+    Penguin(ClientRequests* requests, QGraphicsPixmapItem* parent=nullptr);
+    QPixmap resizePixmap(const QPixmap& pixmap, int width, int height);
+
 private:
     ClientRequests* m_clientRequests;
     QMap<QString, QPixmap> m_sprites;
 
 protected:
     void keyPressEvent(QKeyEvent* event) override;
-
-public:
-    Penguin(ClientRequests* requests, QGraphicsPixmapItem* parent=nullptr);
-    QPixmap resizePixmap(const QPixmap& pixmap, int width, int height);
 };

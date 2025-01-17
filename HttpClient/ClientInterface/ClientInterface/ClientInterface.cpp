@@ -19,6 +19,7 @@ ClientInterface::ClientInterface(QWidget *parent)
     gamePage->setMinimumSize(800, 600);
 
     setCentralWidget(stackedWidget);
+    this->showMaximized();
 
     stackedWidget->setCurrentWidget(loginPage);
 

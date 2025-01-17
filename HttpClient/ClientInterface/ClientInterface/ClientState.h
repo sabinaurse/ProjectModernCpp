@@ -4,20 +4,6 @@
 #include <QMap>
 
 class ClientState {
-private:
-    ClientState() : m_playerScore(0), m_playerPoints(0) {}
-
-    QString m_currentPlayer;
-    int m_playerScore;
-    int m_playerPoints;
-    int m_cooldownLevel;
-    int m_bulletSpeedLevel;
-    QMap<QString, std::pair<int, int>> m_playerPositions;
-    QVector<QPair<QPair<int, int>, QString>> m_snowballPositions; //
-
-    ClientState(const ClientState&) = delete;
-    ClientState& operator=(const ClientState&) = delete;
-
 public:
     static ClientState& instance();
 
@@ -34,11 +20,27 @@ public:
     int GetBulletSpeedLevel() const;
 
     void UpdatePlayerPosition(const QString& name, int x, int y);
-    std::pair<int,int> GetPlayerPosition(const QString& name) const;
+    std::pair<int, int> GetPlayerPosition(const QString& name) const;
     const QMap<QString, std::pair<int, int>>& GetPlayerPositions() const;
     void ClearPlayerPositions();
 
     void ClearSnowballPositions();
     void UpdateSnowballPosition(int x, int y, const QString& owner);
     const QVector<QPair<QPair<int, int>, QString>>& GetSnowballPositions() const;
+
+private:
+
+    ClientState() : m_playerScore(0), m_playerPoints(0) {}
+
+    QString m_currentPlayer;
+    int m_playerScore;
+    int m_playerPoints;
+    int m_cooldownLevel;
+    int m_bulletSpeedLevel;
+
+    QMap<QString, std::pair<int, int>> m_playerPositions;
+    QVector<QPair<QPair<int, int>, QString>> m_snowballPositions; 
+
+    ClientState(const ClientState&) = delete;
+    ClientState& operator=(const ClientState&) = delete;
 };

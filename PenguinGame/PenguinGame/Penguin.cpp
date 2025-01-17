@@ -8,49 +8,9 @@ Penguin::Penguin(Player* player, Position initialPosition, const Weapon& weapon)
 	m_weapon{ weapon }
 { }
 
-//void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
-//	if (!m_isAlive) return;
-//
-//	Position delta{ 0, 0 };
-//
-//	switch (direction) {
-//	case 'W': delta.first = -MOVE_STEP; break;
-//	case 'S': delta.first = MOVE_STEP; break;
-//	case 'A': delta.second = -MOVE_STEP; break;
-//	case 'D': delta.second = MOVE_STEP; break;
-//	default:
-//		std::cout << "Invalid direction. Use W, A, S, D for movement." << std::endl;
-//		return;
-//	}
-//
-//	Position newPosition = { m_position.first + delta.first, m_position.second + delta.second };
-//
-//	if (newPosition.first >= 0 && newPosition.first < gameBoard.GetRows() &&
-//		newPosition.second >= 0 && newPosition.second < gameBoard.GetCols()) {
-//
-//		const auto& board = gameBoard.GetBoard();
-//		int cellType = board[newPosition.first][newPosition.second];
-//
-//		if (cellType == 0) {
-//			m_position = newPosition;
-//			m_currentDirection = direction;
-//			std::cout << "Penguin direction set to: " << m_currentDirection << std::endl;
-//			std::cout << "Penguin moved to (" << newPosition.first << ", " << newPosition.second << ")." << std::endl;
-//		}
-//		else {
-//			std::cout << "Move blocked by cell type: " << cellType << " at ("
-//				<< newPosition.first << ", " << newPosition.second << ")." << std::endl;
-//		}
-//	}
-//	else {
-//		std::cout << "Move blocked! Out of bounds at (" << newPosition.first << ", " << newPosition.second << ")." << std::endl;
-//	}
-//}
-
 void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 	if (!m_isAlive) return;
 
-	// Mapare direcții către mișcări
 	static const std::unordered_map<char, Position> directionMap = {
 		{'W', {-MOVE_STEP, 0}},
 		{'S', {MOVE_STEP, 0}},
@@ -58,20 +18,17 @@ void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 		{'D', {0, MOVE_STEP}}
 	};
 
-	// Lambda pentru validarea mutării
 	auto isValidMove = [&](Position pos) {
 		return pos.first >= 0 && pos.first < gameBoard.GetRows() &&
 			pos.second >= 0 && pos.second < gameBoard.GetCols() &&
 			gameBoard.GetBoard()[pos.first][pos.second] == 0;
 		};
 
-	// Verificăm dacă direcția este validă folosind find
 	auto it = directionMap.find(direction);
 	if (it != directionMap.end()) {
 		Position delta = it->second;
 		Position newPosition = { m_position.first + delta.first, m_position.second + delta.second };
 
-		// Validare și actualizare poziție
 		if (isValidMove(newPosition)) {
 			m_position = newPosition;
 			m_currentDirection = direction;
@@ -85,8 +42,6 @@ void Penguin::Move(char direction, const MapGen::GameBoard& gameBoard) {
 		std::cout << "Invalid direction. Use W, A, S, D for movement." << std::endl;
 	}
 }
-
-
 
 void Penguin::Fire() {
 	if (!m_isAlive) return;
@@ -139,8 +94,8 @@ void Penguin::TakeDamage()
 		<< " took damage! Remaining lives: " << static_cast<int>(m_lives) << std::endl;
 
 	if (m_lives <= 0) {
-		m_isAlive = false;
 
+		m_isAlive = false;
 		static int eliminationCount = 0;
 		MarkAsEliminated(++eliminationCount);
 

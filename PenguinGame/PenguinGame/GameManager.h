@@ -9,6 +9,9 @@
 #include <condition_variable>
 #include "Game.h"
 
+constexpr int MAP_ROWS = 26;
+constexpr int MAP_COLUMNS = 30;
+
 constexpr size_t MAX_PLAYERS_PER_MATCH = 4;
 constexpr size_t MIN_PLAYERS_TO_START = 1;
 constexpr int WAIT_TIME_LIMIT = 10;

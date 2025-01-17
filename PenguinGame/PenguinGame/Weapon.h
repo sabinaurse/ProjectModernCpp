@@ -35,11 +35,11 @@ void Weapon::SetBulletSpeedFromLevel(T bulletSpeedLevel)
 {
 	if (bulletSpeedLevel == 1)
 	{
-		m_bulletSpeed = 3.5f;
+		m_bulletSpeed = 1.5f;
 	}
 	else
 	{
-		m_bulletSpeed = 3.25f;
+		m_bulletSpeed = 1.25f;
 	}
 }
 

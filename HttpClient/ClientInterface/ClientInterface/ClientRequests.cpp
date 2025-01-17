@@ -15,40 +15,11 @@ void ClientRequests::initializeRequestActions() {
         emit loginCompleted(data);
         };
 
-    requestActions[RequestType::UpdatePlayerPosition] = [this](const QString& data) {
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
-        if (jsonDoc.isObject()) {
-            QJsonObject jsonObj = jsonDoc.object();
-            updatePlayerPositionFromJson(jsonObj);
-        }
-        };
-
     requestActions[RequestType::GetMap] = [this](const QString& data) {
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
         if (jsonDoc.isObject()) {
             QJsonObject jsonObj = jsonDoc.object();
             getMapFromJson(jsonObj);
-        }
-        };
-
-    requestActions[RequestType::Fire] = [this](const QString& data) {
-        qDebug() << "Fire response received:" << data;
-
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(data.toUtf8());
-        if (jsonDoc.isObject()) {
-            QJsonObject jsonObj = jsonDoc.object();
-
-            int startY = jsonObj["startX"].toInt();
-            int startX = jsonObj["startY"].toInt();
-            QString direction = jsonObj["direction"].toString();
-            float speed = jsonObj["bulletSpeed"].toDouble();
-
-            qDebug() << "Emitting snowballFired with:" << startX << startY << direction << speed;
-
-            emit snowballFired(startX, startY, direction, speed);
-        }
-        else {
-            qDebug() << "Invalid JSON response for Fire.";
         }
         };
 
@@ -77,12 +48,6 @@ void ClientRequests::GetPlayer(const QString& name) {
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
     activeRequests.insert(reply, "getPlayer");
-}
-
-void ClientRequests::DeletePlayer(const QString& name) {
-    QUrl url("http://localhost:18080/deletePlayer/" + name);
-    QNetworkRequest request(url);
-    networkManager->deleteResource(request);
 }
 
 void ClientRequests::UpdatePlayer(const QString& name, int newScore, int newPoints) {
@@ -148,8 +113,6 @@ void ClientRequests::GetMap(const QString& playerName) {
     activeRequests.insert(reply, "getMap");
 }
 
-
-
 void ClientRequests::StartGame() {
     QUrl url("http://localhost:18080/startGame");
 
@@ -163,20 +126,6 @@ void ClientRequests::StartGame() {
     activeRequests.insert(reply, "checkGameStart");
 }
 
-void ClientRequests::ResetGame() {
-    QUrl url("http://localhost:18080/resetGame");
-    QJsonObject json;
-    json["name"] = ClientState::instance().GetCurrentPlayer();
-    QNetworkRequest request(url);
-    networkManager->post(request, QByteArray());
-}
-
-void ClientRequests::GetLeaderboard() {
-    QUrl url("http://localhost:18080/leaderboard");
-    QNetworkRequest request(url);
-    networkManager->get(request);
-}
-
 ClientRequests::RequestType ClientRequests::toRequestType(const QString& requestType) {
     if (requestType == "createPlayer") {
         return RequestType::CreatePlayer;
@@ -184,14 +133,8 @@ ClientRequests::RequestType ClientRequests::toRequestType(const QString& request
     else if (requestType == "getPlayer") {
         return RequestType::GetPlayer;
     }
-    else if (requestType == "updatePlayerPosition") {
-        return RequestType::UpdatePlayerPosition;
-    }
     else if (requestType == "getMap") {
         return RequestType::GetMap;
-    }
-    else if (requestType == "Fire") {
-        return RequestType::Fire;
     }
     else if (requestType == "getGameState") {
         return RequestType::GetGameState;
@@ -233,22 +176,6 @@ void ClientRequests::onReplyFinished(QNetworkReply* reply) {
 
     activeRequests.remove(reply);
     reply->deleteLater();
-}
-
-void ClientRequests::updatePlayerPositionFromJson(const QJsonObject& jsonObj)
-{
-    int x = jsonObj["x"].toInt();
-    int y = jsonObj["y"].toInt();
-    QString playerName = ClientState::instance().GetCurrentPlayer();
-
-    qDebug() << "Player:" << playerName << "Position:" << x << y;
-    qDebug() << "Parsed JSON:" << QJsonDocument(jsonObj).toJson(QJsonDocument::Indented);
-
-    if (!playerName.isEmpty()) {
-        ClientState::instance().UpdatePlayerPosition(playerName, x, y);
-        qDebug() << ClientState::instance().GetPlayerPosition(playerName);
-        emit gameStateUpdated();
-    }
 }
 
 void ClientRequests::getMapFromJson(const QJsonObject& jsonObj)

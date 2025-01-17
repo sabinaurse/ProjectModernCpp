@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QStackedWidget>
+#include <QScreen>
 
 #include "ClientRequests.h"
 #include "ui_ClientInterface.h"
@@ -12,6 +13,10 @@
 class ClientInterface : public QMainWindow
 {
     Q_OBJECT
+
+public:
+    ClientInterface(QWidget* parent = nullptr);
+    ~ClientInterface();
 
 private:
     Ui::ClientInterfaceClass ui;
@@ -26,8 +31,4 @@ private:
 private slots:
     void onLoginSuccessful(const QString& playerName, int playerScore, int playerPoints, int cooldownLevel, int bulletSpeedLevel);
     void onGameStartRequested();
-
-public:
-    ClientInterface(QWidget *parent = nullptr);
-    ~ClientInterface();
 };

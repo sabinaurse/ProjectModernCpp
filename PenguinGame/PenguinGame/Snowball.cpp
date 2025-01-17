@@ -9,17 +9,6 @@ Snowball::Snowball(const std::pair<int, int>& startPosition, Direction launchDir
 {
 }
 
-//void Snowball::UpdatePosition() {
-//	auto currentTime = std::chrono::steady_clock::now();
-//	std::chrono::duration<float> elapsedTime = currentTime - m_lastUpdate;
-//	std::cout << "Updating snowball position. Current direction: " << DirectionToString(m_direction);
-//	if (elapsedTime.count() >= 1.0f / m_bulletSpeed) {
-//		m_position = GetNextPosition();
-//		m_lastUpdate = currentTime;  
-//	}
-//}
-
-
 void Snowball::UpdatePosition() {
 	auto currentTime = std::chrono::steady_clock::now();
 	std::chrono::duration<float> elapsedTime = currentTime - m_lastUpdate;
