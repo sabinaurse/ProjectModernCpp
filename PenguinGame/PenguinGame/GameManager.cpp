@@ -1,7 +1,10 @@
 ﻿#include "GameManager.h"
 #include <iostream>
 
-GameManager::GameManager() {}
+GameManager::GameManager() : m_runningMultigamingLoop(false) {
+	std::cout << "[GameManager] Constructor inițializat." << std::endl;
+}
+
 
 void GameManager::AddPlayerToQueue(Player* player) {
 	std::lock_guard<std::mutex> lock(m_queueMutex);
@@ -36,29 +39,37 @@ void GameManager::AddPlayerToQueue(Player* player) {
 	for (auto* player : playersInQueue) {
 		m_waitingQueue.push({ player, std::chrono::steady_clock::now() });
 	}
+
+	RunMultigamingLoop();
 }
 
 
 void GameManager::RunMultigamingLoop() {
-	const auto delay = std::chrono::milliseconds(100); // Pauză între iterații
-
-	// Rulează bucla principală până când toate jocurile sunt terminate
-	while (true) {
-		TryStartMatch();
-		// UpdateActiveGames();
-
-		 // Oprește bucla dacă nu mai sunt jocuri active și coada e goală
-		{
-			std::lock_guard<std::mutex> lock(m_queueMutex);
-			if (m_waitingQueue.empty() && m_activeGames.empty()) {
-				break;
-			}
-		}
-
-		std::this_thread::sleep_for(delay);
+	if (m_runningMultigamingLoop.exchange(true)) {
+		std::cout << "[GameManager] Bucla de multigaming rulează deja." << std::endl;
+		return; // Dacă bucla rulează deja, ieșim
 	}
 
+	m_multigamingThread = std::thread([this]() {
+		std::cout << "[GameManager] Pornim bucla de multigaming." << std::endl;
+		while (m_runningMultigamingLoop) {
+			TryStartMatch();
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+		std::cout << "[GameManager] Bucla de multigaming s-a terminat." << std::endl;
+		});
 }
+
+
+
+void GameManager::StopMultigamingLoop() {
+	m_runningMultigamingLoop = false;
+
+	if (m_multigamingThread.joinable()) {
+		m_multigamingThread.join();
+	}
+}
+
 
 void GameManager::TryStartMatch() {
 	std::vector<Player*> playersForMatch;
@@ -135,6 +146,7 @@ void GameManager::StartMatch(const std::vector<Player*>& playersForMatch) {
 		std::cout << "[GameManager] Jocul cu ID  a început și a fost adăugat în lista jocurilor active." << std::endl;
 	}
 	m_gameCounter++;
+	m_playerAssignedCondition.notify_all();
 }
 
 void GameManager::UpdateActiveGames() {
@@ -151,6 +163,7 @@ void GameManager::UpdateActiveGames() {
 			++it;
 		}
 	}
+
 }
 
 Game* GameManager::GetGameById(int playerId) {

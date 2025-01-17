@@ -30,9 +30,18 @@ public:
     void RunMultigamingLoop();
     Game* GetGameById(int playerId);
     int GetPlayerIdByName(const std::string& playerName);
+    std::condition_variable& GetPlayerAssignedCondition() {
+        return m_playerAssignedCondition;
+    }
+
+    std::mutex& GetConditionMutex() {
+        return m_conditionMutex;
+    }
+
 private:
     void TryStartMatch();
     void UpdateActiveGames();
+    void StopMultigamingLoop();
     void StartMatch(const std::vector<Player*>& playersForMatch);
 private:
     int m_gameCounter=1;
@@ -41,4 +50,10 @@ private:
     std::unordered_map<std::string, int> m_playerNameToIdMap;
     std::mutex m_queueMutex;
     std::mutex m_gamesMutex;
+
+    std::atomic<bool> m_runningMultigamingLoop; // Controlează starea buclei
+    std::thread m_multigamingThread;
+
+    std::condition_variable m_playerAssignedCondition;
+    std::mutex m_conditionMutex;
 };

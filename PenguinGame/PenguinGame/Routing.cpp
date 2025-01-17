@@ -86,21 +86,42 @@ void Routing::Run(int port)
 
 			std::string playerName = body["name"].s();
 
-			// Obține datele jucătorului din baza de date
+			// Obține datele jucătorului
+			std::cout << "[Route] Obținere date pentru jucător: " << playerName << std::endl;
 			auto dbPlayer = m_db.GetPlayerByName(playerName);
 			auto player = std::make_unique<Player>(dbPlayer);
 
 			// Adaugă jucătorul în coada de așteptare
+			std::cout << "[Route] Adăugare jucător în coadă." << std::endl;
 			m_gameManager.AddPlayerToQueue(player.get());
-			m_gameManager.RunMultigamingLoop();
+
+			// Așteptăm până când jucătorul este repartizat într-un joc
+			{
+				std::unique_lock<std::mutex> lock(m_gameManager.GetConditionMutex());
+				m_gameManager.GetPlayerAssignedCondition().wait(lock, [&]() {
+					return m_gameManager.GetPlayerIdByName(playerName) != -1;
+					});
+
+			}
+
+			// Obține ID-ul jocului și trimite răspunsul
+			int gameId = m_gameManager.GetPlayerIdByName(playerName);
+			std::cout << "[Route] Jucătorul " << playerName << " a fost repartizat în jocul " << gameId << std::endl;
 
 
-			return crow::response(200, "Player added to waiting queue: " + playerName);
+
+
+			std::string responseBody = "Game";
+			std::cout << "[Route] Trimit răspuns către client: " << responseBody << std::endl;
+			return crow::response(200, responseBody);
 		}
 		catch (const std::exception& e) {
+			std::cerr << "[Route] Eroare: " << e.what() << std::endl;
 			return crow::response(500, "Error adding player to game: " + std::string(e.what()));
 		}
 			});
+
+
 
 	CROW_ROUTE(m_app, "/getGameState").methods("POST"_method)
 		([this](const crow::request& req) {
