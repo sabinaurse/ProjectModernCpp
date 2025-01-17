@@ -59,9 +59,14 @@ void Game::EndGame()
 void Game::AddPlayer(std::unique_ptr<Player> player) {
     if (std::any_of(m_players.begin(), m_players.end(),
         [&player](const auto& existingPlayer) { return existingPlayer->GetName() == player->GetName(); })) {
-        //throw std::runtime_error("Player with the same name already exists in the game!");
+        std::cout << "[Game] Jucătorul " << player->GetName() << " există deja în joc. Nu îl adăugăm din nou." << std::endl;
+        return;
     }
+
+    std::cout << "[Game] Adăugăm jucătorul " << player->GetName() << " în joc." << std::endl;
     m_players.push_back(std::move(player));
+    std::cout << "[Game] Numărul total de jucători în joc: " << m_players.size() << std::endl;
+
 }
 
 void Game::InitializePlayers() {
