@@ -247,7 +247,7 @@ void Routing::Run(int port)
 
 			if (gameId == -1) {
 				// Jucătorul nu este într-un joc activ
-				return crow::response(200, "Player not in a game yet.");
+				//return crow::response(200, "Player not in a game yet.");
 			}
 
 			// Obținem jocul corespunzător ID-ului
