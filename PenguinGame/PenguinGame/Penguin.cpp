@@ -83,6 +83,18 @@ void Penguin::EliminateEnemy()
 	std::cout << "Player " << m_player->GetName() << " eliminated an enemy! Total points: " << m_player->GetPoints() << std::endl;
 }
 
+void Penguin::AddLife() {
+	if (m_lives < MAXLIVES) {
+		++m_lives;
+		std::cout << "Penguin controlled by " << m_player->GetName()
+			<< " gained an extra life! Current lives: " << static_cast<int>(m_lives) << std::endl;
+	}
+	else {
+		std::cout << "Penguin controlled by " << m_player->GetName()
+			<< " already has the maximum number of lives (" << MAXLIVES << ")." << std::endl;
+	}
+}
+
 void Penguin::TakeDamage()
 {
 	if (!m_isAlive) {

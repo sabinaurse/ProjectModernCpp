@@ -16,6 +16,7 @@ void Game::StartGame()
 {
     m_isGameOver = false;
     InitializePlayers();
+    m_lastSpawnTime = std::chrono::steady_clock::now();
     std::cout << "Starting the game..." << std::endl;
     StartUpdateLoop();
 }
@@ -134,6 +135,7 @@ void Game::CheckForCollisions()
     CheckSnowballToPenguinCollisions();
     CheckSnowballToObstacleCollisions();
     CheckSnowballToSnowballCollisions();
+    CheckPenguinPowerUpCollisions();
 
     for (const auto& penguin : m_penguins) {
         penguin->GetWeapon().RemoveInactiveSnowballs();
@@ -228,6 +230,57 @@ void Game::CheckSnowballToSnowballCollisions() {
     }
 }
 
+void Game::CheckPenguinPowerUpCollisions() {
+    for (auto& penguin : m_penguins) {
+        for (auto it = m_powerUps.begin(); it != m_powerUps.end(); ++it) {
+            if (penguin->GetPosition() == it->position && it->isActive) {
+                if (it->type == PowerUpType::ExtraLife) {
+                    std::cout << "ExtraLife Power-Up triggered.\n";
+                    penguin->AddLife();
+                }
+
+                it->isActive = false;
+                m_powerUps.erase(it);
+                break;
+            }
+        }
+    }
+}
+
+std::string Game::PowerUpTypeToString(PowerUpType type) {
+    switch (type) {
+    case PowerUpType::ExtraLife:
+        return "ExtraLife";
+    default:
+        return "Unknown";
+    }
+}
+
+void Game::TrySpawnPowerUp() {
+    if (m_powerUps.size() >= m_maxPowerUps) {
+        return;
+    }
+
+    auto now = std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - m_lastSpawnTime).count();
+
+    if (elapsed >= 10) {
+        uint32_t x = rand() % m_boardManager.GetGameBoard().GetRows();
+        uint32_t y = rand() % m_boardManager.GetGameBoard().GetCols();
+
+        if (m_boardManager.GetGameBoard().GetBoard()[x][y] == 0) {
+            m_powerUps.emplace_back(Position{ x, y }, PowerUpType::ExtraLife);
+            m_lastSpawnTime = now;
+            std::cout << "Power-Up (ExtraLife) spawned at (" << x << ", " << y << ").\n";
+        }
+    }
+}
+
+
+const std::vector<PowerUp>& Game::GetPowerUps() const {
+    return m_powerUps;
+}
+
 bool Game::IsGameOver() const {
     return m_isGameOver;
 }
@@ -248,6 +301,8 @@ void Game::StartUpdateLoop() {
             auto startTime = std::chrono::steady_clock::now();
 
             UpdateAllSnowballs(); 
+
+            TrySpawnPowerUp();
 
             CheckForCollisions();
 

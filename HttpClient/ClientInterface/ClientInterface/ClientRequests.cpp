@@ -277,6 +277,24 @@ void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
                 }
             }
         }
+
+        ClientState::instance().ClearPowerUpPositions();
+
+        if (jsonObj.contains("powerUps") && jsonObj["powerUps"].isArray()) {
+            QJsonArray powerUpsArray = jsonObj["powerUps"].toArray();
+
+            for (const QJsonValue& powerUpValue : powerUpsArray) {
+                if (powerUpValue.isObject()) {
+                    QJsonObject powerUpObj = powerUpValue.toObject();
+                    int y = powerUpObj["x"].toInt();
+                    int x = powerUpObj["y"].toInt();
+                    QString type = powerUpObj["type"].toString();
+
+                    ClientState::instance().UpdatePowerUpPosition(x, y, type);
+                    qDebug() << "Updated Power-Up position:" << type << "(" << x << "," << y << ")";
+                }
+            }
+        }
          
         if (jsonObj.contains("board") && jsonObj["board"].isArray()) {
             QJsonArray boardArray = jsonObj["board"].toArray();

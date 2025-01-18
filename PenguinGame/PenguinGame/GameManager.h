@@ -14,13 +14,12 @@ constexpr int MAP_COLUMNS = 30;
 
 constexpr size_t MAX_PLAYERS_PER_MATCH = 4;
 constexpr size_t MIN_PLAYERS_TO_START = 1;
-constexpr int WAIT_TIME_LIMIT = 10;
+constexpr int WAIT_TIME_LIMIT = 2;
 
 struct WaitingPlayer {
-    Player* player; // Pointer către jucătorul aflat în așteptare.
-    std::chrono::steady_clock::time_point joinTime; // Momentul când jucătorul a fost adăugat în coadă.
+    Player* player; 
+    std::chrono::steady_clock::time_point joinTime; 
 
-    // Operatorul < pentru a defini ordinea în coada de prioritate.
     bool operator<(const WaitingPlayer& other) const {
         return player->GetScore() < other.player->GetScore();
     }

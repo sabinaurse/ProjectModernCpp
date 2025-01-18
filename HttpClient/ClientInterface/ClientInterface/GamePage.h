@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QWidget>
 #include <QGraphicsScene>
@@ -27,6 +27,11 @@ public:
     void updatePenguins(const QMap<QString, std::pair<int, int>>& playerPositions, int cellSize);
     void updateSnowballs(const QVector<QPair<QPair<int, int>, QString>>& snowballPositions, int cellSize);
     void stopGameStateTimer();
+
+    void updatePowerUps(const QVector<QPair<QPoint, QString>>& powerUpPositions, int cellSize); // Metodă pentru actualizare
+    void clearPowerUps(); // Metodă pentru curățare
+
+
     ~GamePage();
 
 private:
@@ -37,6 +42,8 @@ private:
     ClientRequests* m_requests;
     QTimer* m_gameStateTimer;
     Map* m_map;
+
+    QMap<QPair<int, int>, QGraphicsItem*> m_powerUps;
 
 private slots:
     void onGameStateUpdated();

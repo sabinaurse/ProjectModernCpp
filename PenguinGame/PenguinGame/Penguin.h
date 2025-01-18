@@ -23,6 +23,8 @@ public:
 	Weapon& GetWeapon() { return m_weapon; }
 	const Weapon& GetWeapon() const { return m_weapon; }
 
+	void AddLife();
+
 	void TakeDamage();
 	void ResetState();
 	bool IsAlive() const { return m_isAlive; }

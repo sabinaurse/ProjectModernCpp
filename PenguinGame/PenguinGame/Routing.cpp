@@ -170,8 +170,7 @@ void Routing::Run(int port)
 				gameState["players"][i]["y"] = penguin->GetPosition().second;
 			}
 
-			// Secțiunea pentru gloanțe
-			size_t snowballIndex = 0; // Index pentru fiecare glonț
+			size_t snowballIndex = 0; 
 			for (const auto& penguin : penguins) {
 				if (!penguin) continue;
 
@@ -181,8 +180,18 @@ void Routing::Run(int port)
 					gameState["snowballs"][snowballIndex]["y"] = snowball.GetPosition().second;
 					gameState["snowballs"][snowballIndex]["owner"] = penguin->GetPlayer()->GetName();
 					gameState["snowballs"][snowballIndex]["active"] = snowball.IsActive();
-					//gameState["snowballs"][snowballIndex]["direction"] = DirectionToString(snowball.GetDirection());
 					++snowballIndex;
+				}
+			}
+
+			const auto& powerUps = game->GetPowerUps();
+			size_t powerUpIndex = 0;
+			for (const auto& powerUp : powerUps) {
+				if (powerUp.isActive) {
+					gameState["powerUps"][powerUpIndex]["x"] = powerUp.position.first;
+					gameState["powerUps"][powerUpIndex]["y"] = powerUp.position.second;
+					gameState["powerUps"][powerUpIndex]["type"] = Game::PowerUpTypeToString(powerUp.type);
+					++powerUpIndex;
 				}
 			}
 

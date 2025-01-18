@@ -75,3 +75,15 @@ void ClientState::UpdateSnowballPosition(int x, int y, const QString& owner) {
 const QVector<QPair<QPair<int, int>, QString>>& ClientState::GetSnowballPositions() const {
     return m_snowballPositions;
 }
+
+void ClientState::ClearPowerUpPositions() {
+    m_powerUps.clear();
+}
+
+void ClientState::UpdatePowerUpPosition(int x, int y, const QString& type) {
+    m_powerUps.append({ QPoint(x, y), type });
+}
+
+const QVector<QPair<QPoint, QString>>& ClientState::GetPowerUpPositions() const {
+    return m_powerUps;
+}

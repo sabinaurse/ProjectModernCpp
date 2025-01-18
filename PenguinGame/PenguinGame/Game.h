@@ -14,6 +14,19 @@
 using PlayerList = std::vector<std::unique_ptr<Player>>;
 using PenguinList = std::vector<std::shared_ptr<Penguin>>;
 
+enum class PowerUpType {
+	ExtraLife
+};
+
+struct PowerUp {
+	Position position;
+	PowerUpType type; 
+	bool isActive;
+
+	PowerUp(Position pos, PowerUpType powerUpType = PowerUpType::ExtraLife)
+		: position(pos), type(powerUpType), isActive(true) {}
+};
+
 class Game
 {
 public:
@@ -46,6 +59,11 @@ public:
 	const std::vector<std::shared_ptr<Penguin>>& GetPenguins() const { return m_penguins; }
 	std::vector<std::unique_ptr<Player>>& GetPlayers() { return m_players; }
 
+	static std::string PowerUpTypeToString(PowerUpType type);
+	void TrySpawnPowerUp();
+	void CheckPenguinPowerUpCollisions();
+	const std::vector<PowerUp>& GetPowerUps() const;
+
 	bool IsGameOver() const;
 	bool MapUpdated() const;
 	void ResetMapUpdateFlag();
@@ -62,6 +80,10 @@ private:
 	PlayerList m_players;
 	PenguinList m_penguins;
 	int m_radius=10;
+
+	std::vector<PowerUp> m_powerUps;
+	const size_t m_maxPowerUps{ 3 };
+	std::chrono::time_point<std::chrono::steady_clock> m_lastSpawnTime;
 
 	bool m_isGameOver{ false };
 	bool m_mapUpdated{ false };

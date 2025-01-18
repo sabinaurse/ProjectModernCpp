@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QMap>
+#include <QPoint>
 
 class ClientState {
 public:
@@ -28,6 +29,10 @@ public:
     void UpdateSnowballPosition(int x, int y, const QString& owner);
     const QVector<QPair<QPair<int, int>, QString>>& GetSnowballPositions() const;
 
+    void ClearPowerUpPositions();
+    void UpdatePowerUpPosition(int x, int y, const QString& type);
+    const QVector<QPair<QPoint, QString>>& GetPowerUpPositions() const;
+
 private:
 
     ClientState() : m_playerScore(0), m_playerPoints(0) {}
@@ -40,6 +45,8 @@ private:
 
     QMap<QString, std::pair<int, int>> m_playerPositions;
     QVector<QPair<QPair<int, int>, QString>> m_snowballPositions; 
+
+    QVector<QPair<QPoint, QString>> m_powerUps;
 
     ClientState(const ClientState&) = delete;
     ClientState& operator=(const ClientState&) = delete;

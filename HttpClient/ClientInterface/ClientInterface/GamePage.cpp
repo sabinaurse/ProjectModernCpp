@@ -7,7 +7,7 @@ GamePage::GamePage(ClientRequests* requests, QWidget* parent)
     layout->setAlignment(Qt::AlignCenter);
     layout->addWidget(m_view);
 
-    m_view->setRenderHint(QPainter::Antialiasing, false);
+    m_view->setRenderHint(QPainter::Antialiasing);
     m_view->setScene(m_scene);
     m_view->show();
 
@@ -106,29 +106,64 @@ void GamePage::updateSnowballs(const QVector<QPair<QPair<int, int>, QString>>& s
 void GamePage::onGameStateUpdated() {
     const auto& playerPositions = ClientState::instance().GetPlayerPositions();
     const auto& snowballPositions = ClientState::instance().GetSnowballPositions();
+    const auto& powerUpPositions = ClientState::instance().GetPowerUpPositions(); 
+
 
     qDebug() << "Game state updated. Number of players:" << playerPositions.size();
     qDebug() << "Number of snowballs:" << snowballPositions.size();
-
+    qDebug() << "Number of power-ups:" << powerUpPositions.size();
+    
     const int cellSize = Map::getCellSize(); 
 
     updatePenguins(playerPositions, cellSize); 
-    clearSnowballs();                         
+    clearSnowballs();          
     updateSnowballs(snowballPositions, cellSize);
-
-
-    for (const auto& snowballData : snowballPositions) {
-        const auto& position = snowballData.first;
-        const QString& owner = snowballData.second;
-
-        Snowball* newSnowball = new Snowball(position.first * cellSize, position.second * cellSize);
-        m_scene->addItem(newSnowball);
-        m_snowballs[owner].append(newSnowball);
-    }
+    updatePowerUps(powerUpPositions, cellSize);
 
     qDebug() << "Finished updating players and snowballs. Requesting scene update.";
     m_scene->update();
 }
+
+void GamePage::clearPowerUps() {
+    for (auto it = m_powerUps.begin(); it != m_powerUps.end(); ++it) {
+        m_scene->removeItem(it.value());
+        delete it.value();
+    }
+    m_powerUps.clear();
+}
+
+void GamePage::updatePowerUps(const QVector<QPair<QPoint, QString>>& powerUpPositions, int cellSize) {
+    clearPowerUps(); 
+
+    for (const auto& powerUpData : powerUpPositions) {
+        QPoint position = powerUpData.first;
+        QString type = powerUpData.second;
+
+        QGraphicsEllipseItem* powerUpItem = new QGraphicsEllipseItem();
+
+        int powerUpSize = cellSize / 2;
+
+        powerUpItem->setRect(0, 0, powerUpSize, powerUpSize);
+
+        powerUpItem->setPos(position.x() * cellSize + cellSize / 4,
+            position.y() * cellSize + cellSize / 4);
+        powerUpItem->setZValue(2);
+
+        QBrush brush;
+        if (type == "ExtraLife") {
+            brush.setColor(Qt::red);
+        }
+        else {
+            brush.setColor(Qt::yellow);
+        }
+        brush.setStyle(Qt::SolidPattern);
+        powerUpItem->setBrush(brush);
+
+        m_scene->addItem(powerUpItem);
+        m_powerUps[{position.x(), position.y()}] = powerUpItem;
+    }
+}
+
 
 void GamePage::startGameStateTimer() {
     if (!m_gameStateTimer->isActive()) {
