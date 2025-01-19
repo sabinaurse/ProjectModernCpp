@@ -60,13 +60,13 @@ void Game::EndGame()
 void Game::AddPlayer(std::unique_ptr<Player> player) {
     if (std::any_of(m_players.begin(), m_players.end(),
         [&player](const auto& existingPlayer) { return existingPlayer->GetName() == player->GetName(); })) {
-        std::cout << "[Game] Jucătorul " << player->GetName() << " există deja în joc. Nu îl adăugăm din nou." << std::endl;
+        std::cout << "Player " << player->GetName() << " is already in the game. We won't add him again." << std::endl;
         return;
     }
 
-    std::cout << "[Game] Adăugăm jucătorul " << player->GetName() << " în joc." << std::endl;
+    std::cout << "Added player " << player->GetName() << " to the game" << std::endl;
     m_players.push_back(std::move(player));
-    std::cout << "[Game] Numărul total de jucători în joc: " << m_players.size() << std::endl;
+    std::cout << "Total players in game: " << m_players.size() << std::endl;
 
 }
 
@@ -139,8 +139,6 @@ void Game::CheckForCollisions()
 
     for (const auto& penguin : m_penguins) {
         penguin->GetWeapon().RemoveInactiveSnowballs();
-        //if(!penguin)
-            //;
     }
 }
 
@@ -195,7 +193,7 @@ void Game::CheckSnowballToObstacleCollisions() {
 
             case 3: 
                 std::cout << "Snowball triggered bomb at (" << pos.first << ", " << pos.second << "). Triggering explosion." << std::endl;
-                m_boardManager.TriggerExplosion(pos.first, pos.second, m_radius,m_penguins);
+                m_boardManager.TriggerExplosion(pos.first, pos.second, RADIUS, m_penguins);
                 snowball.Deactivate();
                 m_mapUpdated = true;
                 break;
@@ -257,7 +255,7 @@ std::string Game::PowerUpTypeToString(PowerUpType type) {
 }
 
 void Game::TrySpawnPowerUp() {
-    if (m_powerUps.size() >= m_maxPowerUps) {
+    if (m_powerUps.size() >= MAX_POWER_UPS) {
         return;
     }
 

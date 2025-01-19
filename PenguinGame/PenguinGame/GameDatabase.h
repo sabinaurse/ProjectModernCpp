@@ -13,7 +13,6 @@ namespace game_database
         int score;
         int bullet_speed_level;
         int cooldown_level;
-        //id_game => multigaming
     };
 
     inline auto createStorage(const std::string& filename)

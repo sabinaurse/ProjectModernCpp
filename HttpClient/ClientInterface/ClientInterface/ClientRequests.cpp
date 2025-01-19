@@ -35,7 +35,6 @@ void ClientRequests::initializeRequestActions() {
         };
     }
 
-
 void ClientRequests::CreatePlayer(const QString& name) {
     QUrl url("http://localhost:18080/addPlayer/" + name);
     QNetworkRequest request(url);
@@ -322,7 +321,6 @@ void ClientRequests::updateGameStateFromJson(const QJsonObject& jsonObj) {
         qDebug() << "GameState response missing 'players' array.";
     }
 }
-
 
 void ClientRequests::MovePlayer(const QString& playerName, const QString& direction) {
     QUrl url("http://localhost:18080/movePlayer");

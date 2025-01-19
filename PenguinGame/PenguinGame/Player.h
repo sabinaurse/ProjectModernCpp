@@ -10,9 +10,6 @@ public:
 	Player(const game_database::GamePlayer& dbPlayer);
 	~Player() = default;
 
-	//pt multigaming
-	//Player(const std::string& name, uint32_t score = 0);
-
 	std::string GetName() const;
 	int GetPoints() const;
 	int GetScore() const;

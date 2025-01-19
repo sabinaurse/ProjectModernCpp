@@ -46,6 +46,7 @@ namespace MapGen {
         void CreateRandomPath(const std::pair<uint32_t, uint32_t>& start,const std::pair<uint32_t, uint32_t>& end);
         bool IsPathPossible(const std::pair<uint32_t, uint32_t>& start, const std::pair<uint32_t, uint32_t>& end) const;
         void ForcePath(std::pair<uint32_t, uint32_t> start, std::pair<uint32_t, uint32_t> end);
+
     private:
         uint32_t m_rows = 0;
         uint32_t m_cols = 0;

@@ -44,11 +44,6 @@ namespace MapGen {
         }
         return *this;
     }
-    /*
-    void GameBoard::AddCellType(int id, const CellTypeDefinition& definition) {
-        m_cellDefinitions[id] = definition;
-    }
-    */
 
     void GameBoard::AddCellType(uint8_t id, CellTypeDefinition definition) {
         m_cellDefinitions.emplace(static_cast<unsigned int>(id), std::move(definition));
@@ -67,22 +62,20 @@ namespace MapGen {
         ReserveCorners();
         CreateRandomPaths();
 
-        // 1. Plasarea grupurilor de ziduri (indestructibile/destructibile)
         for (const auto& [id, definition] : m_cellDefinitions) {
             if (id == 1 || id == 2) {
-                uint8_t baseGroupCount = (id == 1) ? 10 : 6; // Mai puține grupuri pentru tipul 2
-                uint8_t additionalGroups = (id == 1) ? 8 : 5; // Mai puține variații pentru tipul 2
+                uint8_t baseGroupCount = (id == 1) ? 10 : 6; 
+                uint8_t additionalGroups = (id == 1) ? 8 : 5; 
                 uint8_t groupCount = baseGroupCount + (m_rng() % additionalGroups);
 
                 for (uint8_t g = 0; g < groupCount; ++g) {
                     bool placed = false;
 
-                    // Generate random groups with a maximum of 10 attempts
                     for (int attempt = 0; attempt < 10 && !placed; ++attempt) {
-                        uint32_t x = m_rng() % m_rows;    // Random între 0 și m_rows - 1
-                        uint32_t y = m_rng() % m_cols;    // Random între 0 și m_cols - 1
+                        uint32_t x = m_rng() % m_rows;   
+                        uint32_t y = m_rng() % m_cols;    
                         uint32_t width = 2 + (m_rng() % 2);
-                        uint32_t height = 2 + (m_rng() % 2); // Random între 2 și 4
+                        uint32_t height = 2 + (m_rng() % 2); 
 
                         if (CanPlaceGroup(id, x, y, width, height)) {
                             GenerateRectangleGroup(id, x, y, width, height);
@@ -97,7 +90,6 @@ namespace MapGen {
             }
         }
 
-        // 2. Plasarea bombelor
         int bombCount = 0;
         std::vector<std::pair<int, int>> bombPositions;
 
@@ -156,7 +148,6 @@ namespace MapGen {
     }
 
     bool GameBoard::CanPlaceGroup(uint8_t id, uint32_t x, uint32_t y, uint32_t width, uint32_t height) const noexcept {
-        // Coordonatele colțurilor rezervate
         std::vector<std::pair<uint32_t, uint32_t>> reservedCorners = {
             {0, 0},
             {0, m_cols - 1},
@@ -165,7 +156,7 @@ namespace MapGen {
         };
 
         auto isNearReservedCorner = [&](uint32_t cx, uint32_t cy) {
-            constexpr uint32_t cornerBuffer = 2; // Distanța minimă față de colțuri
+            constexpr uint32_t cornerBuffer = 2; 
             for (const auto& corner : reservedCorners) {
                 if (SquaredDistance(cx, cy, corner.first, corner.second) <= cornerBuffer * cornerBuffer) {
                     return true;
@@ -174,55 +165,45 @@ namespace MapGen {
             return false;
             };
 
-        // Verificare distanță față de alte grupuri
         auto isFarFromOtherGroups = [&](uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
-            constexpr uint32_t minDistance = 2; // Distanța minimă față de alte grupuri
+            constexpr uint32_t minDistance = 2; 
             for (const auto& group : m_placedGroups) {
                 uint32_t gx, gy, gwidth, gheight;
                 std::tie(gx, gy, gwidth, gheight) = group;
 
-                // Verificăm suprapunerea extinsă cu buffer
-                if (!(x >= gx + gwidth + minDistance || gx >= x + width + minDistance || // Orizontal
-                    y >= gy + gheight + minDistance || gy >= y + height + minDistance)) { // Vertical
+                if (!(x >= gx + gwidth + minDistance || gx >= x + width + minDistance ||
+                    y >= gy + gheight + minDistance || gy >= y + height + minDistance)) { 
                     return false;
                 }
             }
             return true;
             };
 
-        // Verifică fiecare celulă a grupului
         for (uint32_t i = 0; i < width; ++i) {
             for (uint32_t j = 0; j < height; ++j) {
                 uint32_t newX = x + i;
                 uint32_t newY = y + j;
 
-                // Verifică limitele tablei
                 if (newX >= m_rows || newY >= m_cols) {
                     return false;
                 }
 
-                // Verifică dacă zona este liberă
                 if (m_board[newX][newY] != 0) {
                     return false;
                 }
 
-                // Verifică dacă celula este prea aproape de colțuri rezervate
                 if (isNearReservedCorner(newX, newY)) {
                     return false;
                 }
             }
         }
 
-        // Verifică dacă grupul este suficient de departe de alte grupuri
         if (!isFarFromOtherGroups(x, y, width, height)) {
             return false;
         }
 
         return true;
     }
-
-
-
 
     void GameBoard::ReserveCorners() {
         m_board[0][0] = 0;
@@ -248,7 +229,6 @@ namespace MapGen {
     }
 
     bool GameBoard::IsPathPossible(const std::pair<uint32_t, uint32_t>& start,const  std::pair<uint32_t, uint32_t>& end) const {
-        // use a BFS approach
         std::queue<std::pair<uint32_t, uint32_t>> toVisit;
         std::vector<std::vector<bool>> visited(m_rows, std::vector<bool>(m_cols, false));
 

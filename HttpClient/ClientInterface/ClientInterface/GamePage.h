@@ -28,9 +28,8 @@ public:
     void updateSnowballs(const QVector<QPair<QPair<int, int>, QString>>& snowballPositions, int cellSize);
     void stopGameStateTimer();
 
-    void updatePowerUps(const QVector<QPair<QPoint, QString>>& powerUpPositions, int cellSize); // Metodă pentru actualizare
-    void clearPowerUps(); // Metodă pentru curățare
-
+    void updatePowerUps(const QVector<QPair<QPoint, QString>>& powerUpPositions, int cellSize); 
+    void clearPowerUps(); 
 
     ~GamePage();
 

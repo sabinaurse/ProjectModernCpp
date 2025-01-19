@@ -17,10 +17,12 @@ public:
     Penguin(ClientRequests* requests, QGraphicsPixmapItem* parent=nullptr);
     QPixmap resizePixmap(const QPixmap& pixmap, int width, int height);
 
+protected:
+    void keyPressEvent(QKeyEvent* event) override;
+
 private:
     ClientRequests* m_clientRequests;
     QMap<QString, QPixmap> m_sprites;
 
-protected:
-    void keyPressEvent(QKeyEvent* event) override;
+
 };

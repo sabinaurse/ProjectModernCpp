@@ -17,6 +17,13 @@
 class LoginPage : public QWidget {
     Q_OBJECT
 
+public:
+    explicit LoginPage(ClientRequests* requests, QWidget* parent = nullptr);
+    ~LoginPage();
+
+signals:
+    void loginSuccessful(const QString& playerName, int playerScore, int playerPoints, int cooldownLevel, int bulletSpeedLevel);
+
 private:
     Ui::LoginPage ui;
     ClientRequests* m_clientRequests;
@@ -27,14 +34,6 @@ private slots:
     void onRegisterClicked();
     void onRequestCompleted(const QString& data);
     void onRequestFailed(const QString& error);
-
-public:
-    explicit LoginPage(ClientRequests* requests, QWidget* parent = nullptr);
-    ~LoginPage();
-
-signals:
-signals:
-    void loginSuccessful(const QString& playerName, int playerScore, int playerPoints, int cooldownLevel, int bulletSpeedLevel);
 };
 
 

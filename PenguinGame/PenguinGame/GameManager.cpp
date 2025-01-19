@@ -2,13 +2,13 @@
 #include <iostream>
 
 GameManager::GameManager() : m_runningMultigamingLoop(false) {
-	std::cout << "[GameManager] Constructor inițializat." << std::endl;
+	std::cout << "Initialized GameManager constructor" << std::endl;
 }
 
 void GameManager::AddPlayerToQueue(Player* player) {
 	std::lock_guard<std::mutex> lock(m_queueMutex);
 
-	std::cout << "[GameManager] Adăugarea jucătorului " << player->GetName() << " în coadă." << std::endl;
+	std::cout << "Added player " << player->GetName() << " to the waiting queue." << std::endl;
 
 	std::vector<Player*> playersInQueue;
 	bool exists = false;
@@ -17,7 +17,7 @@ void GameManager::AddPlayerToQueue(Player* player) {
 		const auto& waitingPlayer = m_waitingQueue.top();
 		if (waitingPlayer.player == player) {
 			exists = true;
-			std::cout << "[GameManager] Jucătorul " << player->GetName() << " este deja în coadă. Nu îl mai adăugăm." << std::endl;
+			std::cout << "Player " << player->GetName() << " is already in the waiting queue." << std::endl;
 			break;
 		}
 		playersInQueue.push_back(waitingPlayer.player);
@@ -28,7 +28,7 @@ void GameManager::AddPlayerToQueue(Player* player) {
 		WaitingPlayer waitingPlayer{ player, std::chrono::steady_clock::now() };
 		m_waitingQueue.push(waitingPlayer);
 		m_playerNameToIdMap[player->GetName()] = -1;
-		std::cout << "[GameManager] Jucătorul " << player->GetName() << " a fost adăugat în coadă." << std::endl;
+		std::cout << "Player " << player->GetName() << " has been added to the waiting queue." << std::endl;
 	}
 
 	for (auto* player : playersInQueue) {
@@ -40,17 +40,17 @@ void GameManager::AddPlayerToQueue(Player* player) {
 
 void GameManager::RunMultigamingLoop() {
 	if (m_runningMultigamingLoop.exchange(true)) {
-		std::cout << "[GameManager] Bucla de multigaming rulează deja." << std::endl;
+		std::cout << "Multigaming loop is running." << std::endl;
 		return; 
 	}
 
 	m_multigamingThread = std::thread([this]() {
-		std::cout << "[GameManager] Pornim bucla de multigaming." << std::endl;
+		std::cout << "Starting multigaming loop." << std::endl;
 		while (m_runningMultigamingLoop) {
 			TryStartMatch();
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
-		std::cout << "[GameManager] Bucla de multigaming s-a terminat." << std::endl;
+		std::cout << "Multigaming loop has ended." << std::endl;
 		});
 }
 
@@ -73,19 +73,19 @@ void GameManager::TryStartMatch() {
 		auto waitingPlayer = m_waitingQueue.top();
 		m_waitingQueue.pop();
 
-		std::cout << "[GameManager] Jucător extras din coadă: " << waitingPlayer.player->GetName() << std::endl;
+		std::cout << "Player has been extracted from the waiting queue:" << waitingPlayer.player->GetName() << std::endl;
 
 		auto waitTime = std::chrono::duration_cast<std::chrono::seconds>(now - waitingPlayer.joinTime).count();
 		playersForMatch.push_back(waitingPlayer.player);
 
 		if (playersForMatch.size() == MAX_PLAYERS_PER_MATCH) {
-			std::cout << "[GameManager] Meciul poate începe cu " << playersForMatch.size() << " jucători." << std::endl;
+			std::cout << "The match can start with " << playersForMatch.size() << " players." << std::endl;
 			StartMatch(playersForMatch);
 			return;
 		}
 
 		if (waitTime >= WAIT_TIME_LIMIT && playersForMatch.size() >= MIN_PLAYERS_TO_START) {
-			std::cout << "[GameManager] Meciul poate începe cu " << playersForMatch.size() << " jucători." << std::endl;
+			std::cout << "The match can start with " << playersForMatch.size() << " players." << std::endl;
 			StartMatch(playersForMatch);
 			return;
 		}
@@ -93,39 +93,37 @@ void GameManager::TryStartMatch() {
 		tempQueue.push_back(waitingPlayer);
 	}
 
-	std::cout << "[GameManager] Numărul de jucători în playersForMatch: " << playersForMatch.size() << std::endl;
+	std::cout << "Number of players in match: " << playersForMatch.size() << std::endl;
 
 	for (const auto& player : tempQueue) {
 		m_waitingQueue.push(player);
 	}
-	std::cout << "[GameManager] Dimensiunea cozii după reintroducere: " << m_waitingQueue.size() << std::endl;
-	std::cout << "[GameManager] Nu sunt suficienți jucători pentru a începe un meci." << std::endl;
+	std::cout << "Size of waiting queue with remaining players: " << m_waitingQueue.size() << std::endl;
+	std::cout << "Not enough players to start a match." << std::endl;
 }
 
 void GameManager::StartMatch(const std::vector<Player*>& playersForMatch) {
-	std::cout << "[GameManager] Pornim un nou meci cu " << playersForMatch.size() << " jucători." << std::endl;
+	std::cout << "Starting a match with " << playersForMatch.size() << " players." << std::endl;
 
 	auto newGame = std::make_unique<Game>(MAP_ROWS, MAP_COLUMNS);
 
 	newGame->SetGameId(m_gameCounter);
 
-	std::cout << "Adăugăm jucători la meci..." << std::endl;
-	std::cout << "[GameManager] Numărul de jucători pentru meci: " << playersForMatch.size() << std::endl;
+	std::cout << "Adding players to the match..." << std::endl;
+	std::cout << "Number of players in match: " << playersForMatch.size() << std::endl;
 
 	for (auto* player : playersForMatch) {
 		player->SetGameId(m_gameCounter);
 		newGame->AddPlayer(std::make_unique<Player>(*player));
 		m_playerNameToIdMap[player->GetName()] = m_gameCounter;
-		std::cout << "[GameManager] Adăugăm jucătorul " << player->GetName() << " la meci cu id " << player->GetGameId() << "si id-ul"<< m_playerNameToIdMap[player->GetName()] << std::endl;
+		std::cout << "Adding player: " << player->GetName() << " to the match with id " << player->GetGameId() << "and id "<< m_playerNameToIdMap[player->GetName()] << std::endl;
 
 	}
-
-	//newGame->StartGame();
 
 	{
 		std::lock_guard<std::mutex> lock(m_gamesMutex);
 		m_activeGames[m_gameCounter] = std::move(newGame);
-		std::cout << "[GameManager] Jocul cu ID  a început și a fost adăugat în lista jocurilor active." << std::endl;
+		std::cout << "The match has started and has been added to the active matches list." << std::endl;
 	}
 	m_gameCounter++;
 	m_playerAssignedCondition.notify_all();
@@ -133,11 +131,11 @@ void GameManager::StartMatch(const std::vector<Player*>& playersForMatch) {
 
 void GameManager::UpdateActiveGames() {
 	std::lock_guard<std::mutex> lock(m_gamesMutex);
-	std::cout << "[GameManager] Actualizăm jocurile active." << std::endl;
+	std::cout << "Updating active matches." << std::endl;
 
 	for (auto it = m_activeGames.begin(); it != m_activeGames.end();) {
 		if (it->second->IsGameOver()) {
-			std::cout << "[GameManager] Jocul cu ID " << it->first << " s-a încheiat. Îl eliminăm din lista activă." << std::endl;
+			std::cout << "The match with ID " << it->first << " is over. Adding it to the inactive matches list." << std::endl;
 			it->second->EndGame();
 			it = m_activeGames.erase(it);
 		}

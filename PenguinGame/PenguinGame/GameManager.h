@@ -45,6 +45,7 @@ private:
     void UpdateActiveGames();
     void StopMultigamingLoop();
     void StartMatch(const std::vector<Player*>& playersForMatch);
+
 private:
     int m_gameCounter=1;
     std::priority_queue<WaitingPlayer> m_waitingQueue;
@@ -53,7 +54,7 @@ private:
     std::mutex m_queueMutex;
     std::mutex m_gamesMutex;
 
-    std::atomic<bool> m_runningMultigamingLoop; // Controlează starea buclei
+    std::atomic<bool> m_runningMultigamingLoop;
     std::thread m_multigamingThread;
 
     std::condition_variable m_playerAssignedCondition;

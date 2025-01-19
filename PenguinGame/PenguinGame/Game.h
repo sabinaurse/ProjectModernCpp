@@ -30,6 +30,9 @@ struct PowerUp {
 class Game
 {
 public:
+	static constexpr int RADIUS = 10;           
+	static constexpr size_t MAX_POWER_UPS = 3;
+
 	Game() = default;
 	Game(uint32_t rows, uint32_t cols)
 		: m_boardManager(rows, cols) {}

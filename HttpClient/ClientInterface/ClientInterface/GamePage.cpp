@@ -156,6 +156,7 @@ void GamePage::updatePowerUps(const QVector<QPair<QPoint, QString>>& powerUpPosi
         else {
             brush.setColor(Qt::yellow);
         }
+
         brush.setStyle(Qt::SolidPattern);
         powerUpItem->setBrush(brush);
 
@@ -163,7 +164,6 @@ void GamePage::updatePowerUps(const QVector<QPair<QPoint, QString>>& powerUpPosi
         m_powerUps[{position.x(), position.y()}] = powerUpItem;
     }
 }
-
 
 void GamePage::startGameStateTimer() {
     if (!m_gameStateTimer->isActive()) {

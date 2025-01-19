@@ -1,6 +1,5 @@
 ﻿#include "LoginPage.h"
 
-
 LoginPage::LoginPage(ClientRequests* requests, QWidget* parent)
     : QWidget(parent), m_clientRequests(requests),
     m_nameRegex(QRegularExpression("^[a-zA-Z0-9]{5,18}$"))
