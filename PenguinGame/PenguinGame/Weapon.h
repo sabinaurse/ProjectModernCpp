@@ -12,15 +12,15 @@ public:
 	bool CanShoot() const;
 	void ResetTimeSinceLastShot();
 	int GetCooldown() const;
-	float GetBulletSpeed() const;
+	
+	template <typename T>
+	T GetBulletSpeed() const;
 
 	std::deque<Snowball>& GetSnowballs();
 	void RemoveInactiveSnowballs();
 
 	void SetCooldownFromLevel(int cooldownLevel);
-
-	template <typename T>
-	void SetBulletSpeedFromLevel(T bulletSpeedLevel);
+	void SetBulletSpeedFromLevel(int bulletSpeedLevel);
 
 private:
 	int m_cooldown;
@@ -29,17 +29,8 @@ private:
 	std::deque<Snowball> m_snowballs;
 };
 
-
 template <typename T>
-void Weapon::SetBulletSpeedFromLevel(T bulletSpeedLevel)
+T Weapon::GetBulletSpeed() const
 {
-	if (bulletSpeedLevel == 1)
-	{
-		m_bulletSpeed = 1.5f;
-	}
-	else
-	{
-		m_bulletSpeed = 1.25f;
-	}
+	return static_cast<T>(m_bulletSpeed);
 }
-

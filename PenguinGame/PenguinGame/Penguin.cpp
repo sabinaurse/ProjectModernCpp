@@ -59,7 +59,7 @@ void Penguin::Fire() {
 			return;
 		}
 
-		float bulletSpeed = m_weapon.GetBulletSpeed();
+		float bulletSpeed = m_weapon.GetBulletSpeed<float>();
 
 		Snowball newSnowball(m_position, direction, bulletSpeed);
 		m_weapon.GetSnowballs().emplace_back(std::move(newSnowball));

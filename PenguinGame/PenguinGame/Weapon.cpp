@@ -23,11 +23,6 @@ int Weapon::GetCooldown() const {
 	return m_cooldown;
 }
 
-float Weapon::GetBulletSpeed() const
-{
-    return m_bulletSpeed;
-}
-
 std::deque<Snowball>& Weapon::GetSnowballs()
 {
 	return m_snowballs;
@@ -65,5 +60,17 @@ void Weapon::SetCooldownFromLevel(int cooldownLevel)
     default:
         m_cooldown = 4000;
         break;
+    }
+}
+
+void Weapon::SetBulletSpeedFromLevel(int bulletSpeedLevel)
+{
+    if (bulletSpeedLevel == 1)
+    {
+        m_bulletSpeed = 1.5f;
+    }
+    else
+    {
+        m_bulletSpeed = 1.25f;
     }
 }
