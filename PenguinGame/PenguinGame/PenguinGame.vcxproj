@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BoardManager.h" />
+    <ClInclude Include="FriendlyGame.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameDatabase.h" />
     <ClInclude Include="GameManager.h" />
@@ -143,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BoardManager.cpp" />
+    <ClCompile Include="FriendlyGame.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameDatabase.cpp" />
     <ClCompile Include="GameManager.cpp" />

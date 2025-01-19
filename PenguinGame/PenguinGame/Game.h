@@ -43,9 +43,9 @@ public:
 	int GetGameId();   
 	void SetGameId(int gameId);
 
-	void StartGame();
-	void EndGame();
-	void CheckForCollisions();
+	virtual void StartGame();
+	virtual void EndGame();
+	virtual void CheckForCollisions();
 	const MapGen::GameBoard& GetBoard() const;
 	BoardManager& GetBoardManager() { return m_boardManager; }
 	const BoardManager& GetBoardManager() const { return m_boardManager; }
@@ -71,11 +71,15 @@ public:
 	void StartUpdateLoop();
 	void StopUpdateLoop();
 	void UpdateAllSnowballs();
-private:
+
+	virtual ~Game() = default;
+
+protected:
 	void CheckSnowballToPenguinCollisions();
 	void CheckSnowballToObstacleCollisions();
 	void CheckSnowballToSnowballCollisions();
-private:
+
+protected:
 	BoardManager m_boardManager;
 	PlayerList m_players;
 	PenguinList m_penguins;
